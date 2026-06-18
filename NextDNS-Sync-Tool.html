@@ -15,16 +15,37 @@
   --text:#111827;--muted:#6b7280;--radius:10px;
   --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
   --shadow-md:0 4px 16px rgba(0,0,0,.1);
+  /* surfaces — used so dark mode can recolour panels cleanly */
+  --app-bg:#f1f5f9;        /* page / panel background */
+  --surface:#fff;          /* cards, header, sidebar */
+  --surface-2:#f8fafc;     /* subtle raised rows */
+  --code-bg:#0f172a;       /* dark code/log panels */
+  --code-text:#e2e8f0;
 }
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f1f5f9;color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+[data-theme="dark"]{
+  --blue:#3b82f6;--blue-h:#60a5fa;--blue-light:#1e293b;
+  --green:#22c55e;--green-bg:#0f2417;--green-b:#14532d;
+  --red:#ef4444;--red-bg:#2a1414;--red-b:#7f1d1d;
+  --orange:#f59e0b;--orange-bg:#2a1f0a;--orange-b:#78420c;
+  --gray:#9ca3af;--gray-light:#1e293b;--gray-border:#334155;
+  --text:#e2e8f0;--muted:#94a3b8;
+  --shadow:0 1px 3px rgba(0,0,0,.4),0 1px 2px rgba(0,0,0,.3);
+  --shadow-md:0 4px 18px rgba(0,0,0,.5);
+  --app-bg:#0f172a;
+  --surface:#1e293b;
+  --surface-2:#172033;
+  --code-bg:#020617;
+  --code-text:#e2e8f0;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--app-bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;transition:background .2s,color .2s}
 
 /* ─── SHARED ─── */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
 .btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
 .btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-h)}
-.btn-outline{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}.btn-outline:hover{background:var(--blue-light)}
-.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--gray-border)}.btn-ghost:hover{background:var(--gray-light);color:var(--text)}
-.btn-danger{background:#fff;color:var(--red);border:1.5px solid var(--red-b)}.btn-danger:hover{background:var(--red-bg)}
+.btn-outline{background:var(--surface);color:var(--blue);border:1.5px solid var(--blue)}.btn-outline:hover{background:var(--blue-light)}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--gray-border)}.btn-ghost:hover{background:var(--surface-2);color:var(--text)}
+.btn-danger{background:var(--surface);color:var(--red);border:1.5px solid var(--red-b)}.btn-danger:hover{background:var(--red-bg)}
 .btn-sm{padding:5px 10px;font-size:12px}
 .btn-xs{padding:3px 8px;font-size:11px;border-radius:5px}
 
@@ -33,12 +54,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 @keyframes spin{to{transform:rotate(360deg)}}
 
 label{font-size:13px;font-weight:600;color:var(--text)}
-input[type=password],input[type=text],select{width:100%;padding:8px 10px;border:1.5px solid var(--gray-border);border-radius:7px;font-size:13px;background:#fff;outline:none;transition:border .15s;font-family:inherit}
+input[type=password],input[type=text],select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--gray-border);border-radius:7px;font-size:13px;background:var(--surface);color:var(--text);outline:none;transition:border .15s;font-family:inherit}
 input:focus,select:focus{border-color:var(--blue)}
 
 /* ─── LOGIN ─── */
 #sl{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
-.login-box{background:#fff;border-radius:14px;box-shadow:var(--shadow-md);padding:2.5rem 2rem;width:100%;max-width:400px}
+.login-box{background:var(--surface);border-radius:14px;box-shadow:var(--shadow-md);padding:2.5rem 2rem;width:100%;max-width:400px}
 .login-logo{color:var(--blue);font-size:18px;font-weight:800;margin-bottom:1.25rem;letter-spacing:-.3px}
 .login-title{font-size:22px;font-weight:700;margin-bottom:.4rem}
 .login-sub{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:1.25rem}
@@ -52,7 +73,7 @@ input:focus,select:focus{border-color:var(--blue)}
 
 /* ─── WELCOME ─── */
 #sw{display:none;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
-.welcome-box{background:#fff;border-radius:14px;box-shadow:var(--shadow-md);padding:2rem;width:100%;max-width:400px;text-align:center}
+.welcome-box{background:var(--surface);border-radius:14px;box-shadow:var(--shadow-md);padding:2rem;width:100%;max-width:400px;text-align:center}
 .avatar{width:52px;height:52px;background:var(--blue);border-radius:50%;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
 .welcome-email{font-weight:600;font-size:15px;margin-bottom:2px}
 .welcome-label{font-size:12px;color:var(--muted)}
@@ -68,7 +89,7 @@ input:focus,select:focus{border-color:var(--blue)}
 
 /* header */
 .app-header{
-  background:#fff;
+  background:var(--surface);
   border-bottom:1px solid var(--gray-border);
   padding:0 20px;
   height:52px;
@@ -105,7 +126,7 @@ input:focus,select:focus{border-color:var(--blue)}
 /* ─── SIDEBAR ─── */
 .sidebar{
   width:268px;min-width:268px;
-  background:#fff;
+  background:var(--surface);
   border-right:1px solid var(--gray-border);
   display:flex;flex-direction:column;
   overflow-y:auto;
@@ -155,7 +176,7 @@ input:focus,select:focus{border-color:var(--blue)}
 .sb-actions{padding:14px 16px;display:flex;flex-direction:column;gap:8px;margin-top:auto;border-top:1px solid var(--gray-border)}
 
 /* ─── PREVIEW PANEL ─── */
-.preview-panel{flex:1;overflow-y:auto;padding:20px;background:#f1f5f9;min-width:0}
+.preview-panel{flex:1;overflow-y:auto;padding:20px;background:var(--app-bg);min-width:0}
 
 .preview-empty{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -169,7 +190,7 @@ input:focus,select:focus{border-color:var(--blue)}
 .preview-hdr{
   display:flex;align-items:center;justify-content:space-between;
   margin-bottom:16px;flex-wrap:wrap;gap:8px;
-  background:#f1f5f9;padding-bottom:12px;
+  background:var(--app-bg);padding-bottom:12px;
   position:sticky;top:0;z-index:5;
   padding-top:2px;
 }
@@ -181,7 +202,7 @@ input:focus,select:focus{border-color:var(--blue)}
 .dot-g{background:var(--green)}.dot-r{background:var(--red)}.dot-gr{background:#9ca3af}.dot-o{background:var(--orange)}
 
 /* target block */
-.target-block{background:#fff;border-radius:12px;border:1px solid var(--gray-border);margin-bottom:20px;overflow:hidden;box-shadow:var(--shadow)}
+.target-block{background:var(--surface);border-radius:12px;border:1px solid var(--gray-border);margin-bottom:20px;overflow:hidden;box-shadow:var(--shadow)}
 .target-hdr{
   padding:14px 18px;
   border-bottom:2px solid var(--gray-border);
@@ -206,7 +227,7 @@ input:focus,select:focus{border-color:var(--blue)}
 .cat-hdr{
   display:flex;align-items:center;justify-content:space-between;
   padding:9px 16px 8px;
-  background:#f8fafc;
+  background:var(--surface-2);
   border-bottom:1px solid #eef2f7;
   cursor:pointer;
   user-select:none;
@@ -235,14 +256,14 @@ input:focus,select:focus{border-color:var(--blue)}
   min-height:36px;
 }
 .change-row:last-child{border-bottom:none}
-.change-row:hover{background:#fafbfc}
+.change-row:hover{background:var(--surface-2)}
 .change-row.row-add{background:#f0fdf4}
 .change-row.row-add:hover{background:#e8faf0}
 .change-row.row-rem{background:#fef5f5}
 .change-row.row-rem:hover{background:#fdecea}
 .change-row.row-over{background:#fffcf5}
 .change-row.row-over:hover{background:#fef9ec}
-.change-row.row-unch{background:#fff}
+.change-row.row-unch{background:var(--surface)}
 .change-row.skipped{opacity:.4}
 .change-row.skipped .change-domain{text-decoration:line-through}
 
@@ -266,11 +287,11 @@ input:focus,select:focus{border-color:var(--blue)}
 /* ─── MODAL ─── */
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;padding:1rem}
 .overlay.open{display:flex}
-.modal{background:#fff;border-radius:12px;padding:1.75rem;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;display:flex;flex-direction:column;gap:12px}
+.modal{background:var(--surface);border-radius:12px;padding:1.75rem;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;display:flex;flex-direction:column;gap:12px}
 .modal-title{font-size:16px;font-weight:700}
 .modal-body{font-size:13px;color:var(--muted);line-height:1.6}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end}
-.progress-log{background:#0f172a;border-radius:8px;padding:10px 14px;font-family:'SF Mono',Monaco,monospace;font-size:11.5px;color:#94a3b8;max-height:220px;overflow-y:auto;display:none;flex:none}
+.progress-log{background:var(--code-bg);border-radius:8px;padding:10px 14px;font-family:'SF Mono',Monaco,monospace;font-size:11.5px;color:#94a3b8;max-height:220px;overflow-y:auto;display:none;flex:none}
 .progress-log .ok{color:#4ade80}.progress-log .err{color:#f87171}.progress-log .info{color:#60a5fa}
 
 /* ─── PROFILE VIEWER MODAL ─── */
@@ -296,7 +317,7 @@ input:focus,select:focus{border-color:var(--blue)}
 
 /* df sidebar */
 .df-sidebar{
-  width:260px;min-width:260px;background:#fff;
+  width:260px;min-width:260px;background:var(--surface);
   border-right:1px solid var(--gray-border);
   display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
 }
@@ -307,7 +328,7 @@ input:focus,select:focus{border-color:var(--blue)}
   padding:10px 14px;border-bottom:1px solid #f3f6fa;
   cursor:pointer;transition:background .1s;user-select:none;
 }
-.dev-card:hover{background:#f8fafc}
+.dev-card:hover{background:var(--surface-2)}
 .dev-card.selected{background:var(--blue-light)}
 .dev-check{width:16px;height:16px;border:2px solid var(--gray-border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;transition:.15s}
 .dev-card.selected .dev-check{background:var(--blue);border-color:var(--blue)}
@@ -322,7 +343,7 @@ input:focus,select:focus{border-color:var(--blue)}
 .df-controls{
   display:flex;align-items:center;gap:10px;
   padding:10px 16px;border-bottom:1px solid var(--gray-border);
-  background:#fff;flex-shrink:0;flex-wrap:wrap;
+  background:var(--surface);flex-shrink:0;flex-wrap:wrap;
 }
 .df-search{
   flex:1;min-width:180px;padding:7px 10px 7px 32px;
@@ -331,7 +352,7 @@ input:focus,select:focus{border-color:var(--blue)}
   outline:none;transition:border .15s;
 }
 .df-search:focus{border-color:var(--blue)}
-.df-search:disabled{background-color:#f9fafb;cursor:not-allowed;opacity:.6}
+.df-search:disabled{background-color:var(--surface-2);cursor:not-allowed;opacity:.6}
 
 .toggle-wrap{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap}
 .toggle-wrap input{display:none}
@@ -342,7 +363,7 @@ input:focus,select:focus{border-color:var(--blue)}
 .toggle-wrap input:disabled + .toggle{opacity:.5;cursor:not-allowed}
 
 /* df log panel */
-.df-log-panel{flex:1;display:flex;flex-direction:column;min-width:0;background:#f8fafc}
+.df-log-panel{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--app-bg)}
 .df-log-inner{flex:1;overflow-y:auto;min-height:0}
 
 .df-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--muted);min-height:200px}
@@ -359,7 +380,7 @@ input:focus,select:focus{border-color:var(--blue)}
   border-bottom:1px solid #f0f4f8;
   font-size:13px;transition:background .08s;
 }
-.log-row:hover{background:#fff}
+.log-row:hover{background:var(--surface-2)}
 .log-row.blocked{background:#fff5f5}
 .log-row.blocked:hover{background:#fff0f0}
 .log-row.allowed{background:#f8fff8}
@@ -387,7 +408,7 @@ input:focus,select:focus{border-color:var(--blue)}
 .live-label{font-size:11px;font-weight:700;color:var(--red);letter-spacing:.04em}
 
 /* stat pills in df sidebar footer */
-.df-stat{display:flex;justify-content:space-between;padding:10px 14px;background:#f8fafc;border-top:1px solid var(--gray-border);font-size:12px;gap:8px;flex-shrink:0}
+.df-stat{display:flex;justify-content:space-between;padding:10px 14px;background:var(--surface-2);border-top:1px solid var(--gray-border);font-size:12px;gap:8px;flex-shrink:0}
 .df-stat-item{display:flex;flex-direction:column;align-items:center;gap:2px}
 .df-stat-val{font-size:16px;font-weight:700}
 .df-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
@@ -400,19 +421,19 @@ input:focus,select:focus{border-color:var(--blue)}
 
 /* ─── QUICK EDIT ─── */
 .qe-mode-active{background:var(--blue)!important;color:#fff!important;border-color:var(--blue)!important}
-.qe-result-block{background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
-.qe-result-hdr{padding:12px 16px;background:#f8fafc;border-bottom:1px solid var(--gray-border);display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.qe-result-block{background:var(--surface);border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.qe-result-hdr{padding:12px 16px;background:var(--surface-2);border-bottom:1px solid var(--gray-border);display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
 .qe-domain-row{display:flex;align-items:center;gap:10px;padding:6px 16px;border-bottom:1px solid #f3f6fa;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12.5px}
 .qe-domain-row:last-child{border-bottom:none}
 .qe-domain-row.will-add{background:#f0fdf4}.qe-domain-row.will-remove{background:#fef5f5}
 .qe-domain-row.already-exists{opacity:.55}.qe-domain-row.not-found{opacity:.55}
 
 /* ─── CONFIG MANAGEMENT ─── */
-.cm-profile-block{background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px}
+.cm-profile-block{background:var(--surface);border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px}
 .cm-profile-hdr{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);padding:14px 18px;display:flex;align-items:center;gap:10px}
 .cm-section{border-bottom:1px solid var(--gray-border)}
 .cm-section:last-child{border-bottom:none}
-.cm-section-hdr{padding:9px 16px;background:#f8fafc;border-bottom:1px solid #eef2f7;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.cm-section-hdr{padding:9px 16px;background:var(--surface-2);border-bottom:1px solid #eef2f7;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
 .cm-section-body{padding:10px 16px;display:flex;flex-wrap:wrap;gap:6px}
 .cm-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;background:var(--gray-light);border:1px solid var(--gray-border);padding:3px 9px;border-radius:20px;font-family:'SF Mono',Monaco,Menlo,monospace}
 .cm-tag-deny{background:var(--red-bg);border-color:var(--red-b);color:var(--red)}
@@ -421,43 +442,187 @@ input:focus,select:focus{border-color:var(--blue)}
 .cm-tag-off{background:#f3f4f6;border-color:#e5e7eb;color:#6b7280}
 .cm-kv{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;border-radius:6px;background:var(--gray-light);font-size:12.5px;min-width:160px;flex:1}
 .cm-kv-key{color:var(--muted);font-size:12px}
+
+/* ─── DARK MODE: re-tint pastel rows/badges that are too light ─── */
+[data-theme="dark"] .change-row.row-add{background:var(--green-bg)}
+[data-theme="dark"] .change-row.row-add:hover{background:#143524}
+[data-theme="dark"] .change-row.row-rem{background:var(--red-bg)}
+[data-theme="dark"] .change-row.row-rem:hover{background:#3a1a1a}
+[data-theme="dark"] .change-row.row-over{background:var(--orange-bg)}
+[data-theme="dark"] .change-row.row-over:hover{background:#352808}
+[data-theme="dark"] .change-row.forced{background:var(--orange-bg)}
+[data-theme="dark"] .remove-toggle{background:var(--orange-bg);border-color:var(--orange-b)}
+[data-theme="dark"] .remove-toggle-text{color:#fbbf24}
+[data-theme="dark"] .remove-toggle-text strong{color:#fcd34d}
+[data-theme="dark"] .log-row.blocked{background:var(--red-bg)}
+[data-theme="dark"] .log-row.blocked:hover{background:#3a1a1a}
+[data-theme="dark"] .log-row.allowed{background:var(--green-bg)}
+[data-theme="dark"] .log-type-badge{background:#334155;color:#cbd5e1}
+[data-theme="dark"] .log-reason{background:var(--red-bg);color:#fca5a5}
+[data-theme="dark"] .pv-on{background:#14532d;color:#86efac}
+[data-theme="dark"] .pv-off{background:#334155;color:#94a3b8}
+[data-theme="dark"] .cb-add{background:#14532d;color:#86efac}
+[data-theme="dark"] .cb-rem{background:#7f1d1d;color:#fca5a5}
+[data-theme="dark"] .cb-over{background:#78420c;color:#fcd34d}
+[data-theme="dark"] .b-editor{background:#1e3a8a;color:#bfdbfe}
+[data-theme="dark"] .b-demo{background:#78420c;color:#fcd34d}
+[data-theme="dark"] .cm-tag-on{background:#1e3a8a;border-color:#1e40af;color:#bfdbfe}
+[data-theme="dark"] .cm-tag-off{background:#334155;border-color:#475569;color:#94a3b8}
+[data-theme="dark"] .qe-domain-row.will-add{background:var(--green-bg)}
+[data-theme="dark"] .qe-domain-row.will-remove{background:var(--red-bg)}
+[data-theme="dark"] .toggle{background:#475569}
+[data-theme="dark"] .df-search{background-color:var(--surface)}
+[data-theme="dark"] .df-search::placeholder{color:var(--muted)}
+[data-theme="dark"] ::-webkit-scrollbar-thumb{background:#475569}
+[data-theme="dark"] .demo-banner{background:#3a2f08;border-bottom-color:#78420c;color:#fcd34d}
+
+/* ─── ABOUT ─── */
+.gc-btn.gc-about{font-size:14px}
+.about-body{font-size:13px;color:var(--text);line-height:1.6}
+.about-row{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--gray-border)}
+.about-row:last-child{border-bottom:none}
+.about-row .k{color:var(--muted)}
+.about-row .v{font-weight:600;text-align:right}
+.about-body a{color:var(--blue);text-decoration:none}
+.about-body a:hover{text-decoration:underline}
+.page-foot{position:fixed;left:0;right:0;bottom:0;padding:8px 12px;text-align:center;font-size:11px;color:var(--muted);line-height:1.6;pointer-events:none;z-index:1}
+.page-foot a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--gray-border);pointer-events:auto}
+.page-foot a:hover{color:var(--blue);border-bottom-color:var(--blue)}
+
+/* ─── REMEMBER TOGGLE / SAVED SESSIONS ─── */
+.remember-toggle{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(--surface-2);border:1.5px solid var(--gray-border);border-radius:8px;cursor:pointer;user-select:none}
+.remember-toggle input{cursor:pointer;width:14px;height:14px;accent-color:var(--blue);margin-top:2px;flex-shrink:0}
+.remember-toggle .remove-toggle-text{color:var(--muted)}
+.remember-toggle .remove-toggle-text strong{display:block;font-size:13px;color:var(--text);margin-bottom:1px}
+.session-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1.5px solid var(--gray-border);border-radius:8px;margin-bottom:6px;background:var(--surface);transition:border-color .15s}
+.session-row:hover{border-color:var(--blue)}
+.session-row .sess-icon{flex-shrink:0;font-size:14px}
+.session-row .sess-info{flex:1;min-width:0;cursor:pointer}
+.session-row .sess-name{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.session-row .sess-key{font-size:11px;color:var(--muted);font-family:monospace}
+.session-row .sess-del{flex-shrink:0;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;padding:4px 6px;border-radius:5px;transition:.15s}
+.session-row .sess-del:hover{background:var(--red-bg);color:var(--red)}
+.session-row.quick{border-style:dashed;opacity:.85}
+.session-row.quick:hover{opacity:1}
+.sess-added{color:var(--green);font-weight:700;font-size:11px}
+
+/* account chips (multi-account picker on Sync) */
+.acct-group-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:8px 0 4px;display:flex;align-items:center;gap:6px}
+.acct-group-label .acct-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.pcard-acct{font-size:10px;color:var(--muted);margin-left:4px;flex-shrink:0}
+.header-acct{display:flex;align-items:center;gap:6px;font-size:12px}
+.header-acct select{width:auto;min-width:120px;padding:4px 8px;font-size:12px}
+
+/* ─── GLOBAL TOP-RIGHT CONTROLS ─── */
+#global-controls{position:fixed;top:10px;right:12px;z-index:300;display:flex;align-items:center;gap:8px}
+#global-controls.docked{position:static;top:auto;right:auto;z-index:auto}
+.gc-btn{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--gray-border);background:var(--surface);color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:.15s;box-shadow:var(--shadow)}
+.gc-btn:hover{border-color:var(--blue)}
+.gc-lang{display:flex;border:1.5px solid var(--gray-border);border-radius:8px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.gc-lang-btn{border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:700;padding:6px 9px;cursor:pointer;transition:.15s}
+.gc-lang-btn:hover{color:var(--text)}
+.gc-lang-btn.active{background:var(--blue);color:#fff}
+/* when inside the app, header has its own right padding so controls don't overlap logout */
+/* when inside the app, the global controls dock into the header (see #gc-dock) */
+
+/* ─── COMPARE VIEW ─── */
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.cmp-grid{grid-template-columns:1fr}}
+.cmp-col{background:var(--surface);border:1px solid var(--gray-border);border-radius:12px;overflow:hidden;box-shadow:var(--shadow)}
+.cmp-col-hdr{padding:12px 16px;background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;gap:8px}
+.cmp-section-hdr{padding:8px 16px;background:var(--surface-2);border-bottom:1px solid var(--gray-border);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.cmp-row{display:flex;align-items:center;gap:8px;padding:5px 16px;border-bottom:1px solid var(--gray-border);font-size:12.5px}
+.cmp-row:last-child{border-bottom:none}
+.cmp-row.diff{background:var(--orange-bg)}
+.cmp-row.only{background:var(--green-bg)}
+.cmp-row.missing{background:var(--red-bg);opacity:.8}
+.cmp-key{font-family:'SF Mono',Monaco,Menlo,monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.cmp-val{font-weight:600;font-size:11px;padding:1px 7px;border-radius:4px;flex-shrink:0}
+.cmp-diff-badge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--orange-bg);color:var(--orange);flex-shrink:0}
+
+/* ─── FAVORITES & HISTORY ─── */
+.fav-row{display:flex;align-items:center;gap:6px;padding:6px 8px;border:1.5px solid var(--gray-border);border-radius:7px;font-size:12.5px;margin-bottom:5px;background:var(--surface)}
+.fav-row .fav-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;font-weight:600}
+.fav-row .fav-name:hover{color:var(--blue)}
+.hist-row{padding:8px 10px;border:1px solid var(--gray-border);border-radius:7px;margin-bottom:6px;font-size:12px;background:var(--surface)}
+.hist-row .hist-when{font-weight:700;font-size:11px;color:var(--muted)}
+.hist-row .hist-sum{margin-top:3px;color:var(--text)}
+.modal input[type=text]{width:100%}
 </style>
 </head>
 <body>
+
+<!-- ═══ GLOBAL TOP-RIGHT CONTROLS (language + theme) ═══ -->
+<div id="global-controls">
+  <button class="gc-btn gc-about" id="about-btn" onclick="openAbout()" title="About" aria-label="About">ⓘ</button>
+  <button class="gc-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle dark mode" aria-label="Toggle dark mode"><span id="theme-icon">🌙</span></button>
+  <div class="gc-lang" role="group" aria-label="Language">
+    <button class="gc-lang-btn" id="lang-en" onclick="setLang('en')">EN</button>
+    <button class="gc-lang-btn" id="lang-nl" onclick="setLang('nl')">NL</button>
+  </div>
+</div>
 
 <!-- ═══ LOGIN ═══ -->
 <div id="sl">
   <div class="login-box">
     <div class="login-logo">NextDNS</div>
-    <h1 class="login-title">Welcome back</h1>
-    <p class="login-sub">Enter your API key to manage your NextDNS profiles.<br>Type <strong>demo</strong> to explore with sample data.</p>
-    <div class="field">
-      <label for="apikey">API Key</label>
-      <input type="password" id="apikey" placeholder="API key or 'demo'" autocomplete="off">
-      <div class="field-help">Find your key at <a href="https://my.nextdns.io/account" target="_blank">my.nextdns.io/account</a></div>
+    <h1 class="login-title" data-i18n="login.title">Welcome back</h1>
+    <p class="login-sub" data-i18n-html="login.sub">Enter your API key to manage your NextDNS profiles.<br>Type <strong>demo</strong> to explore with sample data.</p>
+
+    <!-- Saved (temporary) sessions = the keys you've added -->
+    <div id="saved-sessions" style="display:none">
+      <div class="sb-label" style="margin-bottom:6px" data-i18n="login.saved">Saved keys</div>
+      <div id="saved-sessions-list" style="margin-bottom:8px"></div>
+      <div class="field-help" style="margin-bottom:12px" data-i18n="login.savedhint">These are kept only until you close the browser.</div>
+      <hr class="divider" style="margin:12px 0">
     </div>
+
+    <div class="field">
+      <label for="apikey" data-i18n="login.apikey">API Key</label>
+      <input type="password" id="apikey" placeholder="API key or 'demo'" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-lpignore="true" data-1p-ignore data-form-type="other" name="nextdns-key-no-store" readonly onfocus="this.removeAttribute('readonly')">
+      <label class="cat-row" style="margin-top:8px;font-weight:400"><input type="checkbox" id="apikey-show" onchange="document.getElementById('apikey').type=this.checked?'text':'password'"> <span data-i18n="login.show">Show key</span></label>
+      <div class="field-help" data-i18n-html="login.help">Find your key at <a href="https://my.nextdns.io/account" target="_blank">my.nextdns.io/account</a></div>
+    </div>
+
+    <label class="remember-toggle" id="remember-toggle-label" style="margin-top:10px">
+      <input type="checkbox" id="opt-remember" onchange="onRememberToggle()">
+      <div class="remove-toggle-text">
+        <strong data-i18n="login.remember.title">Remember temporarily</strong>
+        <span data-i18n="login.remember.body">Stores this key in the browser session so you can switch between accounts. It's cleared when you close the browser.</span>
+      </div>
+    </label>
+
+    <!-- Name only appears when you choose to remember the key -->
+    <div class="field" id="name-field" style="margin-top:10px;display:none">
+      <label for="acctname" data-i18n="login.name">Name this key</label>
+      <input type="text" id="acctname" placeholder="e.g. Home account" autocomplete="off" data-i18n-ph="login.nameph">
+    </div>
+
     <div class="alert alert-error" id="login-err"></div>
     <div class="alert alert-warn" id="login-cors">
-      <strong>⚠️ Browser security restriction (CORS)</strong>
-      Your browser blocks direct access to the NextDNS API from local files.<br><br>
-      <strong>Options:</strong> Type <strong>demo</strong> to explore, or serve this file via a local web server.
+      <strong data-i18n="login.cors.title">⚠️ Browser security restriction (CORS)</strong>
+      <span data-i18n="login.cors.body">Your browser blocks direct access to the NextDNS API from local files.</span><br><br>
+      <span data-i18n-html="login.cors.opts"><strong>Options:</strong> Type <strong>demo</strong> to explore, or serve this file via a local web server.</span>
     </div>
-    <button class="btn btn-primary" style="width:100%;margin-top:14px" id="login-btn" onclick="doLogin()">Continue →</button>
+
+    <button class="btn btn-primary" style="width:100%;margin-top:14px;display:none" id="enter-btn" onclick="openDashboard()" data-i18n="login.enter">Open dashboard →</button>
+    <button class="btn btn-primary" style="width:100%;margin-top:14px" id="login-btn" onclick="doLogin()" data-i18n="login.continue">Continue →</button>
   </div>
 </div>
+<div class="page-foot" id="login-foot"></div>
 
 <!-- ═══ WELCOME ═══ -->
 <div id="sw">
   <div class="welcome-box">
     <div class="avatar" id="wavatar">?</div>
     <div class="welcome-email" id="wname">Your Account</div>
-    <div class="welcome-label">NextDNS Account</div>
+    <div class="welcome-label" data-i18n="welcome.account">NextDNS Account</div>
     <hr class="divider">
-    <div style="font-size:13px;font-weight:600;text-align:left;margin-bottom:8px">Your Profiles</div>
+    <div style="font-size:13px;font-weight:600;text-align:left;margin-bottom:8px" data-i18n="welcome.profiles">Your Profiles</div>
     <div id="wprofiles"></div>
     <div class="welcome-actions">
-      <button class="btn btn-ghost" onclick="logout()">← Back</button>
-      <button class="btn btn-primary" onclick="openDashboard()">Open Dashboard →</button>
+      <button class="btn btn-ghost" onclick="logout()" data-i18n="welcome.back">← Back</button>
+      <button class="btn btn-primary" onclick="openDashboard()" data-i18n="welcome.open">Open Dashboard →</button>
     </div>
   </div>
 </div>
@@ -466,32 +631,40 @@ input:focus,select:focus{border-color:var(--blue)}
 <div id="sa">
   <header class="app-header">
     <div class="header-left">
-      <span class="app-logo">NextDNS</span>
+      <span class="app-logo">NextDNS Sync Tool</span>
       <nav class="nav-tabs">
         <button class="nav-tab active" id="tab-sync" onclick="switchTab('sync')">
-          <span class="nav-tab-icon">🔄</span> Profile Sync
+          <span class="nav-tab-icon">🔄</span> <span data-i18n="tab.sync">Profile Sync</span>
         </button>
         <button class="nav-tab" id="tab-devices" onclick="switchTab('devices')">
-          <span class="nav-tab-icon">💻</span> Devices
+          <span class="nav-tab-icon">💻</span> <span data-i18n="tab.devices">Devices</span>
         </button>
         <button class="nav-tab" id="tab-flows" onclick="switchTab('flows')">
-          <span class="nav-tab-icon">📡</span> Flows
+          <span class="nav-tab-icon">📡</span> <span data-i18n="tab.flows">Flows</span>
         </button>
         <button class="nav-tab" id="tab-quickedit" onclick="switchTab('quickedit')">
-          <span class="nav-tab-icon">✏️</span> Quick Edit
+          <span class="nav-tab-icon">✏️</span> <span data-i18n="tab.quickedit">Quick Edit</span>
         </button>
         <button class="nav-tab" id="tab-configmgmt" onclick="switchTab('configmgmt')">
-          <span class="nav-tab-icon">💾</span> Config Management
+          <span class="nav-tab-icon">💾</span> <span data-i18n="tab.config">Config Management</span>
+        </button>
+        <button class="nav-tab" id="tab-compare" onclick="switchTab('compare')">
+          <span class="nav-tab-icon">⇄</span> <span data-i18n="tab.compare">Compare</span>
+        </button>
+        <button class="nav-tab" id="tab-history" onclick="switchTab('history')">
+          <span class="nav-tab-icon">🕘</span> <span data-i18n="tab.history">History</span>
         </button>
       </nav>
     </div>
     <div class="header-right">
-      <span class="header-email" id="app-email"></span>
-      <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
+      <span id="app-acct-bar"></span>
+      <button class="btn btn-ghost btn-sm" onclick="addAccount()" title="Add account" data-i18n="account.add">+ Account</button>
+      <button class="btn btn-danger btn-sm" onclick="logout()" data-i18n="app.logout">Logout</button>
+      <span id="gc-dock"></span>
     </div>
   </header>
   <div class="demo-banner" id="demo-banner" style="display:none">
-    🧪 <strong>Demo mode</strong> — Exploring with sample data. No real API calls are made.
+    🧪 <span data-i18n-html="app.demobanner"><strong>Demo mode</strong> — Exploring with sample data. No real API calls are made.</span>
   </div>
   <!-- Profile Sync page -->
   <div id="page-sync" class="app-body">
@@ -499,45 +672,59 @@ input:focus,select:focus{border-color:var(--blue)}
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sb-section">
-        <div class="sb-label">Master Profile</div>
+        <div class="sb-label" data-i18n="sync.master">Master Profile</div>
         <select id="master-select" onchange="onMasterChange()"></select>
-        <div style="font-size:11px;color:var(--muted);margin-top:5px">Settings will be <em>copied from</em> this profile.</div>
-        <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%" onclick="viewProfile(document.getElementById('master-select').value)">👁 View profile</button>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px" data-i18n-html="sync.masterhint">Settings will be <em>copied from</em> this profile.</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%" onclick="viewProfile(document.getElementById('master-select').value)"><span data-i18n="sync.viewprofile">👁 View profile</span></button>
       </div>
 
       <div class="sb-section">
-        <div class="sb-label">Copy To</div>
+        <div class="sb-label" data-i18n="sync.copyto">Copy To</div>
         <div class="profile-cards" id="target-cards"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:6px">Select one or more destination profiles.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px" data-i18n="sync.copytohint">Select one or more destination profiles.</div>
       </div>
 
       <div class="sb-section">
-        <div class="sb-label">What to Sync</div>
+        <div class="sb-label" data-i18n="sync.whattosync">What to Sync</div>
         <div class="sync-cats">
-          <label class="cat-row"><input type="checkbox" id="cat-denylist" checked> Denylist</label>
-          <label class="cat-row"><input type="checkbox" id="cat-allowlist" checked> Allowlist</label>
-          <label class="cat-row"><input type="checkbox" id="cat-rewrites"> Rewrites</label>
-          <label class="cat-row"><input type="checkbox" id="cat-security"> Security settings</label>
-          <label class="cat-row"><input type="checkbox" id="cat-tlds"> TLD Blocklist</label>
-          <label class="cat-row"><input type="checkbox" id="cat-privacy"> Privacy &amp; blocklists</label>
-          <label class="cat-row"><input type="checkbox" id="cat-parental"> Parental Control</label>
+          <label class="cat-row"><input type="checkbox" id="cat-denylist" checked> <span data-i18n="cat.denylist">Denylist</span></label>
+          <label class="cat-row"><input type="checkbox" id="cat-allowlist" checked> <span data-i18n="cat.allowlist">Allowlist</span></label>
+          <label class="cat-row"><input type="checkbox" id="cat-rewrites"> <span data-i18n="cat.rewrites">Rewrites</span></label>
+          <label class="cat-row"><input type="checkbox" id="cat-security"> <span data-i18n="cat.security">Security settings</span></label>
+          <label class="cat-row"><input type="checkbox" id="cat-tlds"> <span data-i18n="cat.tlds">TLD Blocklist</span></label>
+          <label class="cat-row"><input type="checkbox" id="cat-privacy"> <span data-i18n="cat.privacy">Privacy &amp; blocklists</span></label>
+          <label class="cat-row"><input type="checkbox" id="cat-parental"> <span data-i18n="cat.parental">Parental Control</span></label>
         </div>
       </div>
 
       <div class="sb-section">
-        <div class="sb-label">Options</div>
+        <div class="sb-label" data-i18n="sync.options">Options</div>
         <label class="remove-toggle" id="remove-toggle-label">
           <input type="checkbox" id="opt-remove" onchange="onRemoveToggle()">
           <div class="remove-toggle-text">
-            <strong>Remove if not in master</strong>
-            Items in destination that don't exist in master will be removed. Off by default.
+            <strong data-i18n="sync.remove.title">Remove if not in master</strong>
+            <span data-i18n="sync.remove.body">Items in destination that don't exist in master will be removed. Off by default.</span>
           </div>
         </label>
       </div>
 
+      <div class="sb-section">
+        <div class="sb-label" data-i18n="tools">Tools</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="openProfileActions('rename')" data-i18n="pa.rename">✎ Rename</button>
+          <button class="btn btn-ghost btn-sm" onclick="openProfileActions('duplicate')" data-i18n="pa.duplicate">⧉ Duplicate</button>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label" data-i18n="preset.title">Preset selections</div>
+        <div id="fav-list" style="margin-bottom:6px"></div>
+        <button class="btn btn-ghost btn-sm" style="width:100%" onclick="saveCurrentFavorite()" data-i18n="preset.save">★ Save current as preset</button>
+      </div>
+
       <div class="sb-actions">
-        <button class="btn btn-outline" id="preview-btn" onclick="previewChanges()">Preview Changes</button>
-        <button class="btn btn-primary" id="apply-btn" onclick="openApplyModal()" disabled>Apply Changes</button>
+        <button class="btn btn-outline" id="preview-btn" onclick="previewChanges()" data-i18n="sync.preview">Preview Changes</button>
+        <button class="btn btn-primary" id="apply-btn" onclick="openApplyModal()" disabled data-i18n="sync.apply">Apply Changes</button>
       </div>
     </aside>
 
@@ -545,8 +732,8 @@ input:focus,select:focus{border-color:var(--blue)}
     <main class="preview-panel" id="preview-panel">
       <div class="preview-empty" id="preview-empty">
         <div class="empty-icon">🔄</div>
-        <h3>No preview yet</h3>
-        <p>Select a master profile, one or more destination profiles, and click "Preview Changes".</p>
+        <h3 data-i18n="sync.empty.title">No preview yet</h3>
+        <p data-i18n="sync.empty.body">Select a master profile, one or more destination profiles, and click "Preview Changes".</p>
       </div>
       <div id="preview-content" style="display:none"></div>
     </main>
@@ -556,25 +743,25 @@ input:focus,select:focus{border-color:var(--blue)}
   <div id="page-devices" class="app-body" style="display:none">
     <aside class="sidebar" style="width:240px;min-width:240px">
       <div class="sb-section">
-        <div class="sb-label">Profiel</div>
+        <div class="sb-label" data-i18n="common.profile">Profiel</div>
         <select id="dv-profile-select" onchange="onDvProfileChange()"></select>
       </div>
       <div class="sb-section">
-        <div class="sb-label">Zoeken</div>
-        <input type="text" id="dv-search" placeholder="Naam of model…" oninput="onDvSearch()">
+        <div class="sb-label" data-i18n="common.search">Zoeken</div>
+        <input type="text" id="dv-search" placeholder="Naam of model…" data-i18n-ph="dv.searchph" oninput="onDvSearch()">
       </div>
       <div class="sb-actions">
-        <div style="background:var(--blue-light);border:1.5px solid #bfdbfe;border-radius:8px;padding:12px;text-align:center">
+        <div style="background:var(--blue-light);border:1.5px solid var(--blue);border-radius:8px;padding:12px;text-align:center">
           <div style="font-size:28px;font-weight:800;color:var(--blue);line-height:1" id="dv-count">—</div>
-          <div style="font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-top:3px">Devices</div>
+          <div style="font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-top:3px" data-i18n="tab.devices">Devices</div>
         </div>
       </div>
     </aside>
     <main class="preview-panel" id="dv-main">
       <div class="preview-empty" id="dv-empty">
         <div class="empty-icon">💻</div>
-        <h3>Geen profiel geselecteerd</h3>
-        <p>Selecteer een profiel om de gekoppelde devices te bekijken.</p>
+        <h3 data-i18n="dv.empty.title">Geen profiel geselecteerd</h3>
+        <p data-i18n="dv.empty.body">Selecteer een profiel om de gekoppelde devices te bekijken.</p>
       </div>
       <div id="dv-content" style="display:none"></div>
     </main>
@@ -584,43 +771,43 @@ input:focus,select:focus{border-color:var(--blue)}
   <div id="page-flows" class="df-body" style="display:none">
     <aside class="df-sidebar">
       <div class="sb-section">
-        <div class="sb-label">Profiel</div>
+        <div class="sb-label" data-i18n="common.profile">Profiel</div>
         <select id="df-profile-select" onchange="onDfProfileChange()"></select>
       </div>
       <div class="sb-section" style="padding-bottom:8px">
-        <div class="sb-label">Filter op device</div>
+        <div class="sb-label" data-i18n="df.filterdevice">Filter op device</div>
         <div id="df-devices-list">
-          <div style="color:var(--muted);font-size:12px;font-style:italic">Selecteer een profiel</div>
+          <div style="color:var(--muted);font-size:12px;font-style:italic" data-i18n="df.selectprofile">Selecteer een profiel</div>
         </div>
       </div>
       <div class="df-stat" id="df-stat">
         <div class="df-stat-item">
           <span class="df-stat-val stat-total" id="df-stat-total">0</span>
-          <span class="df-stat-lbl">Queries</span>
+          <span class="df-stat-lbl" data-i18n="df.queries">Queries</span>
         </div>
         <div class="df-stat-item">
           <span class="df-stat-val stat-blocked" id="df-stat-blocked">0</span>
-          <span class="df-stat-lbl">Blocked</span>
+          <span class="df-stat-lbl" data-i18n="df.blocked">Blocked</span>
         </div>
         <div class="df-stat-item">
           <span class="df-stat-val stat-allowed" id="df-stat-allowed">0</span>
-          <span class="df-stat-lbl">Allowed</span>
+          <span class="df-stat-lbl" data-i18n="df.allowed">Allowed</span>
         </div>
       </div>
     </aside>
     <div class="df-log-panel">
       <div class="df-controls">
-        <button class="btn btn-primary btn-sm" id="df-start-btn" onclick="toggleLiveLog()">▶ Start</button>
-        <input class="df-search" type="text" id="df-search" placeholder="Search domain…" disabled oninput="onDfSearch()">
+        <button class="btn btn-primary btn-sm" id="df-start-btn" onclick="toggleLiveLog()" data-i18n="df.start">▶ Start</button>
+        <input class="df-search" type="text" id="df-search" placeholder="Search domain…" data-i18n-ph="df.searchph" disabled oninput="onDfSearch()">
         <label class="toggle-wrap">
           <input type="checkbox" id="df-blocked-only" onchange="onDfFilterChange()">
           <span class="toggle"></span>
-          Blocked only
+          <span data-i18n="df.blockedonly">Blocked only</span>
         </label>
         <label class="toggle-wrap">
           <input type="checkbox" id="df-raw" onchange="onDfFilterChange()">
           <span class="toggle"></span>
-          Raw DNS
+          <span data-i18n="df.rawdns">Raw DNS</span>
         </label>
         <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
           <div class="live-dot" id="df-live-dot" style="display:none"></div>
@@ -630,8 +817,8 @@ input:focus,select:focus{border-color:var(--blue)}
       <div class="df-log-inner" id="df-log-inner">
         <div class="df-empty" id="df-empty">
           <div class="empty-icon">📡</div>
-          <h3>Nog geen live data</h3>
-          <p>Selecteer een profiel, optioneel een device, en klik Start om live DNS-queries te streamen.</p>
+          <h3 data-i18n="df.empty.title">Nog geen live data</h3>
+          <p data-i18n="df.empty.body">Selecteer een profiel, optioneel een device, en klik Start om live DNS-queries te streamen.</p>
         </div>
         <div id="df-log-rows" style="display:none"></div>
       </div>
@@ -644,10 +831,10 @@ input:focus,select:focus{border-color:var(--blue)}
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sb-section">
-        <div class="sb-label">Modus</div>
+        <div class="sb-label" data-i18n="qe.mode">Modus</div>
         <div style="display:flex;gap:6px">
-          <button class="btn btn-primary btn-sm" id="qe-mode-add" onclick="setQeMode('add')" style="flex:1">+ Add Domains</button>
-          <button class="btn btn-ghost btn-sm" id="qe-mode-remove" onclick="setQeMode('remove')" style="flex:1">− Remove Domains</button>
+          <button class="btn btn-primary btn-sm" id="qe-mode-add" onclick="setQeMode('add')" style="flex:1" data-i18n="qe.add">+ Add Domains</button>
+          <button class="btn btn-ghost btn-sm" id="qe-mode-remove" onclick="setQeMode('remove')" style="flex:1" data-i18n="qe.remove">− Remove Domains</button>
         </div>
         <div id="qe-mode-hint" style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5">
           Domeinen worden <strong>toegevoegd</strong> aan de geselecteerde profielen.
@@ -656,15 +843,21 @@ input:focus,select:focus{border-color:var(--blue)}
 
       <div class="sb-section">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div class="sb-label" style="margin-bottom:0">Profielen</div>
-          <button class="btn btn-ghost btn-xs" onclick="qeSelectAll()">Alles selecteren</button>
+          <div class="sb-label" style="margin-bottom:0" data-i18n="common.profiles">Profielen</div>
+          <button class="btn btn-ghost btn-xs" onclick="qeSelectAll()" data-i18n="common.selectall">Alles selecteren</button>
         </div>
         <div class="profile-cards" id="qe-profile-cards"></div>
       </div>
 
+      <div class="sb-section">
+        <div class="sb-label" data-i18n="preset.title">Preset selections</div>
+        <div id="qe-preset-list" style="margin-bottom:6px"></div>
+        <button class="btn btn-ghost btn-sm" style="width:100%" onclick="saveQePreset()" data-i18n="preset.save">★ Save current as preset</button>
+      </div>
+
       <div class="sb-actions">
-        <button class="btn btn-outline" id="qe-preview-btn" onclick="qePreview()">Preview</button>
-        <button class="btn btn-primary" id="qe-apply-btn" onclick="qeApply()" disabled>Toepassen</button>
+        <button class="btn btn-outline" id="qe-preview-btn" onclick="qePreview()" data-i18n="common.preview">Preview</button>
+        <button class="btn btn-primary" id="qe-apply-btn" onclick="qeApply()" disabled data-i18n="common.apply">Toepassen</button>
       </div>
     </aside>
 
@@ -672,11 +865,11 @@ input:focus,select:focus{border-color:var(--blue)}
     <main class="preview-panel" style="display:flex;flex-direction:column;gap:16px;overflow-y:auto">
 
       <!-- Deny section -->
-      <div style="background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
+      <div style="background:var(--surface);border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
         <div style="background:linear-gradient(135deg,#7f1d1d 0%,#dc2626 100%);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:16px">🚫</span>
-            <span style="font-weight:700;color:#fff;font-size:14px">Denylist</span>
+            <span style="font-weight:700;color:#fff;font-size:14px" data-i18n="cat.denylist">Denylist</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <label class="btn btn-xs" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer" title="Upload .txt bestand">
@@ -693,11 +886,11 @@ input:focus,select:focus{border-color:var(--blue)}
       </div>
 
       <!-- Allow section -->
-      <div style="background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
+      <div style="background:var(--surface);border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
         <div style="background:linear-gradient(135deg,#14532d 0%,#16a34a 100%);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:16px">✅</span>
-            <span style="font-weight:700;color:#fff;font-size:14px">Allowlist</span>
+            <span style="font-weight:700;color:#fff;font-size:14px" data-i18n="cat.allowlist">Allowlist</span>
           </div>
           <div style="display:flex;align-items:center;gap:8px">
             <label class="btn btn-xs" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer" title="Upload .txt bestand">
@@ -714,12 +907,12 @@ input:focus,select:focus{border-color:var(--blue)}
       </div>
 
       <!-- Rewrites section -->
-      <div style="background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
+      <div style="background:var(--surface);border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
         <div style="background:linear-gradient(135deg,#3b0764 0%,#7c3aed 100%);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
           <div style="display:flex;align-items:center;gap:8px">
             <span style="font-size:16px">↩️</span>
             <div>
-              <span style="font-weight:700;color:#fff;font-size:14px">Rewrites</span>
+              <span style="font-weight:700;color:#fff;font-size:14px" data-i18n="cat.rewrites">Rewrites</span>
               <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:1px">Formaat: <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px">naam.lan=192.168.1.1</code> of <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px">naam.lan=alias.local</code></div>
             </div>
           </div>
@@ -743,13 +936,13 @@ input:focus,select:focus{border-color:var(--blue)}
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sb-section">
-        <div class="sb-label">Profiel(en)</div>
+        <div class="sb-label" data-i18n="cm.profiles">Profiel(en)</div>
         <div class="profile-cards" id="cm-profile-cards"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:6px">Selecteer één of meerdere profielen.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px" data-i18n="cm.profileshint">Selecteer één of meerdere profielen.</div>
       </div>
 
       <div class="sb-section">
-        <div class="sb-label">Onderdelen</div>
+        <div class="sb-label" data-i18n="cm.parts">Onderdelen</div>
         <div class="sync-cats" id="cm-cats">
           <label class="cat-row"><input type="checkbox" id="cm-cat-denylist" checked onchange="cmClearPreview()"> Denylist</label>
           <label class="cat-row"><input type="checkbox" id="cm-cat-allowlist" checked onchange="cmClearPreview()"> Allowlist</label>
@@ -762,28 +955,28 @@ input:focus,select:focus{border-color:var(--blue)}
       </div>
 
       <div class="sb-section">
-        <div class="sb-label">Exporteren</div>
-        <button class="btn btn-outline" style="width:100%;margin-bottom:6px" onclick="cmExport()">📤 Preview export</button>
-        <button class="btn btn-ghost" style="width:100%" onclick="cmDownload()" id="cm-download-btn" disabled>⬇ Download JSON</button>
+        <div class="sb-label" data-i18n="cm.export">Exporteren</div>
+        <button class="btn btn-outline" style="width:100%;margin-bottom:6px" onclick="cmExport()" data-i18n="cm.previewexport">📤 Preview export</button>
+        <button class="btn btn-ghost" style="width:100%" onclick="cmDownload()" id="cm-download-btn" disabled data-i18n="cm.download">⬇ Download JSON</button>
       </div>
 
       <div class="sb-section">
-        <div class="sb-label">Importeren</div>
+        <div class="sb-label" data-i18n="cm.import">Importeren</div>
         <label class="btn btn-ghost" style="width:100%;margin-bottom:6px;cursor:pointer;justify-content:flex-start;gap:6px">
-          📂 <span>Bestand kiezen…</span>
+          📂 <span data-i18n="cm.choosefile">Bestand kiezen…</span>
           <input type="file" id="cm-import-file" accept=".json" style="display:none" onchange="cmLoadImport(event)">
         </label>
-        <button class="btn btn-outline" style="width:100%;margin-bottom:6px" id="cm-import-preview-btn" onclick="cmImportPreview()" disabled>👁 Preview import</button>
-        <button class="btn btn-primary" style="width:100%" id="cm-import-apply-btn" onclick="cmImportApply()" disabled>📥 Import toepassen</button>
+        <button class="btn btn-outline" style="width:100%;margin-bottom:6px" id="cm-import-preview-btn" onclick="cmImportPreview()" disabled data-i18n="cm.previewimport">👁 Preview import</button>
+        <button class="btn btn-primary" style="width:100%" id="cm-import-apply-btn" onclick="cmImportApply()" disabled data-i18n="cm.applyimport">📥 Import toepassen</button>
       </div>
 
       <div class="sb-section">
-        <div class="sb-label">Nieuw profiel</div>
+        <div class="sb-label" data-i18n="cm.newprofile">Nieuw profiel</div>
         <div class="field" style="gap:5px;margin-bottom:8px">
-          <label for="cm-new-profile-name">Naam</label>
-          <input type="text" id="cm-new-profile-name" placeholder="Bijv. Thuis — Gasten">
+          <label for="cm-new-profile-name" data-i18n="common.name">Naam</label>
+          <input type="text" id="cm-new-profile-name" placeholder="Bijv. Thuis — Gasten" data-i18n-ph="cm.newprofileph">
         </div>
-        <button class="btn btn-ghost" style="width:100%" onclick="cmCreateProfile()">➕ Aanmaken</button>
+        <button class="btn btn-ghost" style="width:100%" onclick="cmCreateProfile()" data-i18n="cm.create">➕ Aanmaken</button>
       </div>
     </aside>
 
@@ -791,8 +984,8 @@ input:focus,select:focus{border-color:var(--blue)}
     <main class="preview-panel" id="cm-preview-panel">
       <div class="preview-empty" id="cm-preview-empty">
         <div class="empty-icon">💾</div>
-        <h3>Geen preview</h3>
-        <p>Selecteer profielen en klik op "Preview export" of laad een importbestand.</p>
+        <h3 data-i18n="cm.empty.title">Geen preview</h3>
+        <p data-i18n="cm.empty.body">Selecteer profielen en klik op "Preview export" of laad een importbestand.</p>
       </div>
       <div id="cm-preview-content" style="display:none">
         <div class="preview-hdr">
@@ -804,7 +997,7 @@ input:focus,select:focus{border-color:var(--blue)}
             <label class="toggle-wrap" id="cm-view-toggle-wrap" title="Schakel tussen JSON-weergave en leesbare tekst">
               <input type="checkbox" id="cm-view-toggle" onchange="cmToggleView()">
               <span class="toggle"></span>
-              <span style="font-size:12px">JSON weergave</span>
+              <span style="font-size:12px" data-i18n="cm.jsonview">JSON weergave</span>
             </label>
             <button class="btn btn-ghost btn-sm" onclick="cmClearPreview()">↺ Reset</button>
           </div>
@@ -815,9 +1008,74 @@ input:focus,select:focus{border-color:var(--blue)}
 
         <!-- JSON view -->
         <div id="cm-json-view" style="display:none">
-          <div style="background:#0f172a;border-radius:10px;padding:16px;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12px;color:#e2e8f0;white-space:pre-wrap;word-break:break-all;max-height:calc(100vh - 200px);overflow-y:auto;line-height:1.6" id="cm-json-content"></div>
+          <div style="background:var(--code-bg);border-radius:10px;padding:16px;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12px;color:var(--code-text);white-space:pre-wrap;word-break:break-all;max-height:calc(100vh - 200px);overflow-y:auto;line-height:1.6" id="cm-json-content"></div>
         </div>
       </div>
+    </main>
+  </div>
+
+  <!-- ═══ COMPARE PAGE ═══ -->
+  <div id="page-compare" class="app-body" style="display:none">
+    <aside class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label" data-i18n="pa.compare.a">Profile A</div>
+        <select id="cmp-a"></select>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label" data-i18n="pa.compare.b">Profile B</div>
+        <select id="cmp-b"></select>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label" data-i18n="cm.parts">Components</div>
+        <div class="sync-cats">
+          <label class="cat-row"><input type="checkbox" id="cmp-cat-denylist" checked> <span data-i18n="cat.denylist">Denylist</span></label>
+          <label class="cat-row"><input type="checkbox" id="cmp-cat-allowlist" checked> <span data-i18n="cat.allowlist">Allowlist</span></label>
+          <label class="cat-row"><input type="checkbox" id="cmp-cat-rewrites" checked> <span data-i18n="cat.rewrites">Rewrites</span></label>
+          <label class="cat-row"><input type="checkbox" id="cmp-cat-security" checked> <span data-i18n="cat.security">Security settings</span></label>
+          <label class="cat-row"><input type="checkbox" id="cmp-cat-tlds" checked> <span data-i18n="cat.tlds">TLD Blocklist</span></label>
+          <label class="cat-row"><input type="checkbox" id="cmp-cat-privacy" checked> <span data-i18n="cat.privacy">Privacy &amp; blocklists</span></label>
+          <label class="cat-row"><input type="checkbox" id="cmp-cat-parental" checked> <span data-i18n="cat.parental">Parental Control</span></label>
+        </div>
+      </div>
+      <div class="sb-actions">
+        <button class="btn btn-primary" onclick="runCompare()" data-i18n="pa.compare.go">Compare</button>
+      </div>
+    </aside>
+    <main class="preview-panel">
+      <div class="preview-empty" id="cmp-empty">
+        <div class="empty-icon">⇄</div>
+        <h3 data-i18n="pa.compare.title">Compare Profiles</h3>
+        <p data-i18n="pa.compare.pick">Pick two profiles to compare side by side. Nothing is changed.</p>
+      </div>
+      <div id="cmp-result" style="display:none"></div>
+    </main>
+  </div>
+
+  <!-- ═══ HISTORY PAGE ═══ -->
+  <div id="page-history" class="app-body" style="display:none">
+    <aside class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label" data-i18n="hist.title">Change history</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5" data-i18n="hist.intro">Every sync and duplication is logged here: when it ran, which profiles were involved, and how many items changed.</div>
+      </div>
+      <div class="sb-actions">
+        <button class="btn btn-outline" style="width:100%;margin-bottom:6px" onclick="exportHistory()" data-i18n="sync.exporthistory">⬇ Export history (.txt)</button>
+        <button class="btn btn-ghost" style="width:100%" onclick="clearHistory()" data-i18n="sync.clearhistory">Clear history</button>
+      </div>
+    </aside>
+    <main class="preview-panel">
+      <div class="preview-hdr">
+        <div class="preview-hdr-left">
+          <div class="preview-hdr-title" data-i18n="hist.title">Change history</div>
+          <div id="hist-count" style="font-size:11px;color:var(--muted)"></div>
+        </div>
+      </div>
+      <div class="preview-empty" id="hist-empty">
+        <div class="empty-icon">🕘</div>
+        <h3 data-i18n="hist.empty.title">Nothing logged yet</h3>
+        <p data-i18n="hist.empty.body">Apply a sync or duplicate a profile and it will appear here.</p>
+      </div>
+      <div id="hist-list" style="display:none;max-width:760px"></div>
     </main>
   </div>
 
@@ -847,6 +1105,36 @@ input:focus,select:focus{border-color:var(--blue)}
   </div>
 </div>
 
+<!-- ═══ PROFILE ACTION PICKER (rename/duplicate) ═══ -->
+<div class="overlay" id="paction-modal">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-title" id="paction-title">Profile</div>
+    <div class="field"><label data-i18n="common.profile">Profile</label><select id="paction-select"></select></div>
+    <div class="modal-body" id="paction-hint" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closePAction()" data-i18n="common.cancel">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="paction-go" onclick="runPAction()">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ABOUT MODAL ═══ -->
+<div class="overlay" id="about-modal">
+  <div class="modal" style="max-width:380px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="modal-title" data-i18n="about.title">About</div>
+      <button class="btn btn-ghost btn-sm" onclick="closeAbout()" data-i18n="common.close">✕ Close</button>
+    </div>
+    <div class="about-body">
+      <div style="font-weight:800;color:var(--blue);font-size:16px;letter-spacing:-.3px;margin-bottom:2px">NextDNS Sync</div>
+      <div class="about-row"><span class="k" data-i18n="about.version">Version</span><span class="v" id="about-version">4.0</span></div>
+      <div class="about-row"><span class="k" data-i18n="about.maintainer">Maintainer</span><span class="v">Timo Hissink</span></div>
+      <div class="about-row"><span class="k" data-i18n="about.source">Source</span><span class="v"><a href="https://github.com/timohissink/nextdns-sync" target="_blank" rel="noopener">github.com/timohissink/nextdns-sync</a></span></div>
+      <div class="about-row"><span class="k" data-i18n="about.license">License</span><span class="v"><a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GPLv3</a></span></div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -856,10 +1144,786 @@ input:focus,select:focus{border-color:var(--blue)}
 let S = {
   isDemo: false, apiKey: '', email: '',
   profiles: [], cache: {},
-  preview: null,    // { [tid]: { changes, totals, name } }
-  skipped: {},      // { [tid]: { [cat]: Set<id> } }  — skip add/remove
-  forced: {}        // { [tid]: { [cat]: Set<id> } }  — force overruled items
+  // ── Multi-account ──
+  accounts: [],        // [{id, name, apiKey, isDemo, profiles:[{id,name,...}]}]
+  activeAcct: null,    // account id used by single-account tabs (Devices, Flows, Quick Edit, Config)
+  preview: null,    // { [uid]: { changes, totals, name } }   (uid = acctId:profileId)
+  skipped: {},      // { [uid]: { [cat]: Set<id> } }  — skip add/remove
+  forced: {}        // { [uid]: { [cat]: Set<id> } }  — force overruled items
 }
+
+// ── Account helpers ──
+function getActiveAccount() { return S.accounts.find(a=>a.id===S.activeAcct) || null }
+function acctById(id) { return S.accounts.find(a=>a.id===id) || null }
+function ctxForAcct(id) { const a=acctById(id); return a ? {apiKey:a.apiKey, isDemo:a.isDemo} : activeCtx() }
+function uidOf(acctId, profileId) { return acctId + '\x1f' + profileId }
+function splitUid(uid) { const i=uid.indexOf('\x1f'); return {acct: uid.slice(0,i), pid: uid.slice(i+1)} }
+function profileByUid(uid) { return S.profiles.find(p=>p._uid===uid) || null }
+function ctxForProfileUid(uid) { const p=profileByUid(uid); return p ? ctxForAcct(p._acct) : activeCtx() }
+
+// Rebuild the merged S.profiles list from all accounts; each profile is tagged with its account.
+function rebuildMergedProfiles() {
+  const merged = []
+  for (const a of S.accounts) {
+    for (const p of (a.profiles||[])) {
+      merged.push({ ...p, _acct:a.id, _acctName:a.name, _uid:uidOf(a.id, p.id) })
+    }
+  }
+  S.profiles = merged
+}
+
+// Profiles belonging to the currently-active account (for single-account tabs)
+function activeProfiles() {
+  const a = getActiveAccount()
+  return a ? S.profiles.filter(p=>p._acct===a.id) : S.profiles
+}
+
+// ═══════════════════════════════════════════════
+//  PREFERENCES / I18N / THEME  (localStorage)
+// ═══════════════════════════════════════════════
+const APP_VERSION = '4.0'
+const LS = {
+  lang:    'nextdns.lang',
+  theme:   'nextdns.theme',
+  favs:    'nextdns.syncFavorites',
+  qePresets:'nextdns.qePresets',
+  history: 'nextdns.syncHistory'
+}
+
+const I18N = {
+  en: {
+    'login.title':'Welcome back',
+    'login.sub':"Enter your API key to manage your NextDNS profiles.<br>Type <strong>demo</strong> to explore with sample data.",
+    'login.apikey':'API Key',
+    'login.show':'Show key',
+    'login.help':'Find your key at <a href="https://my.nextdns.io/account" target="_blank">my.nextdns.io/account</a>',
+    'login.cors.title':'⚠️ Browser security restriction (CORS)',
+    'login.cors.body':'Your browser blocks direct access to the NextDNS API from local files.',
+    'login.cors.opts':'<strong>Options:</strong> Type <strong>demo</strong> to explore, or serve this file via a local web server.',
+    'login.continue':'Continue →',
+    'login.empty':'Please enter your API key.',
+    'login.connecting':'Connecting…',
+    'login.invalid':'Invalid API key. Please check and try again.',
+    'login.name':'Name (optional)','login.nameph':'e.g. Home account',
+    'login.remember.title':'Remember temporarily','login.remember.body':"Stores this key in the browser session so you can switch between accounts. It's cleared when you close the browser.",
+    'login.saved':'Your keys','login.savedhint':'These are kept only until you close the browser.','login.forget':'Forget','login.added':'Account added.',
+    'login.enter':'Open dashboard →','login.addanother':'+ Add another key','login.dupkey':'That key is already added.','login.profilecount':'profiles','login.clickadd':'tap to add',
+    'account.active':'Active','account.add':'+ Account','account.switched':'Switched to {n}',
+    'welcome.account':'NextDNS Account',
+    'welcome.profiles':'Your Profiles',
+    'welcome.back':'← Back',
+    'welcome.open':'Open Dashboard →',
+    'welcome.youraccount':'Your Account',
+    'tab.sync':'Profile Sync','tab.devices':'Devices','tab.flows':'Flows','tab.quickedit':'Quick Edit','tab.config':'Config Management',
+    'app.logout':'Logout',
+    'app.demobanner':"<strong>Demo mode</strong> — Exploring with sample data. No real API calls are made.",
+    'app.demomode':'Demo Mode',
+    'sync.master':'Master Profile',
+    'sync.masterhint':'Settings will be <em>copied from</em> this profile.',
+    'sync.viewprofile':'👁 View profile',
+    'sync.copyto':'Copy To',
+    'sync.copytohint':'Select one or more destination profiles.',
+    'sync.whattosync':'What to Sync',
+    'sync.options':'Options',
+    'sync.remove.title':'Remove if not in master',
+    'sync.remove.body':"Items in destination that don't exist in master will be removed. Off by default.",
+    'sync.preview':'Preview Changes',
+    'sync.apply':'Apply Changes',
+    'sync.empty.title':'No preview yet',
+    'sync.empty.body':'Select a master profile, one or more destination profiles, and click "Preview Changes".',
+    'sync.favorites':'Favorite Configurations',
+    'sync.savefav':'★ Save current as favorite',
+    'sync.nofavs':'No saved favorites yet.',
+    'sync.favname':'Name this configuration',
+    'sync.favsaved':'Favorite saved.',
+    'sync.favloaded':'Favorite loaded.',
+    'sync.favdeleted':'Favorite deleted.',
+    'sync.history':'Sync History',
+    'sync.nohistory':'No syncs recorded yet.',
+    'sync.exporthistory':'⬇ Export history (.txt)',
+    'sync.clearhistory':'Clear history',
+    'cat.denylist':'Denylist','cat.allowlist':'Allowlist','cat.rewrites':'Rewrites','cat.security':'Security settings','cat.tlds':'TLD Blocklist','cat.privacy':'Privacy & blocklists','cat.parental':'Parental Control',
+    'preview.title':'Change Preview',
+    'preview.added':'Added','preview.removed':'Removed','preview.unchanged':'Unchanged','preview.overruled':'Overruled',
+    'preview.reset':'↺ Reset',
+    'preview.nochanges':'No changes in this category',
+    'row.skip':'Skip','row.undo':'Undo','row.override':'Override',
+    'apply.title':'Apply Changes?',
+    'apply.body':'This will apply {n} change(s) across {t} profile(s). Overruled and skipped items will not be modified.',
+    'apply.cancel':'Cancel','apply.confirm':'Apply','apply.applying':'Applying…','apply.done':'Done ✓','apply.close':'Close',
+    'apply.success':'All changes applied successfully!','apply.successtoast':'Applied successfully!',
+    'apply.witherrors':'Completed with {n} error(s).',
+    'common.profile':'Profile','common.profiles':'Profiles','common.search':'Search','common.name':'Name',
+    'common.selectall':'Select all','common.preview':'Preview','common.apply':'Apply','common.close':'✕ Close','common.cancel':'Cancel','common.save':'Save','common.loading':'Loading…',
+    'dv.searchph':'Name or model…',
+    'dv.empty.title':'No profile selected','dv.empty.body':'Select a profile to view its linked devices.',
+    'df.filterdevice':'Filter by device','df.selectprofile':'Select a profile',
+    'df.queries':'Queries','df.blocked':'Blocked','df.allowed':'Allowed',
+    'df.start':'▶ Start','df.stop':'■ Stop','df.searchph':'Search domain…','df.blockedonly':'Blocked only','df.rawdns':'Raw DNS',
+    'df.empty.title':'No live data yet','df.empty.body':'Select a profile, optionally a device, and click Start to stream live DNS queries.',
+    'qe.mode':'Mode','qe.add':'+ Add Domains','qe.remove':'− Remove Domains',
+    'qe.hint.add':'Domains will be <strong>added</strong> to the selected profiles.',
+    'qe.hint.remove':'Domains will be <strong>removed</strong> from the selected profiles.',
+    'qe.domains':'{n} domains','qe.rewrites':'{n} rewrites · only available in Add mode',
+    'qe.upload':'📂 Upload','qe.clear':'Clear',
+    'cm.profiles':'Profile(s)','cm.profileshint':'Select one or more profiles.','cm.parts':'Components',
+    'cm.export':'Export','cm.previewexport':'📤 Preview export','cm.download':'⬇ Download JSON',
+    'cm.import':'Import','cm.choosefile':'Choose file…','cm.previewimport':'👁 Preview import','cm.applyimport':'📥 Apply import',
+    'cm.newprofile':'New profile','cm.newprofileph':'E.g. Home — Guests','cm.create':'➕ Create',
+    'cm.empty.title':'No preview','cm.empty.body':'Select profiles and click "Preview export", or load an import file.',
+    'cm.jsonview':'JSON view',
+    // profile actions (new)
+    'pa.rename':'✎ Rename','pa.duplicate':'⧉ Duplicate','pa.compare':'⇄ Compare',
+    'pa.rename.title':'Rename profile','pa.rename.label':'New name','pa.renamed':'Profile renamed.',
+    'pa.dup.title':'Duplicate profile','pa.dup.label':'Name for the copy','pa.dup.hint':'Creates a new profile and copies denylist, allowlist, rewrites, security, TLDs, privacy and parental control into it.',
+    'pa.dup.working':'Duplicating…','pa.dup.done':'Profile duplicated.',
+    'pa.compare.title':'Compare Profiles','pa.compare.pick':'Pick two profiles to compare side by side. Nothing is changed.','pa.compare.a':'Profile A','pa.compare.b':'Profile B','pa.compare.go':'Compare','pa.compare.same':'Pick two different profiles.',
+    'pa.compare.onlyin':'only here','pa.compare.differs':'differs','pa.compare.diffcount':'{n} difference(s)','pa.compare.nodiff':'Identical for the selected components.',
+    'tools':'Tools',
+    'tab.compare':'Compare','tab.history':'History',
+    'preset.title':'Preset selections','preset.save':'★ Save current as preset','preset.name':'Name this preset','preset.saved':'Preset saved.','preset.loaded':'Preset loaded.','preset.deleted':'Preset deleted.','preset.none':'No presets saved yet.',
+    'hist.title':'Change history','hist.intro':'Every sync and duplication is logged here: when it ran, which profiles were involved, and how many items changed.','hist.empty.title':'Nothing logged yet','hist.empty.body':'Apply a sync or duplicate a profile and it will appear here.',
+    'about.title':'About','about.version':'Version','about.maintainer':'Maintainer','about.source':'Source','about.license':'License',
+  },
+  nl: {
+    'login.title':'Welkom terug',
+    'login.sub':"Voer je API-sleutel in om je NextDNS-profielen te beheren.<br>Typ <strong>demo</strong> om met voorbeelddata te verkennen.",
+    'login.apikey':'API-sleutel',
+    'login.show':'Sleutel tonen',
+    'login.help':'Vind je sleutel op <a href="https://my.nextdns.io/account" target="_blank">my.nextdns.io/account</a>',
+    'login.cors.title':'⚠️ Browser-beveiliging (CORS)',
+    'login.cors.body':'Je browser blokkeert directe toegang tot de NextDNS API vanuit lokale bestanden.',
+    'login.cors.opts':'<strong>Opties:</strong> Typ <strong>demo</strong> om te verkennen, of serveer dit bestand via een lokale webserver.',
+    'login.continue':'Doorgaan →',
+    'login.empty':'Voer je API-sleutel in.',
+    'login.connecting':'Verbinden…',
+    'login.invalid':'Ongeldige API-sleutel. Controleer en probeer opnieuw.',
+    'login.name':'Naam (optioneel)','login.nameph':'bijv. Thuis-account',
+    'login.remember.title':'Tijdelijk onthouden','login.remember.body':'Bewaart deze sleutel in de browsersessie zodat je tussen accounts kunt wisselen. Hij wordt gewist zodra je de browser sluit.',
+    'login.saved':'Je sleutels','login.savedhint':'Deze blijven alleen bewaard tot je de browser sluit.','login.forget':'Verwijderen','login.added':'Account toegevoegd.',
+    'login.enter':'Open dashboard →','login.addanother':'+ Nog een sleutel toevoegen','login.dupkey':'Die sleutel is al toegevoegd.','login.profilecount':'profielen','login.clickadd':'tik om toe te voegen',
+    'account.active':'Actief','account.add':'+ Account','account.switched':'Gewisseld naar {n}',
+    'welcome.account':'NextDNS-account',
+    'welcome.profiles':'Je profielen',
+    'welcome.back':'← Terug',
+    'welcome.open':'Open dashboard →',
+    'welcome.youraccount':'Je account',
+    'tab.sync':'Profiel-sync','tab.devices':'Apparaten','tab.flows':'Verkeer','tab.quickedit':'Snel bewerken','tab.config':'Configuratiebeheer',
+    'app.logout':'Uitloggen',
+    'app.demobanner':"<strong>Demomodus</strong> — Verkennen met voorbeelddata. Er worden geen echte API-aanroepen gedaan.",
+    'app.demomode':'Demomodus',
+    'sync.master':'Bronprofiel',
+    'sync.masterhint':'Instellingen worden <em>gekopieerd van</em> dit profiel.',
+    'sync.viewprofile':'👁 Profiel bekijken',
+    'sync.copyto':'Kopiëren naar',
+    'sync.copytohint':'Selecteer één of meer doelprofielen.',
+    'sync.whattosync':'Wat synchroniseren',
+    'sync.options':'Opties',
+    'sync.remove.title':'Verwijderen indien niet in bron',
+    'sync.remove.body':'Items in het doel die niet in de bron staan worden verwijderd. Standaard uit.',
+    'sync.preview':'Wijzigingen tonen',
+    'sync.apply':'Wijzigingen toepassen',
+    'sync.empty.title':'Nog geen voorbeeld',
+    'sync.empty.body':'Selecteer een bronprofiel, één of meer doelprofielen, en klik op "Wijzigingen tonen".',
+    'sync.favorites':'Favoriete configuraties',
+    'sync.savefav':'★ Huidige opslaan als favoriet',
+    'sync.nofavs':'Nog geen favorieten opgeslagen.',
+    'sync.favname':'Geef deze configuratie een naam',
+    'sync.favsaved':'Favoriet opgeslagen.',
+    'sync.favloaded':'Favoriet geladen.',
+    'sync.favdeleted':'Favoriet verwijderd.',
+    'sync.history':'Sync-geschiedenis',
+    'sync.nohistory':'Nog geen syncs vastgelegd.',
+    'sync.exporthistory':'⬇ Geschiedenis exporteren (.txt)',
+    'sync.clearhistory':'Geschiedenis wissen',
+    'cat.denylist':'Denylist','cat.allowlist':'Allowlist','cat.rewrites':'Rewrites','cat.security':'Beveiligingsinstellingen','cat.tlds':'TLD-blokkadelijst','cat.privacy':'Privacy & blokkadelijsten','cat.parental':'Ouderlijk toezicht',
+    'preview.title':'Wijzigingsvoorbeeld',
+    'preview.added':'Toegevoegd','preview.removed':'Verwijderd','preview.unchanged':'Ongewijzigd','preview.overruled':'Overschreven',
+    'preview.reset':'↺ Reset',
+    'preview.nochanges':'Geen wijzigingen in deze categorie',
+    'row.skip':'Overslaan','row.undo':'Ongedaan','row.override':'Forceren',
+    'apply.title':'Wijzigingen toepassen?',
+    'apply.body':'Dit past {n} wijziging(en) toe op {t} profiel(en). Overschreven en overgeslagen items worden niet aangepast.',
+    'apply.cancel':'Annuleren','apply.confirm':'Toepassen','apply.applying':'Bezig…','apply.done':'Klaar ✓','apply.close':'Sluiten',
+    'apply.success':'Alle wijzigingen succesvol toegepast!','apply.successtoast':'Succesvol toegepast!',
+    'apply.witherrors':'Voltooid met {n} fout(en).',
+    'common.profile':'Profiel','common.profiles':'Profielen','common.search':'Zoeken','common.name':'Naam',
+    'common.selectall':'Alles selecteren','common.preview':'Voorbeeld','common.apply':'Toepassen','common.close':'✕ Sluiten','common.cancel':'Annuleren','common.save':'Opslaan','common.loading':'Laden…',
+    'dv.searchph':'Naam of model…',
+    'dv.empty.title':'Geen profiel geselecteerd','dv.empty.body':'Selecteer een profiel om de gekoppelde apparaten te bekijken.',
+    'df.filterdevice':'Filter op apparaat','df.selectprofile':'Selecteer een profiel',
+    'df.queries':'Queries','df.blocked':'Geblokkeerd','df.allowed':'Toegestaan',
+    'df.start':'▶ Start','df.stop':'■ Stop','df.searchph':'Zoek domein…','df.blockedonly':'Alleen geblokkeerd','df.rawdns':'Ruwe DNS',
+    'df.empty.title':'Nog geen live data','df.empty.body':'Selecteer een profiel, optioneel een apparaat, en klik Start om live DNS-queries te streamen.',
+    'qe.mode':'Modus','qe.add':'+ Domeinen toevoegen','qe.remove':'− Domeinen verwijderen',
+    'qe.hint.add':'Domeinen worden <strong>toegevoegd</strong> aan de geselecteerde profielen.',
+    'qe.hint.remove':'Domeinen worden <strong>verwijderd</strong> uit de geselecteerde profielen.',
+    'qe.domains':'{n} domeinen','qe.rewrites':'{n} rewrites · alleen beschikbaar in Add-modus',
+    'qe.upload':'📂 Upload','qe.clear':'Leegmaken',
+    'cm.profiles':'Profiel(en)','cm.profileshint':'Selecteer één of meerdere profielen.','cm.parts':'Onderdelen',
+    'cm.export':'Exporteren','cm.previewexport':'📤 Preview export','cm.download':'⬇ Download JSON',
+    'cm.import':'Importeren','cm.choosefile':'Bestand kiezen…','cm.previewimport':'👁 Preview import','cm.applyimport':'📥 Import toepassen',
+    'cm.newprofile':'Nieuw profiel','cm.newprofileph':'Bijv. Thuis — Gasten','cm.create':'➕ Aanmaken',
+    'cm.empty.title':'Geen preview','cm.empty.body':'Selecteer profielen en klik op "Preview export" of laad een importbestand.',
+    'cm.jsonview':'JSON weergave',
+    'pa.rename':'✎ Hernoemen','pa.duplicate':'⧉ Dupliceren','pa.compare':'⇄ Vergelijken',
+    'pa.rename.title':'Profiel hernoemen','pa.rename.label':'Nieuwe naam','pa.renamed':'Profiel hernoemd.',
+    'pa.dup.title':'Profiel dupliceren','pa.dup.label':'Naam voor de kopie','pa.dup.hint':'Maakt een nieuw profiel en kopieert denylist, allowlist, rewrites, beveiliging, TLDs, privacy en ouderlijk toezicht erin.',
+    'pa.dup.working':'Dupliceren…','pa.dup.done':'Profiel gedupliceerd.',
+    'pa.compare.title':'Profielen vergelijken','pa.compare.pick':'Kies twee profielen om naast elkaar te vergelijken. Er wordt niets gewijzigd.','pa.compare.a':'Profiel A','pa.compare.b':'Profiel B','pa.compare.go':'Vergelijken','pa.compare.same':'Kies twee verschillende profielen.',
+    'pa.compare.onlyin':'alleen hier','pa.compare.differs':'verschilt','pa.compare.diffcount':'{n} verschil(len)','pa.compare.nodiff':'Identiek voor de geselecteerde onderdelen.',
+    'tools':'Hulpmiddelen',
+    'tab.compare':'Vergelijken','tab.history':'Geschiedenis',
+    'preset.title':'Preset-selecties','preset.save':'★ Huidige opslaan als preset','preset.name':'Geef deze preset een naam','preset.saved':'Preset opgeslagen.','preset.loaded':'Preset geladen.','preset.deleted':'Preset verwijderd.','preset.none':'Nog geen presets opgeslagen.',
+    'hist.title':'Wijzigingsgeschiedenis','hist.intro':'Elke sync en duplicatie wordt hier vastgelegd: wanneer het draaide, welke profielen betrokken waren, en hoeveel items zijn gewijzigd.','hist.empty.title':'Nog niets vastgelegd','hist.empty.body':'Voer een sync uit of dupliceer een profiel en het verschijnt hier.',
+    'about.title':'Over','about.version':'Versie','about.maintainer':'Beheerder','about.source':'Broncode','about.license':'Licentie',
+  }
+}
+
+let LANG = 'en'
+
+function t(key, vars) {
+  let str = (I18N[LANG] && I18N[LANG][key]) ?? (I18N.en[key]) ?? key
+  if (vars) for (const k in vars) str = str.replaceAll('{'+k+'}', vars[k])
+  return str
+}
+
+function detectLang() {
+  const saved = localStorage.getItem(LS.lang)
+  if (saved==='en' || saved==='nl') return saved
+  const nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase()
+  return nav.startsWith('nl') ? 'nl' : 'en'
+}
+
+function applyLang() {
+  document.documentElement.lang = LANG
+  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')) })
+  document.querySelectorAll('[data-i18n-html]').forEach(el => { el.innerHTML = t(el.getAttribute('data-i18n-html')) })
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-ph')) })
+  document.getElementById('lang-en').classList.toggle('active', LANG==='en')
+  document.getElementById('lang-nl').classList.toggle('active', LANG==='nl')
+  // Re-render dynamic views that contain translated strings
+  if (S.preview) renderPreview(getCats())
+  qeRefreshHint()
+  refreshFavoritesUI()
+  refreshQePresetsUI()
+  refreshHistoryUI()
+  renderSavedSessions()
+  updateEnterButton()
+}
+
+function setLang(l) {
+  LANG = l
+  localStorage.setItem(LS.lang, l)
+  applyLang()
+}
+
+// ─── Theme ───
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme)
+  const icon = document.getElementById('theme-icon')
+  if (icon) icon.textContent = theme==='dark' ? '☀️' : '🌙'
+}
+function toggleTheme() {
+  const cur = document.documentElement.getAttribute('data-theme')==='dark' ? 'dark' : 'light'
+  const next = cur==='dark' ? 'light' : 'dark'
+  localStorage.setItem(LS.theme, next)
+  applyTheme(next)
+}
+
+// ─── About / footer ───
+function openAbout() { document.getElementById('about-modal').classList.add('open') }
+function closeAbout() { document.getElementById('about-modal').classList.remove('open') }
+
+function renderLoginFooter() {
+  const el = document.getElementById('login-foot')
+  if (!el) return
+  el.innerHTML = `v${APP_VERSION} · Timo Hissink · `
+    + `<a href="https://github.com/timohissink/nextdns-sync" target="_blank" rel="noopener">GitHub</a> · `
+    + `<a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GPLv3</a>`
+}
+// Footer (version/maintainer/links) only shows on the login screen
+function setFootVisible(v) {
+  const el = document.getElementById('login-foot')
+  if (el) el.style.display = v ? 'block' : 'none'
+}
+
+// Move the language/theme/about controls into the header while in the app
+// (so they flow with Logout etc.), and back to the fixed top-right corner
+// on the login/welcome screens.
+function relocateControls(inApp) {
+  const gc = document.getElementById('global-controls')
+  if (!gc) return
+  if (inApp) {
+    const dock = document.getElementById('gc-dock')
+    if (dock && gc.parentElement!==dock) { dock.appendChild(gc); gc.classList.add('docked') }
+  } else {
+    if (gc.parentElement !== document.body) { document.body.appendChild(gc); }
+    gc.classList.remove('docked')
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  SYNC FAVORITES  (localStorage)
+// ═══════════════════════════════════════════════
+function loadFavs() {
+  try { return JSON.parse(localStorage.getItem(LS.favs) || '[]') } catch { return [] }
+}
+function saveFavs(list) { localStorage.setItem(LS.favs, JSON.stringify(list)) }
+
+function saveCurrentFavorite() {
+  const name = prompt(t('preset.name'))
+  if (!name || !name.trim()) return
+  const fav = {
+    name: name.trim(),
+    master: document.getElementById('master-select').value,   // uid
+    targets: getSelectedTargets().map(p=>p._uid),             // uids
+    cats: getCats(),
+    remove: getRemoveOpt()
+  }
+  const list = loadFavs()
+  list.push(fav); saveFavs(list)
+  refreshFavoritesUI()
+  toast(t('preset.saved'),'ok')
+}
+
+function applyFavorite(idx) {
+  const fav = loadFavs()[idx]
+  if (!fav) return
+  // master (only if it still exists)
+  const ms = document.getElementById('master-select')
+  if (fav.master && [...ms.options].some(o=>o.value===fav.master)) ms.value = fav.master
+  buildTargetCards()
+  // targets (uids)
+  ;(fav.targets||[]).forEach(uid => { const c=document.getElementById('card-'+cssId(uid)); if (c) c.classList.add('selected') })
+  // cats
+  const map={denylist:'cat-denylist',allowlist:'cat-allowlist',rewrites:'cat-rewrites',security:'cat-security',tlds:'cat-tlds',privacy:'cat-privacy',parental:'cat-parental'}
+  for (const k in map){ const el=document.getElementById(map[k]); if(el && fav.cats) el.checked=!!fav.cats[k] }
+  const rem=document.getElementById('opt-remove'); if(rem) rem.checked=!!fav.remove
+  clearPreview()
+  toast(t('preset.loaded'),'ok')
+}
+
+function deleteFavorite(idx) {
+  const list = loadFavs(); list.splice(idx,1); saveFavs(list)
+  refreshFavoritesUI()
+  toast(t('preset.deleted'),'')
+}
+
+function refreshFavoritesUI() {
+  const box = document.getElementById('fav-list')
+  if (!box) return
+  const list = loadFavs()
+  if (!list.length) { box.innerHTML = `<div style="font-size:11px;color:var(--muted);font-style:italic">${t('preset.none')}</div>`; return }
+  box.innerHTML = list.map((f,i)=>`
+    <div class="fav-row">
+      <span style="flex-shrink:0">★</span>
+      <span class="fav-name" onclick="applyFavorite(${i})" title="${esc(f.name)}">${esc(f.name)}</span>
+      <button class="btn btn-ghost btn-xs" onclick="deleteFavorite(${i})" title="Delete">✕</button>
+    </div>`).join('')
+}
+
+// ═══════════════════════════════════════════════
+//  QUICK EDIT PRESETS  (localStorage)
+//  A preset stores the deny/allow/rewrite text, mode and selected profiles
+// ═══════════════════════════════════════════════
+function loadQePresets() {
+  try { return JSON.parse(localStorage.getItem(LS.qePresets) || '[]') } catch { return [] }
+}
+function saveQePresets(list) { localStorage.setItem(LS.qePresets, JSON.stringify(list)) }
+
+function saveQePreset() {
+  const name = prompt(t('preset.name'))
+  if (!name || !name.trim()) return
+  const preset = {
+    name: name.trim(),
+    mode: (typeof QE!=='undefined' ? QE.mode : 'add'),
+    deny: document.getElementById('qe-deny-input')?.value || '',
+    allow: document.getElementById('qe-allow-input')?.value || '',
+    rewrite: document.getElementById('qe-rewrite-input')?.value || '',
+    profiles: qeGetSelectedProfiles().map(p=>p.id)
+  }
+  const list = loadQePresets()
+  list.push(preset); saveQePresets(list)
+  refreshQePresetsUI()
+  toast(t('preset.saved'),'ok')
+}
+
+function applyQePreset(idx) {
+  const p = loadQePresets()[idx]
+  if (!p) return
+  setQeMode(p.mode || 'add')
+  const d=document.getElementById('qe-deny-input'); if(d) d.value=p.deny||''
+  const a=document.getElementById('qe-allow-input'); if(a) a.value=p.allow||''
+  const r=document.getElementById('qe-rewrite-input'); if(r) r.value=p.rewrite||''
+  // reselect profiles that still exist
+  document.querySelectorAll('#qe-profile-cards .pcard').forEach(c=>c.classList.remove('selected'))
+  ;(p.profiles||[]).forEach(pid => { const c=document.getElementById('qe-card-'+pid); if(c) c.classList.add('selected') })
+  qeOnInput()
+  toast(t('preset.loaded'),'ok')
+}
+
+function deleteQePreset(idx) {
+  const list = loadQePresets(); list.splice(idx,1); saveQePresets(list)
+  refreshQePresetsUI()
+  toast(t('preset.deleted'),'')
+}
+
+function refreshQePresetsUI() {
+  const box = document.getElementById('qe-preset-list')
+  if (!box) return
+  const list = loadQePresets()
+  if (!list.length) { box.innerHTML = `<div style="font-size:11px;color:var(--muted);font-style:italic">${t('preset.none')}</div>`; return }
+  box.innerHTML = list.map((p,i)=>`
+    <div class="fav-row">
+      <span style="flex-shrink:0">★</span>
+      <span class="fav-name" onclick="applyQePreset(${i})" title="${esc(p.name)}">${esc(p.name)}</span>
+      <button class="btn btn-ghost btn-xs" onclick="deleteQePreset(${i})" title="Delete">✕</button>
+    </div>`).join('')
+}
+
+// ═══════════════════════════════════════════════
+//  SYNC HISTORY  (localStorage)
+// ═══════════════════════════════════════════════
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(LS.history) || '[]') } catch { return [] }
+}
+function saveHistory(list) { localStorage.setItem(LS.history, JSON.stringify(list)) }
+
+function recordSync(entry) {
+  const list = loadHistory()
+  list.unshift(entry)              // newest first
+  if (list.length > 200) list.length = 200
+  saveHistory(list)
+  refreshHistoryUI()
+}
+
+function refreshHistoryUI() {
+  const box = document.getElementById('hist-list')
+  if (!box) return
+  const empty = document.getElementById('hist-empty')
+  const countEl = document.getElementById('hist-count')
+  const list = loadHistory()
+  if (countEl) countEl.textContent = list.length ? (list.length + ' ' + (LANG==='nl'?'vermeldingen':'entries')) : ''
+  if (!list.length) {
+    box.style.display = 'none'
+    if (empty) empty.style.display = 'flex'
+    return
+  }
+  if (empty) empty.style.display = 'none'
+  box.style.display = 'block'
+  const kindLabel = k => k==='duplicate' ? (LANG==='nl'?'duplicaat':'duplicate') : (LANG==='nl'?'sync':'sync')
+  box.innerHTML = list.map(h => {
+    const when = new Date(h.at).toLocaleString(LANG==='nl'?'nl-NL':'en-GB')
+    const tgt = (h.targets||[]).join(', ')
+    const catLine = (h.cats&&h.cats.length) ? `<div style="font-size:11px;color:var(--muted);margin-top:2px">${h.cats.map(c=>esc(t('cat.'+c)!=='cat.'+c?t('cat.'+c):c)).join(' · ')}</div>` : ''
+    return `<div class="hist-row">
+      <div class="hist-when">${esc(when)}${h.demo?' · DEMO':''} · ${esc(kindLabel(h.kind))}</div>
+      <div class="hist-sum">${esc(h.master||'')} → ${esc(tgt)} &nbsp;<span style="color:var(--green);font-weight:700">+${h.added||0}</span> / <span style="color:var(--red);font-weight:700">−${h.removed||0}</span>${h.errors?` · <span style="color:var(--orange)">⚠ ${h.errors}</span>`:''}</div>
+      ${catLine}
+    </div>`
+  }).join('')
+}
+
+function clearHistory() {
+  saveHistory([])
+  refreshHistoryUI()
+}
+
+function exportHistory() {
+  const list = loadHistory()
+  const lines = []
+  lines.push('NextDNS Sync History')
+  lines.push('Exported: ' + new Date().toISOString())
+  lines.push('Entries: ' + list.length)
+  lines.push(''.padEnd(60,'='))
+  for (const h of list) {
+    lines.push('')
+    lines.push('When    : ' + new Date(h.at).toISOString() + (h.demo?'  [DEMO]':''))
+    if (h.kind)  lines.push('Action  : ' + h.kind)
+    if (h.master)lines.push('Master  : ' + h.master)
+    lines.push('Targets : ' + ((h.targets||[]).join(', ') || '-'))
+    if (h.cats && h.cats.length) lines.push('Categories: ' + h.cats.join(', '))
+    lines.push('Changes : +' + (h.added||0) + ' added, -' + (h.removed||0) + ' removed' + (h.errors?(', '+h.errors+' error(s)'):''))
+  }
+  const blob = new Blob([lines.join('\n')], {type:'text/plain'})
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'nextdns-sync-history_' + new Date().toISOString().slice(0,10) + '.txt'
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+// ═══════════════════════════════════════════════
+//  PROFILE ACTIONS: RENAME / DUPLICATE  (API-backed)
+// ═══════════════════════════════════════════════
+async function renameProfile(uid) {
+  const prof = profileByUid(uid)
+  if (!prof) return
+  const ctx = ctxForProfileUid(uid)
+  const acct = acctById(prof._acct)
+  const name = prompt(t('pa.rename.label'), prof.name)
+  if (name===null) return
+  const trimmed = name.trim()
+  if (!trimmed || trimmed===prof.name) return
+  try {
+    // PATCH the profile name (the profile is GET/PATCH/DELETE-able at /profiles/:id)
+    await apiPatch(`/profiles/${prof.id}`, {name: trimmed}, ctx)
+    // update the source-of-truth in the account, then rebuild the merged list
+    const ap = acct?.profiles.find(p=>p.id===prof.id); if (ap) ap.name = trimmed
+    rebuildAllProfileLists()
+    toast(t('pa.renamed'),'ok')
+  } catch(e) {
+    toast('Error: '+(e.message||'rename failed'),'err')
+  }
+}
+
+// Read every supported child of a profile and POST it into a freshly-created profile (same account).
+async function duplicateProfile(uid) {
+  const src = profileByUid(uid)
+  if (!src) return
+  const ctx = ctxForProfileUid(uid)
+  const acct = acctById(src._acct)
+  const pid = src.id
+  const defName = (LANG==='nl'?'Kopie van ':'Copy of ') + src.name
+  const name = prompt(t('pa.dup.label'), defName)
+  if (name===null) return
+  const newName = name.trim() || defName
+  toast(t('pa.dup.working'),'')
+  try {
+    // 1. Read full source config
+    const [deny, allow, rew, sec, tlds, priv, par] = await Promise.all([
+      apiGetList(`/profiles/${pid}/denylist`, ctx),
+      apiGetList(`/profiles/${pid}/allowlist`, ctx),
+      apiGetList(`/profiles/${pid}/rewrites`, ctx),
+      apiGet(`/profiles/${pid}/security`, ctx),
+      apiGetList(`/profiles/${pid}/security/tlds`, ctx),
+      apiGet(`/profiles/${pid}/privacy`, ctx),
+      apiGet(`/profiles/${pid}/parentalControl`, ctx)
+    ])
+
+    // 2. Create a new profile in the same account
+    let newId
+    if (ctx.isDemo) {
+      newId = 'dup'+Math.random().toString(36).slice(2,8)
+      DEMO.data[newId] = JSON.parse(JSON.stringify(DEMO.data[pid] || {}))
+    } else {
+      const r = await fetch(`${BASE}/profiles`, {method:'POST', headers:headers(ctx), body:JSON.stringify({name:newName})})
+      const j = await r.json()
+      if (j.errors) throw new Error(j.errors.map(e=>e.detail||e.code).join(', '))
+      newId = (j.data && j.data.id) || j.id
+      // 3. Copy children into the new profile
+      for (const i of (deny||[]))  await apiPost(`/profiles/${newId}/denylist`,  {id:i.id, active:i.active}, ctx)
+      for (const i of (allow||[])) await apiPost(`/profiles/${newId}/allowlist`, {id:i.id, active:i.active}, ctx)
+      for (const i of (rew||[]))   await apiPost(`/profiles/${newId}/rewrites`,  {name:i.name, content:i.content}, ctx)
+      if (sec)  await apiPatch(`/profiles/${newId}/security`, stripArrays(sec), ctx)
+      for (const i of (tlds||[]))  await apiPost(`/profiles/${newId}/security/tlds`, {id: typeof i==='string'?i:i.id}, ctx)
+      if (priv) {
+        await apiPatch(`/profiles/${newId}/privacy`, {disguisedTrackers:priv.disguisedTrackers, allowAffiliate:priv.allowAffiliate}, ctx)
+        for (const b of (priv.blocklists||[])) await apiPost(`/profiles/${newId}/privacy/blocklists`, {id: typeof b==='string'?b:b.id}, ctx)
+        for (const nb of (priv.natives||[]))   await apiPost(`/profiles/${newId}/privacy/natives`,   {id: typeof nb==='string'?nb:nb.id}, ctx)
+      }
+      if (par) {
+        await apiPatch(`/profiles/${newId}/parentalControl`, {safeSearch:par.safeSearch, youtubeRestrictedMode:par.youtubeRestrictedMode, blockBypass:par.blockBypass}, ctx)
+        for (const c of (par.categories||[])) await apiPost(`/profiles/${newId}/parentalControl/categories`, {id:c.id, active:c.active}, ctx)
+        for (const sv of (par.services||[]))  await apiPost(`/profiles/${newId}/parentalControl/services`,   {id:sv.id, active:sv.active}, ctx)
+      }
+    }
+
+    // register new profile in its account
+    if (acct) acct.profiles.push({id:newId, name:newName})
+    rebuildAllProfileLists()
+    recordSync({at:Date.now(), kind:'duplicate', master:src.name, targets:[newName], added:(deny?.length||0)+(allow?.length||0)+(rew?.length||0), removed:0, demo:ctx.isDemo})
+    toast(t('pa.dup.done'),'ok')
+  } catch(e) {
+    toast('Error: '+(e.message||'duplicate failed'),'err')
+  }
+}
+
+// security object includes a "tlds" array which is managed via its own endpoint; PATCH only the booleans
+function stripArrays(obj) {
+  const out = {}
+  for (const k in obj) if (typeof obj[k]==='boolean') out[k]=obj[k]
+  return out
+}
+
+// Rebuild every place that lists profiles after a rename/duplicate/account change
+function rebuildAllProfileLists() {
+  rebuildMergedProfiles()
+  refreshSyncProfiles()
+  renderAccountBar()
+  const cmCards = document.getElementById('cm-profile-cards'); if (cmCards && cmCards.children.length) initConfigMgmt()
+  const qeCards = document.getElementById('qe-profile-cards'); if (qeCards && qeCards.children.length) initQuickEdit()
+  const dv = document.getElementById('dv-profile-select'); if (dv && dv.options.length) dv.innerHTML = activeProfiles().map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+  const df = document.getElementById('df-profile-select'); if (df && df.options.length) df.innerHTML = activeProfiles().map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+  refreshCompareSelectors()
+}
+
+// ═══════════════════════════════════════════════
+//  COMPARE PROFILES  (read-only, no sync — cross-account)
+// ═══════════════════════════════════════════════
+function refreshCompareSelectors() {
+  const a = document.getElementById('cmp-a'), b = document.getElementById('cmp-b')
+  if (!a || !b) return
+  const multi = S.accounts.length>1
+  const opts = S.profiles.map(p=>`<option value="${p._uid}">${esc(p.name)}${multi?' — '+esc(p._acctName):''}</option>`).join('')
+  const av=a.value, bv=b.value
+  a.innerHTML = opts; b.innerHTML = opts
+  if ([...a.options].some(o=>o.value===av)) a.value=av
+  if ([...b.options].some(o=>o.value===bv)) b.value=bv
+  else if (b.options.length>1) b.selectedIndex=1
+}
+
+function cmpGetCats() {
+  return {
+    denylist:  document.getElementById('cmp-cat-denylist').checked,
+    allowlist: document.getElementById('cmp-cat-allowlist').checked,
+    rewrites:  document.getElementById('cmp-cat-rewrites').checked,
+    security:  document.getElementById('cmp-cat-security').checked,
+    tlds:      document.getElementById('cmp-cat-tlds').checked,
+    privacy:   document.getElementById('cmp-cat-privacy').checked,
+    parental:  document.getElementById('cmp-cat-parental').checked
+  }
+}
+
+async function runCompare() {
+  const aid = document.getElementById('cmp-a').value
+  const bid = document.getElementById('cmp-b').value
+  if (!aid || !bid || aid===bid) { toast(t('pa.compare.same'),'err'); return }
+  const empty = document.getElementById('cmp-empty')
+  const res = document.getElementById('cmp-result')
+  empty.style.display = 'none'
+  res.style.display = 'block'
+  res.innerHTML = `<div style="padding:20px;text-align:center;color:var(--muted)"><span class="spinner spinner-dark"></span> ${t('common.loading')}</div>`
+  try {
+    const load = uid => {
+      const p = profileByUid(uid); const pid = p?.id; const ctx = ctxForProfileUid(uid)
+      return Promise.all([
+        apiGetList(`/profiles/${pid}/denylist`, ctx),
+        apiGetList(`/profiles/${pid}/allowlist`, ctx),
+        apiGetList(`/profiles/${pid}/rewrites`, ctx),
+        apiGet(`/profiles/${pid}/security`, ctx),
+        apiGetList(`/profiles/${pid}/security/tlds`, ctx),
+        apiGet(`/profiles/${pid}/privacy`, ctx),
+        apiGet(`/profiles/${pid}/parentalControl`, ctx)
+      ])
+    }
+    const [A, B] = await Promise.all([load(aid), load(bid)])
+    const pa = profileByUid(aid), pb = profileByUid(bid)
+    const multi = S.accounts.length>1
+    res.innerHTML = renderCompare(
+      (pa?.name||aid) + (multi&&pa?._acctName?' · '+pa._acctName:''),
+      (pb?.name||bid) + (multi&&pb?._acctName?' · '+pb._acctName:''),
+      A, B, cmpGetCats()
+    )
+  } catch(e) {
+    res.innerHTML = `<div style="color:var(--red);padding:16px">Error: ${esc(e.message)}</div>`
+  }
+}
+
+function renderCompare(nameA, nameB, A, B, cats) {
+  cats = cats || {denylist:1,allowlist:1,rewrites:1,security:1,tlds:1,privacy:1,parental:1}
+  const [denyA,allowA,rewA,secA,tldA,privA,parA] = A
+  const [denyB,allowB,rewB,secB,tldB,privB,parB] = B
+  let diffs = 0
+
+  // helper for presence-based lists ([{id,active}] or [{id}])
+  const idActive = arr => { const m={}; for (const i of (arr||[])) m[i.id]= (i.active===undefined?true:i.active); return m }
+  const idSet = arr => new Set((arr||[]).map(x=> typeof x==='string'?x:x.id))
+
+  function listSection(title, a, b, withActive) {
+    const ma = withActive ? idActive(a) : null
+    const mb = withActive ? idActive(b) : null
+    const sa = idSet(a), sb = idSet(b)
+    const all = [...new Set([...sa, ...sb])].sort()
+    if (!all.length) return ''
+    let rowsA = '', rowsB = '', local=0
+    for (const id of all) {
+      const inA = sa.has(id), inB = sb.has(id)
+      let clsA='', clsB=''
+      if (inA && !inB) { clsA='only'; clsB='missing'; local++ }
+      else if (!inA && inB) { clsA='missing'; clsB='only'; local++ }
+      else if (withActive && ma[id]!==mb[id]) { clsA='diff'; clsB='diff'; local++ }
+      const valA = withActive && inA ? `<span class="cmp-val ${ma[id]?'pv-on':'pv-off'}">${ma[id]?'ON':'OFF'}</span>` : ''
+      const valB = withActive && inB ? `<span class="cmp-val ${mb[id]?'pv-on':'pv-off'}">${mb[id]?'ON':'OFF'}</span>` : ''
+      rowsA += `<div class="cmp-row ${clsA}"><span class="cmp-key">${inA?esc(id):'—'}</span>${valA}</div>`
+      rowsB += `<div class="cmp-row ${clsB}"><span class="cmp-key">${inB?esc(id):'—'}</span>${valB}</div>`
+    }
+    diffs += local
+    return {title, rowsA, rowsB}
+  }
+
+  function rewSection() {
+    const key = r => r.name+' → '+r.content
+    const sa = new Set((rewA||[]).map(key)), sb = new Set((rewB||[]).map(key))
+    const all = [...new Set([...sa,...sb])].sort()
+    if (!all.length) return ''
+    let rowsA='', rowsB='', local=0
+    for (const k of all) {
+      const inA=sa.has(k), inB=sb.has(k)
+      let clsA='',clsB=''
+      if (inA&&!inB){clsA='only';clsB='missing';local++}
+      else if(!inA&&inB){clsA='missing';clsB='only';local++}
+      rowsA += `<div class="cmp-row ${clsA}"><span class="cmp-key">${inA?esc(k):'—'}</span></div>`
+      rowsB += `<div class="cmp-row ${clsB}"><span class="cmp-key">${inB?esc(k):'—'}</span></div>`
+    }
+    diffs += local
+    return {title:t('cat.rewrites'), rowsA, rowsB}
+  }
+
+  function boolSection(title, a, b) {
+    a=a||{}; b=b||{}
+    const keys = [...new Set([...Object.keys(a),...Object.keys(b)])].filter(k=>typeof a[k]==='boolean'||typeof b[k]==='boolean').sort()
+    if (!keys.length) return ''
+    let rowsA='',rowsB='',local=0
+    for (const k of keys) {
+      const va=!!a[k], vb=!!b[k]
+      const cls = va!==vb ? 'diff' : ''
+      if (va!==vb) local++
+      rowsA += `<div class="cmp-row ${cls}"><span class="cmp-key">${esc(k)}</span><span class="cmp-val ${va?'pv-on':'pv-off'}">${va?'ON':'OFF'}</span></div>`
+      rowsB += `<div class="cmp-row ${cls}"><span class="cmp-key">${esc(k)}</span><span class="cmp-val ${vb?'pv-on':'pv-off'}">${vb?'ON':'OFF'}</span></div>`
+    }
+    diffs += local
+    return {title, rowsA, rowsB}
+  }
+
+  const sections = [
+    cats.denylist  && listSection(t('cat.denylist'), denyA, denyB, true),
+    cats.allowlist && listSection(t('cat.allowlist'), allowA, allowB, true),
+    cats.rewrites  && rewSection(),
+    cats.security  && boolSection(t('cat.security'), secA, secB),
+    cats.tlds      && listSection(t('cat.tlds'), tldA, tldB, false),
+    cats.privacy   && boolSection(t('cat.privacy')+' (toggles)', {disguisedTrackers:privA?.disguisedTrackers,allowAffiliate:privA?.allowAffiliate}, {disguisedTrackers:privB?.disguisedTrackers,allowAffiliate:privB?.allowAffiliate}),
+    cats.privacy   && listSection(t('cat.privacy')+' (blocklists)', privA?.blocklists, privB?.blocklists, false),
+    cats.parental  && boolSection(t('cat.parental'), {safeSearch:parA?.safeSearch,youtubeRestrictedMode:parA?.youtubeRestrictedMode,blockBypass:parA?.blockBypass}, {safeSearch:parB?.safeSearch,youtubeRestrictedMode:parB?.youtubeRestrictedMode,blockBypass:parB?.blockBypass}),
+  ].filter(Boolean)
+
+  let colA = `<div class="cmp-col"><div class="cmp-col-hdr">🛡 ${esc(nameA)}</div>`
+  let colB = `<div class="cmp-col"><div class="cmp-col-hdr">🛡 ${esc(nameB)}</div>`
+  for (const sec of sections) {
+    colA += `<div class="cmp-section-hdr">${sec.title}</div>${sec.rowsA}`
+    colB += `<div class="cmp-section-hdr">${sec.title}</div>${sec.rowsB}`
+  }
+  colA += '</div>'; colB += '</div>'
+
+  const summary = diffs ? `<div class="cmp-diff-badge">${t('pa.compare.diffcount',{n:diffs})}</div>`
+                        : `<div style="color:var(--green);font-size:12px;font-weight:600">✓ ${t('pa.compare.nodiff')}</div>`
+  return `<div style="margin:8px 0 12px;display:flex;align-items:center;gap:10px">${summary}
+    <span style="font-size:11px;color:var(--muted)">
+      <span class="cmp-val pv-on" style="background:var(--green-bg);color:var(--green)">&nbsp;</span> ${t('pa.compare.onlyin')} &nbsp;
+      <span class="cmp-val" style="background:var(--orange-bg);color:var(--orange)">&nbsp;</span> ${t('pa.compare.differs')}
+    </span></div>
+    <div class="cmp-grid">${colA}${colB}</div>`
+}
+
+// Refresh the Quick-Edit mode hint in the current language
+function qeRefreshHint() {
+  const el = document.getElementById('qe-mode-hint')
+  if (!el || typeof QE==='undefined') return
+  el.innerHTML = QE.mode==='remove' ? t('qe.hint.remove') : t('qe.hint.add')
+}
+
 
 // ═══════════════════════════════════════════════
 //  DEMO DATA
@@ -983,7 +2047,8 @@ const DEMO = {
 function show(id, v) {
   const el = document.getElementById(id)
   if (!el) return
-  el.style.display = v ? (['sw','sa','page-sync','page-devices','page-quickedit','page-configmgmt','df-body'].includes(id) ? 'flex' : 'block') : 'none'
+  // sl (login) and sw (welcome) are centered flex containers; sa + pages are flex too
+  el.style.display = v ? (['sl','sw','sa','page-sync','page-devices','page-quickedit','page-configmgmt','page-compare','page-history','df-body'].includes(id) ? 'flex' : 'block') : 'none'
 }
 
 function toast(msg, type='') {
@@ -999,11 +2064,19 @@ function esc(s) {
 }
 
 // ═══════════════════════════════════════════════
-//  API
+//  API  (account-context aware)
 // ═══════════════════════════════════════════════
 const BASE = 'https://api.nextdns.io'
 
-function headers() { return {'X-Api-Key': S.apiKey, 'Content-Type': 'application/json'} }
+// The "context" decides which key/demo-mode an API call uses.
+// Defaults to the active account so single-account tabs keep working unchanged.
+function activeCtx() {
+  const a = getActiveAccount()
+  return a ? {apiKey:a.apiKey, isDemo:a.isDemo} : {apiKey:S.apiKey, isDemo:S.isDemo}
+}
+function ctxOrActive(ctx) { return ctx || activeCtx() }
+
+function headers(ctx) { const c=ctxOrActive(ctx); return {'X-Api-Key': c.apiKey, 'Content-Type': 'application/json'} }
 
 function getDemoData(path) {
   const p = path.split('/').filter(Boolean)
@@ -1021,20 +2094,22 @@ function getDemoData(path) {
   return null
 }
 
-async function apiGet(path) {
-  if (S.isDemo) return getDemoData(path)
-  const r = await fetch(BASE+path, {headers: {'X-Api-Key': S.apiKey}})
+async function apiGet(path, ctx) {
+  const c = ctxOrActive(ctx)
+  if (c.isDemo) return getDemoData(path)
+  const r = await fetch(BASE+path, {headers: {'X-Api-Key': c.apiKey}})
   const j = await r.json()
   if (j.errors) throw new Error(j.errors.map(e=>e.detail||e.code).join(', '))
   return j.data
 }
 
-async function apiGetList(path) {
-  if (S.isDemo) return getDemoData(path) ?? []
+async function apiGetList(path, ctx) {
+  const c = ctxOrActive(ctx)
+  if (c.isDemo) return getDemoData(path) ?? []
   let results=[], cursor=null
   do {
     const url = path + (cursor ? '?cursor='+encodeURIComponent(cursor) : '')
-    const r = await fetch(BASE+url, {headers: {'X-Api-Key': S.apiKey}})
+    const r = await fetch(BASE+url, {headers: {'X-Api-Key': c.apiKey}})
     const j = await r.json()
     if (j.errors) throw new Error(j.errors.map(e=>e.detail||e.code).join(', '))
     results = results.concat(j.data||[])
@@ -1043,86 +2118,261 @@ async function apiGetList(path) {
   return results
 }
 
-async function apiPost(path, body) {
-  if (S.isDemo) return {}
-  const r = await fetch(BASE+path, {method:'POST', headers:headers(), body:JSON.stringify(body)})
+async function apiPost(path, body, ctx) {
+  const c = ctxOrActive(ctx)
+  if (c.isDemo) return {}
+  const r = await fetch(BASE+path, {method:'POST', headers:headers(c), body:JSON.stringify(body)})
   if (!r.ok) { const j=await r.json(); throw new Error((j.errors||[]).map(e=>e.detail||e.code).join(', ')||r.status) }
 }
 
-async function apiDelete(path) {
-  if (S.isDemo) return {}
-  const r = await fetch(BASE+path, {method:'DELETE', headers:{'X-Api-Key':S.apiKey}})
+async function apiDelete(path, ctx) {
+  const c = ctxOrActive(ctx)
+  if (c.isDemo) return {}
+  const r = await fetch(BASE+path, {method:'DELETE', headers:{'X-Api-Key':c.apiKey}})
   if (!r.ok && r.status!==204) throw new Error('DELETE failed: '+r.status)
 }
 
-async function apiPatch(path, body) {
-  if (S.isDemo) return {}
-  const r = await fetch(BASE+path, {method:'PATCH', headers:headers(), body:JSON.stringify(body)})
+async function apiPatch(path, body, ctx) {
+  const c = ctxOrActive(ctx)
+  if (c.isDemo) return {}
+  const r = await fetch(BASE+path, {method:'PATCH', headers:headers(c), body:JSON.stringify(body)})
   if (!r.ok) { const j=await r.json(); throw new Error((j.errors||[]).map(e=>e.detail||e.code).join(', ')||r.status) }
 }
 
-async function apiPut(path, body) {
-  if (S.isDemo) return {}
-  const r = await fetch(BASE+path, {method:'PUT', headers:headers(), body:JSON.stringify(body)})
+async function apiPut(path, body, ctx) {
+  const c = ctxOrActive(ctx)
+  if (c.isDemo) return {}
+  const r = await fetch(BASE+path, {method:'PUT', headers:headers(c), body:JSON.stringify(body)})
   if (!r.ok) { const j=await r.json(); throw new Error((j.errors||[]).map(e=>e.detail||e.code).join(', ')||r.status) }
 }
 
 // ═══════════════════════════════════════════════
-//  LOGIN
+//  SAVED KEYS  (sessionStorage — temporary)
+//  The login screen shows the working set of accounts (S.accounts).
+//  "Remembered" keys additionally persist in sessionStorage so they
+//  survive a logout (but not a browser close).
+// ═══════════════════════════════════════════════
+const SS_KEY = 'nextdns.savedSessions'
+function loadSessions() {
+  try { return JSON.parse(sessionStorage.getItem(SS_KEY) || '[]') } catch { return [] }
+}
+function saveSessions(list) { sessionStorage.setItem(SS_KEY, JSON.stringify(list)) }
+function rememberSession(name, key) {
+  const list = loadSessions()
+  if (list.some(s=>s.key===key)) { const ex=list.find(s=>s.key===key); if (name) ex.name = name }
+  else list.push({name: name||('Account '+(list.length+1)), key})
+  saveSessions(list)
+}
+function unrememberKey(key) {
+  const list = loadSessions().filter(s=>s.key!==key)
+  saveSessions(list)
+}
+function maskKey(k) { return !k||k==='demo' ? (k==='demo'?'demo':'••••') : (k.length>10 ? k.slice(0,4)+'…'+k.slice(-4) : '••••') }
+
+function toggleRemember() { document.getElementById('opt-remember').click() }
+function onRememberToggle() {
+  const on = document.getElementById('opt-remember').checked
+  document.getElementById('name-field').style.display = on ? 'block' : 'none'
+}
+
+// Render the list of keys already added this session (working set) +
+// remembered keys not yet added (quick re-add).
+function renderSavedSessions() {
+  const wrap = document.getElementById('saved-sessions')
+  const box = document.getElementById('saved-sessions-list')
+  if (!wrap || !box) return
+  const remembered = loadSessions()
+  const activeKeys = new Set(S.accounts.map(a=>a.apiKey))
+  const quickAdd = remembered.filter(s=>!activeKeys.has(s.key))
+  if (!S.accounts.length && !quickAdd.length) { wrap.style.display='none'; box.innerHTML=''; return }
+  wrap.style.display='block'
+  let html = ''
+  // Added this session (working set)
+  html += S.accounts.map(a=>`
+    <div class="session-row">
+      <span class="sess-icon">${a.isDemo?'🧪':'🔑'}</span>
+      <div class="sess-info">
+        <div class="sess-name">${esc(a.name)} <span class="sess-added">✓</span></div>
+        <div class="sess-key">${esc(maskKey(a.apiKey))} · ${(a.profiles||[]).length} ${t('login.profilecount')}</div>
+      </div>
+      <button class="sess-del" title="${esc(t('login.forget'))}" onclick="removeAccount('${a.id}',event)">🗑</button>
+    </div>`).join('')
+  // Remembered, not yet added → click to re-add
+  html += quickAdd.map(s=>`
+    <div class="session-row quick">
+      <span class="sess-icon">🔑</span>
+      <div class="sess-info" onclick="useRemembered('${esc(s.key)}')">
+        <div class="sess-name">${esc(s.name)}</div>
+        <div class="sess-key">${esc(maskKey(s.key))} · ${t('login.clickadd')}</div>
+      </div>
+      <button class="sess-del" title="${esc(t('login.forget'))}" onclick="forgetRemembered('${esc(s.key)}',event)">🗑</button>
+    </div>`).join('')
+  box.innerHTML = html
+}
+
+// Re-add a remembered key (re-fetches its profiles)
+function useRemembered(key) {
+  const s = loadSessions().find(x=>x.key===key)
+  document.getElementById('apikey').removeAttribute('readonly')
+  document.getElementById('apikey').value = key
+  document.getElementById('opt-remember').checked = true
+  onRememberToggle()
+  if (s) document.getElementById('acctname').value = s.name||''
+  doLogin()
+}
+function forgetRemembered(key, ev) {
+  if (ev) ev.stopPropagation()
+  unrememberKey(key)
+  renderSavedSessions()
+}
+
+// Remove an account from the working set (and from remembered keys)
+function removeAccount(id, ev) {
+  if (ev) ev.stopPropagation()
+  const acct = acctById(id)
+  if (acct) unrememberKey(acct.apiKey)
+  S.accounts = S.accounts.filter(a=>a.id!==id)
+  if (S.activeAcct===id) S.activeAcct = S.accounts[0]?.id || null
+  rebuildMergedProfiles()
+  renderSavedSessions()
+  updateEnterButton()
+  setFootVisible(true)
+  relocateControls(false)
+}
+
+// Show/hide the "Open dashboard" button + relabel the primary button
+function updateEnterButton() {
+  const enter = document.getElementById('enter-btn')
+  const btn = document.getElementById('login-btn')
+  const have = S.accounts.length>0
+  if (enter) enter.style.display = have ? 'block' : 'none'
+  if (btn) {
+    btn.textContent = have ? t('login.addanother') : t('login.continue')
+    // when at least one key exists, the dashboard button is the primary action;
+    // adding another key becomes the secondary (outline) action
+    btn.className = have ? 'btn btn-outline' : 'btn btn-primary'
+    btn.style.width = '100%'
+    btn.style.marginTop = have ? '8px' : '14px'
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  LOGIN  (adds an account, stays on login to allow stacking keys)
 // ═══════════════════════════════════════════════
 async function doLogin() {
   const key = document.getElementById('apikey').value.trim()
+  const remember = document.getElementById('opt-remember').checked
+  const nameInput = remember ? document.getElementById('acctname').value.trim() : ''
   const errEl = document.getElementById('login-err')
   const corsEl = document.getElementById('login-cors')
   const btn = document.getElementById('login-btn')
   errEl.style.display = 'none'; corsEl.style.display = 'none'
 
-  if (!key) { errEl.textContent='Please enter your API key.'; errEl.style.display='block'; return }
+  if (!key) { errEl.textContent=t('login.empty'); errEl.style.display='block'; return }
 
+  // DEMO account
   if (key.toLowerCase()==='demo') {
-    S = {...S, isDemo:true, apiKey:'demo', email:DEMO.user.email, profiles:DEMO.profiles}
-    showWelcome(); return
+    const acct = {id:'demo', name:nameInput||'Demo', apiKey:'demo', isDemo:true, profiles:DEMO.profiles.map(p=>({...p}))}
+    upsertAccount(acct)
+    S.activeAcct = S.activeAcct || acct.id
+    if (remember) rememberSession(acct.name, 'demo')
+    afterAddKey(); return
   }
 
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Connecting…'
+  // prevent adding the same key twice
+  if (S.accounts.some(a=>!a.isDemo && a.apiKey===key)) { errEl.textContent=t('login.dupkey'); errEl.style.display='block'; return }
+
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> '+t('login.connecting')
   try {
-    S.apiKey = key
-    const profiles = await apiGetList('/profiles')
-    S.profiles = profiles; S.email = ''
-    showWelcome()
+    const profiles = await apiGetList('/profiles', {apiKey:key, isDemo:false})
+    const id = 'a'+Math.random().toString(36).slice(2,9)
+    const acct = {id, name: nameInput||('Account '+(S.accounts.filter(a=>!a.isDemo).length+1)), apiKey:key, isDemo:false, profiles}
+    upsertAccount(acct)
+    S.activeAcct = S.activeAcct || acct.id
+    if (remember) rememberSession(acct.name, key)
+    afterAddKey()
   } catch(e) {
-    S.apiKey = ''
     const msg = e.message||''
     const isCors = msg.includes('Load failed')||msg.includes('Failed to fetch')||msg.includes('NetworkError')||e instanceof TypeError
     if (isCors) corsEl.style.display='block'
-    else { errEl.textContent = msg.includes('invalid_api_key') ? 'Invalid API key. Please check and try again.' : ('Error: '+(msg||'Unknown. Check your API key.')); errEl.style.display='block' }
+    else { errEl.textContent = msg.includes('invalid_api_key') ? t('login.invalid') : ('Error: '+(msg||'Unknown. Check your API key.')); errEl.style.display='block' }
   } finally {
-    btn.disabled=false; btn.textContent='Continue →'
+    btn.disabled=false; updateEnterButton()
   }
 }
 document.getElementById('apikey').addEventListener('keydown', e => { if(e.key==='Enter') doLogin() })
+
+function upsertAccount(acct) {
+  const existing = S.accounts.findIndex(a=>a.apiKey===acct.apiKey && a.isDemo===acct.isDemo)
+  if (existing>=0) S.accounts[existing] = acct
+  else S.accounts.push(acct)
+  rebuildMergedProfiles()
+}
+
+// Sync the legacy active-account mirror used by single-account tabs
+function syncActiveMirror() {
+  const a = getActiveAccount()
+  S.isDemo = !!a?.isDemo; S.apiKey = a?.apiKey || ''; S.email = a?.isDemo ? (DEMO.user.email) : ''
+}
+
+// After a key is added: stay on the login screen so more can be stacked.
+// The very first key still shows the welcome intro.
+function afterAddKey() {
+  syncActiveMirror()
+  // clear inputs
+  document.getElementById('apikey').value=''
+  document.getElementById('acctname').value=''
+  document.getElementById('opt-remember').checked=false
+  onRememberToggle()
+  renderSavedSessions()
+  updateEnterButton()
+  // First key added → welcome intro. Otherwise stay on login (user can add more or open dashboard).
+  if (S.accounts.length===1) {
+    showWelcome()
+  } else {
+    toast(t('login.added'),'ok')
+  }
+}
 
 // ═══════════════════════════════════════════════
 //  WELCOME
 // ═══════════════════════════════════════════════
 function showWelcome() {
-  show('sl',false); show('sw',true)
-  document.getElementById('wavatar').textContent = (S.email||'Y')[0].toUpperCase()
-  document.getElementById('wname').textContent = S.email||'Your Account'
-  document.getElementById('wprofiles').innerHTML = S.profiles.map(p=>`
-    <div class="wpi">🛡 ${esc(p.name)}${p.editor?'<span class="badge b-editor" style="margin-left:auto">EDITOR</span>':''}${S.isDemo?'<span class="badge b-demo" style="margin-left:auto">DEMO</span>':''}</div>
+  show('sl',false); show('sw',true); setFootVisible(false); relocateControls(false)
+  const acct = getActiveAccount()
+  const nm = acct?.name || S.email || 'Y'
+  document.getElementById('wavatar').textContent = nm[0].toUpperCase()
+  document.getElementById('wname').textContent = acct?.name || S.email || t('welcome.youraccount')
+  document.getElementById('wprofiles').innerHTML = (acct?.profiles||[]).map(p=>`
+    <div class="wpi">🛡 ${esc(p.name)}${p.editor?'<span class="badge b-editor" style="margin-left:auto">EDITOR</span>':''}${acct?.isDemo?'<span class="badge b-demo" style="margin-left:auto">DEMO</span>':''}</div>
   `).join('')
 }
 
+// "Add account" from inside the app — return to login keeping existing accounts
+function addAccount() {
+  stopLiveLog()
+  show('sa',false); show('sw',false); show('sl',true)
+  document.getElementById('apikey').value=''
+  document.getElementById('acctname').value=''
+  document.getElementById('opt-remember').checked=false
+  onRememberToggle()
+  document.getElementById('login-err').style.display='none'
+  document.getElementById('login-cors').style.display='none'
+  renderSavedSessions()
+  updateEnterButton()
+  setFootVisible(true)
+  relocateControls(false)
+}
+
 function openDashboard() {
-  show('sw',false); show('sa',true)
-  document.getElementById('app-email').textContent = S.email || (S.isDemo?'Demo Mode':'')
-  document.getElementById('demo-banner').style.display = S.isDemo?'block':'none'
-  const ms = document.getElementById('master-select')
-  ms.innerHTML = S.profiles.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
-  buildTargetCards()
+  if (!S.accounts.length) return   // nothing to open
+  if (!S.activeAcct || !getActiveAccount()) { S.activeAcct = S.accounts[0].id; syncActiveMirror() }
+  show('sw',false); show('sa',true); setFootVisible(false); relocateControls(true)
+  renderAccountBar()
+  document.getElementById('demo-banner').style.display = S.accounts.some(a=>a.isDemo)?'block':'none'
+  refreshSyncProfiles()
   // Reset tabs to Profile Sync
-  ['sync','devices','flows','quickedit','configmgmt'].forEach(t => {
+  ['sync','devices','flows','quickedit','configmgmt','compare','history'].forEach(t => {
     const tabEl = document.getElementById('tab-'+t)
     if (tabEl) tabEl.classList.toggle('active', t==='sync')
     const page = document.getElementById('page-'+t)
@@ -1133,32 +2383,82 @@ function openDashboard() {
   document.getElementById('dv-profile-select').innerHTML = ''
 }
 
+// Account switcher bar (top-right of app header) for single-account tabs
+function renderAccountBar() {
+  const el = document.getElementById('app-acct-bar')
+  if (!el) return
+  if (S.accounts.length<=1) {
+    const a = getActiveAccount()
+    el.innerHTML = `<span class="header-email">${esc(a?.name || (a?.isDemo?t('app.demomode'):''))}</span>`
+    return
+  }
+  el.innerHTML = `<div class="header-acct">
+    <span class="header-email" data-i18n="account.active">Active</span>
+    <select id="active-acct-select" onchange="onActiveAcctChange()">${
+      S.accounts.map(a=>`<option value="${a.id}" ${a.id===S.activeAcct?'selected':''}>${esc(a.name)}${a.isDemo?' (demo)':''}</option>`).join('')
+    }</select>
+  </div>`
+}
+function onActiveAcctChange() {
+  S.activeAcct = document.getElementById('active-acct-select').value
+  S.isDemo = !!getActiveAccount()?.isDemo
+  S.apiKey = getActiveAccount()?.apiKey || ''
+  // reset single-account tabs so they reload for the new account
+  document.getElementById('dv-profile-select').innerHTML=''
+  document.getElementById('df-profile-select').innerHTML=''
+  document.getElementById('qe-profile-cards').innerHTML=''
+  document.getElementById('cm-profile-cards').innerHTML=''
+  // if currently on a single-account tab, repopulate it
+  const active = document.querySelector('.nav-tab.active')?.id?.replace('tab-','')
+  if (active) switchTab(active)
+  toast(t('account.switched',{n:getActiveAccount()?.name||''}),'ok')
+}
+
+// Populate the Profile Sync master select + target cards (cross-account)
+function refreshSyncProfiles() {
+  const ms = document.getElementById('master-select')
+  const prev = ms.value
+  ms.innerHTML = S.profiles.map(p=>`<option value="${p._uid}">${esc(p.name)}${S.accounts.length>1?' — '+esc(p._acctName):''}</option>`).join('')
+  if (prev && [...ms.options].some(o=>o.value===prev)) ms.value = prev
+  buildTargetCards()
+}
+
 // ═══════════════════════════════════════════════
 //  SIDEBAR
 // ═══════════════════════════════════════════════
 function onMasterChange() { buildTargetCards(); clearPreview() }
 
 function buildTargetCards() {
-  const mid = document.getElementById('master-select').value
-  document.getElementById('target-cards').innerHTML = S.profiles
-    .filter(p=>p.id!==mid)
-    .map(p=>`
-      <div class="pcard" id="card-${p.id}" onclick="toggleTarget('${p.id}')">
-        <div class="pcard-check" id="check-${p.id}"></div>
+  const muid = document.getElementById('master-select').value
+  const box = document.getElementById('target-cards')
+  const multi = S.accounts.length>1
+  // group by account
+  let html = ''
+  for (const a of S.accounts) {
+    const profs = S.profiles.filter(p=>p._acct===a.id && p._uid!==muid)
+    if (!profs.length) continue
+    if (multi) html += `<div class="acct-group-label"><span class="acct-dot"></span>${esc(a.name)}${a.isDemo?' (demo)':''}</div>`
+    html += profs.map(p=>`
+      <div class="pcard" id="card-${cssId(p._uid)}" data-uid="${esc(p._uid)}" onclick="toggleTarget('${esc(p._uid)}')">
+        <div class="pcard-check"></div>
         <span>🛡</span>
         <span class="pcard-name">${esc(p.name)}</span>
-        <button class="pcard-view" onclick="event.stopPropagation();viewProfile('${p.id}')">👁</button>
-      </div>
-    `).join('')
+        <button class="pcard-view" onclick="event.stopPropagation();viewProfile('${esc(p._uid)}')">👁</button>
+      </div>`).join('')
+  }
+  box.innerHTML = html
 }
 
-function toggleTarget(id) {
-  document.getElementById('card-'+id).classList.toggle('selected')
+// safe DOM id from a uid (which contains a separator char)
+function cssId(uid) { return uid.replace(/[^a-zA-Z0-9_-]/g,'_') }
+
+function toggleTarget(uid) {
+  document.getElementById('card-'+cssId(uid))?.classList.toggle('selected')
   clearPreview()
 }
 
 function getSelectedTargets() {
-  return S.profiles.filter(p => document.getElementById('card-'+p.id)?.classList.contains('selected'))
+  return S.profiles.filter(p => document.getElementById('card-'+cssId(p._uid))?.classList.contains('selected'))
 }
 
 function getCats() {
@@ -1181,7 +2481,7 @@ function onRemoveToggle() {
 }
 
 function clearPreview() {
-  S.preview = null; S.skipped = {}
+  S.preview = null; S.skipped = {}; S.forced = {}
   document.getElementById('preview-empty').style.display='flex'
   document.getElementById('preview-content').style.display='none'
   document.getElementById('apply-btn').disabled=true
@@ -1281,11 +2581,15 @@ function countActive(changes, tid, cat, skipped) {
 //  PREVIEW
 // ═══════════════════════════════════════════════
 async function previewChanges() {
-  const mid = document.getElementById('master-select').value
+  const muid = document.getElementById('master-select').value
+  const masterProfile = profileByUid(muid)
+  const mid = masterProfile?.id
+  const mctx = ctxForProfileUid(muid)
   const targets = getSelectedTargets()
   const cats = getCats()
   const removeOrphans = getRemoveOpt()
 
+  if (!masterProfile) { toast('Select a master profile.','err'); return }
   if (!targets.length) { toast('Select at least one destination profile.','err'); return }
   if (!Object.values(cats).some(Boolean)) { toast('Select at least one category to sync.','err'); return }
 
@@ -1294,28 +2598,31 @@ async function previewChanges() {
 
   try {
     const master = {}
-    if (cats.denylist)  master.denylist  = await apiGetList(`/profiles/${mid}/denylist`)
-    if (cats.allowlist) master.allowlist = await apiGetList(`/profiles/${mid}/allowlist`)
-    if (cats.rewrites)  master.rewrites  = await apiGetList(`/profiles/${mid}/rewrites`)
-    if (cats.security)  master.security  = await apiGet(`/profiles/${mid}/security`)
-    if (cats.tlds)      master.tlds      = await apiGetList(`/profiles/${mid}/security/tlds`)
-    if (cats.privacy)   master.privacy   = await apiGet(`/profiles/${mid}/privacy`)
-    if (cats.parental)  master.parental  = await apiGet(`/profiles/${mid}/parentalControl`)
+    if (cats.denylist)  master.denylist  = await apiGetList(`/profiles/${mid}/denylist`, mctx)
+    if (cats.allowlist) master.allowlist = await apiGetList(`/profiles/${mid}/allowlist`, mctx)
+    if (cats.rewrites)  master.rewrites  = await apiGetList(`/profiles/${mid}/rewrites`, mctx)
+    if (cats.security)  master.security  = await apiGet(`/profiles/${mid}/security`, mctx)
+    if (cats.tlds)      master.tlds      = await apiGetList(`/profiles/${mid}/security/tlds`, mctx)
+    if (cats.privacy)   master.privacy   = await apiGet(`/profiles/${mid}/privacy`, mctx)
+    if (cats.parental)  master.parental  = await apiGet(`/profiles/${mid}/parentalControl`, mctx)
 
     S.preview = {}; S.skipped = {}; S.forced = {}
 
     for (const target of targets) {
+      const uid = target._uid
+      const key = cssId(uid)
       const tid = target.id
+      const tctx = ctxForProfileUid(uid)
       const td = {}
-      if (cats.denylist)  td.denylist  = await apiGetList(`/profiles/${tid}/denylist`)
-      if (cats.allowlist) td.allowlist = await apiGetList(`/profiles/${tid}/allowlist`)
-      if (cats.rewrites)  td.rewrites  = await apiGetList(`/profiles/${tid}/rewrites`)
-      if (cats.security)  td.security  = await apiGet(`/profiles/${tid}/security`)
-      if (cats.tlds)      td.tlds      = await apiGetList(`/profiles/${tid}/security/tlds`)
-      if (cats.privacy)   td.privacy   = await apiGet(`/profiles/${tid}/privacy`)
-      if (cats.parental)  td.parental  = await apiGet(`/profiles/${tid}/parentalControl`)
+      if (cats.denylist)  td.denylist  = await apiGetList(`/profiles/${tid}/denylist`, tctx)
+      if (cats.allowlist) td.allowlist = await apiGetList(`/profiles/${tid}/allowlist`, tctx)
+      if (cats.rewrites)  td.rewrites  = await apiGetList(`/profiles/${tid}/rewrites`, tctx)
+      if (cats.security)  td.security  = await apiGet(`/profiles/${tid}/security`, tctx)
+      if (cats.tlds)      td.tlds      = await apiGetList(`/profiles/${tid}/security/tlds`, tctx)
+      if (cats.privacy)   td.privacy   = await apiGet(`/profiles/${tid}/privacy`, tctx)
+      if (cats.parental)  td.parental  = await apiGet(`/profiles/${tid}/parentalControl`, tctx)
 
-      S.skipped[tid] = {}
+      S.skipped[key] = {}
 
       const changes = {}
       if (cats.denylist)  changes.denylist  = sortChanges(computeListChanges(master.denylist||[], td.denylist||[], removeOrphans))
@@ -1352,7 +2659,7 @@ async function previewChanges() {
         for (const i of arr) totals[i.action==='add'?'added':i.action==='remove'?'removed':i.action]++
       }
 
-      S.preview[tid] = {changes, totals, name:target.name, masterData:master}
+      S.preview[key] = {changes, totals, name:target.name, acctName:target._acctName, uid, tid, tctx, masterData:master}
     }
 
     renderPreview(cats)
@@ -1372,8 +2679,8 @@ function toggleSkip(tid, cat, id, btn) {
   if (!S.skipped[tid]) S.skipped[tid] = {}
   if (!S.skipped[tid][cat]) S.skipped[tid][cat] = new Set()
   const sk = S.skipped[tid][cat]
-  if (sk.has(id)) { sk.delete(id); btn.textContent='Skip' }
-  else { sk.add(id); btn.textContent='Undo' }
+  if (sk.has(id)) { sk.delete(id); btn.textContent=t('row.skip') }
+  else { sk.add(id); btn.textContent=t('row.undo') }
   const row = document.getElementById(`row-${tid}-${cat}-${CSS.escape(id)}`)
   if (row) row.classList.toggle('skipped', sk.has(id))
   updateCounts(tid)
@@ -1386,7 +2693,7 @@ function toggleForce(tid, cat, id, btn) {
   const row = document.getElementById(`row-${tid}-${cat}-${CSS.escape(id)}`)
   if (fc.has(id)) {
     fc.delete(id)
-    btn.textContent = 'Override'
+    btn.textContent = t('row.override')
     if (row) {
       row.classList.remove('forced')
       // restore note text
@@ -1399,7 +2706,7 @@ function toggleForce(tid, cat, id, btn) {
     }
   } else {
     fc.add(id)
-    btn.textContent = 'Undo'
+    btn.textContent = t('row.undo')
     if (row) {
       row.classList.add('forced')
       // update note to show it will be applied
@@ -1448,7 +2755,7 @@ function rowClass(action) {
 }
 
 function renderRows(items, tid, cat) {
-  if (!items||!items.length) return `<div style="padding:12px 16px;color:var(--muted);font-size:12px;font-style:italic">No changes in this category</div>`
+  if (!items||!items.length) return `<div style="padding:12px 16px;color:var(--muted);font-size:12px;font-style:italic">${t('preview.nochanges')}</div>`
   return items.map(item => {
     const canSkip     = item.action==='add' || item.action==='remove'
     const canOverride = item.action==='overruled'
@@ -1456,9 +2763,9 @@ function renderRows(items, tid, cat) {
     const tidE = esc(tid), idE = esc(item.id)
     let btns = '<span></span>'
     if (canSkip) {
-      btns = `<button class="skip-btn" onclick="toggleSkip('${tidE}','${cat}','${idE}',this)">Skip</button>`
+      btns = `<button class="skip-btn" onclick="toggleSkip('${tidE}','${cat}','${idE}',this)">${t('row.skip')}</button>`
     } else if (canOverride) {
-      btns = `<button class="force-btn" onclick="toggleForce('${tidE}','${cat}','${idE}',this)" title="Force master value onto destination">Override</button>`
+      btns = `<button class="force-btn" onclick="toggleForce('${tidE}','${cat}','${idE}',this)" title="Force master value onto destination">${t('row.override')}</button>`
     }
     // For rewrites show name → content inline; item.id is composite key
     const displayId = cat==='rewrites'
@@ -1504,24 +2811,24 @@ function renderPreview(cats) {
   content.style.display='block'
 
   const catLabels = {
-    denylist:'Denylist', allowlist:'Allowlist',
-    rewrites:'Rewrites',
-    security:'Security', tlds:'TLD Blocklist', privacy:'Privacy & Blocklists', parental:'Parental Control'
+    denylist:t('cat.denylist'), allowlist:t('cat.allowlist'),
+    rewrites:t('cat.rewrites'),
+    security:t('cat.security'), tlds:t('cat.tlds'), privacy:t('cat.privacy'), parental:t('cat.parental')
   }
   const catIcons = {denylist:'🚫', allowlist:'✅', rewrites:'↩️', security:'🔒', tlds:'🌐', privacy:'👁', parental:'👨‍👧'}
 
   let html = `
     <div class="preview-hdr">
       <div class="preview-hdr-left">
-        <div class="preview-hdr-title">Change Preview</div>
+        <div class="preview-hdr-title">${t('preview.title')}</div>
         <div class="legend">
-          <div class="leg"><div class="dot dot-g"></div> Added</div>
-          <div class="leg"><div class="dot dot-r"></div> Removed</div>
-          <div class="leg"><div class="dot dot-gr"></div> Unchanged</div>
-          <div class="leg"><div class="dot dot-o"></div> Overruled</div>
+          <div class="leg"><div class="dot dot-g"></div> ${t('preview.added')}</div>
+          <div class="leg"><div class="dot dot-r"></div> ${t('preview.removed')}</div>
+          <div class="leg"><div class="dot dot-gr"></div> ${t('preview.unchanged')}</div>
+          <div class="leg"><div class="dot dot-o"></div> ${t('preview.overruled')}</div>
         </div>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="clearPreview()" title="Reset preview and start over">↺ Reset</button>
+      <button class="btn btn-ghost btn-sm" onclick="clearPreview()" title="Reset preview and start over">${t('preview.reset')}</button>
     </div>
   `
 
@@ -1532,8 +2839,8 @@ function renderPreview(cats) {
         <div class="target-hdr">
           <span style="font-size:18px">🛡</span>
           <div>
-            <div class="target-name">${esc(data.name)}</div>
-            <div class="target-id-tag">${esc(tid)}</div>
+            <div class="target-name">${esc(data.name)}${S.accounts.length>1&&data.acctName?` <span style="font-weight:400;opacity:.8;font-size:12px">· ${esc(data.acctName)}</span>`:''}</div>
+            <div class="target-id-tag">${esc(data.tid||'')}</div>
           </div>
           <div class="counts" id="counts-${tid}">${renderCounts(data.totals)}</div>
         </div>
@@ -1579,13 +2886,12 @@ function openApplyModal() {
     }
     return sum+n
   },0)
-  document.getElementById('apply-modal-body').textContent =
-    `This will apply ${nChanges} change(s) across ${nTargets} profile(s). Overruled and skipped items will not be modified.`
+  document.getElementById('apply-modal-body').textContent = t('apply.body',{n:nChanges,t:nTargets})
   document.getElementById('progress-log').style.display='none'
   document.getElementById('progress-log').innerHTML=''
   document.getElementById('modal-actions').style.display='flex'
   document.getElementById('confirm-btn').disabled=false
-  document.getElementById('confirm-btn').textContent='Apply'
+  document.getElementById('confirm-btn').textContent=t('apply.confirm')
   document.getElementById('apply-modal').classList.add('open')
 }
 
@@ -1600,31 +2906,36 @@ function log(msg, type='') {
 
 async function applyChanges() {
   const btn=document.getElementById('confirm-btn')
-  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Applying…'
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> '+t('apply.applying')
   document.getElementById('modal-actions').querySelector('.btn-ghost').disabled=true
 
   let errors=0
-  const mid = document.getElementById('master-select').value
+  const muid = document.getElementById('master-select').value
+  const masterProfile = profileByUid(muid)
+  const mid = masterProfile?.id
+  const mctx = ctxForProfileUid(muid)
   const cats = getCats()
 
   // Reload master fresh
   const master = {}
   try {
-    if (cats.denylist)  master.denylist  = await apiGetList(`/profiles/${mid}/denylist`)
-    if (cats.allowlist) master.allowlist = await apiGetList(`/profiles/${mid}/allowlist`)
-    if (cats.rewrites)  master.rewrites  = await apiGetList(`/profiles/${mid}/rewrites`)
-    if (cats.security)  master.security  = await apiGet(`/profiles/${mid}/security`)
-    if (cats.tlds)      master.tlds      = await apiGetList(`/profiles/${mid}/security/tlds`)
-    if (cats.privacy)   master.privacy   = await apiGet(`/profiles/${mid}/privacy`)
-    if (cats.parental)  master.parental  = await apiGet(`/profiles/${mid}/parentalControl`)
+    if (cats.denylist)  master.denylist  = await apiGetList(`/profiles/${mid}/denylist`, mctx)
+    if (cats.allowlist) master.allowlist = await apiGetList(`/profiles/${mid}/allowlist`, mctx)
+    if (cats.rewrites)  master.rewrites  = await apiGetList(`/profiles/${mid}/rewrites`, mctx)
+    if (cats.security)  master.security  = await apiGet(`/profiles/${mid}/security`, mctx)
+    if (cats.tlds)      master.tlds      = await apiGetList(`/profiles/${mid}/security/tlds`, mctx)
+    if (cats.privacy)   master.privacy   = await apiGet(`/profiles/${mid}/privacy`, mctx)
+    if (cats.parental)  master.parental  = await apiGet(`/profiles/${mid}/parentalControl`, mctx)
   } catch(e) { log('Failed to reload master: '+e.message,'err'); return }
 
-  for (const [tid, data] of Object.entries(S.preview)) {
-    log(`→ ${data.name}`, 'info')
+  for (const [key, data] of Object.entries(S.preview)) {
+    const tid = data.tid          // real profile id
+    const tctx = data.tctx        // account context for this target
+    log(`→ ${data.name}${S.accounts.length>1&&data.acctName?' ('+data.acctName+')':''}`, 'info')
 
     for (const [cat, items] of Object.entries(data.changes)) {
-      const sk = S.skipped[tid]?.[cat] || new Set()
-      const fc = S.forced[tid]?.[cat]  || new Set()
+      const sk = S.skipped[key]?.[cat] || new Set()
+      const fc = S.forced[key]?.[cat]  || new Set()
 
       // Items to execute: normal add/remove (not skipped) + forced overruled
       const active = items.filter(i =>
@@ -1640,61 +2951,61 @@ async function applyChanges() {
             // For forced-overruled: master value wins → treat as 'add' with master active state
             if (item.action==='add'||item.action==='overruled') {
               const masterItem = (master[cat]||[]).find(i=>i.id===item.id)
-              await apiPost(`/profiles/${tid}/${cat}`, {id:item.id, active: masterItem?.active??true})
+              await apiPost(`/profiles/${tid}/${cat}`, {id:item.id, active: masterItem?.active??true}, tctx)
             } else {
-              await apiDelete(`/profiles/${tid}/${cat}/${encodeURIComponent(item.id)}`)
+              await apiDelete(`/profiles/${tid}/${cat}/${encodeURIComponent(item.id)}`, tctx)
             }
           }
           else if (cat==='rewrites') {
             // item.name + item.content is the unique pair
             if (item.action==='remove') {
               // Try to delete by name (API deletes one entry per call; if multiple exist, call per entry)
-              try { await apiDelete(`/profiles/${tid}/rewrites/${encodeURIComponent(item.name)}`) } catch(e2){}
+              try { await apiDelete(`/profiles/${tid}/rewrites/${encodeURIComponent(item.name)}`, tctx) } catch(e2){}
             } else {
               // 'add': the exact name+content combo doesn't exist in target yet, so just POST it
-              await apiPost(`/profiles/${tid}/rewrites`, {name:item.name, content:item.content})
+              await apiPost(`/profiles/${tid}/rewrites`, {name:item.name, content:item.content}, tctx)
             }
           }
           else if (cat==='tlds') {
             if (item.action==='add'||item.action==='overruled') {
-              await apiPost(`/profiles/${tid}/security/tlds`, {id:item.id})
+              await apiPost(`/profiles/${tid}/security/tlds`, {id:item.id}, tctx)
             } else {
-              await apiDelete(`/profiles/${tid}/security/tlds/${encodeURIComponent(item.id)}`)
+              await apiDelete(`/profiles/${tid}/security/tlds/${encodeURIComponent(item.id)}`, tctx)
             }
           }
           else if (cat==='privacy') {
             const boolKeys=['disguisedTrackers','allowAffiliate']
             if (boolKeys.includes(item.id)) {
-              await apiPatch(`/profiles/${tid}/privacy`, {[item.id]: master.privacy[item.id]})
+              await apiPatch(`/profiles/${tid}/privacy`, {[item.id]: master.privacy[item.id]}, tctx)
             } else {
-              if (item.action==='add'||item.action==='overruled') await apiPost(`/profiles/${tid}/privacy/blocklists`, {id:item.id})
-              else await apiDelete(`/profiles/${tid}/privacy/blocklists/${encodeURIComponent(item.id)}`)
+              if (item.action==='add'||item.action==='overruled') await apiPost(`/profiles/${tid}/privacy/blocklists`, {id:item.id}, tctx)
+              else await apiDelete(`/profiles/${tid}/privacy/blocklists/${encodeURIComponent(item.id)}`, tctx)
             }
           }
           else if (cat==='parental') {
             const toggleKeys=['safeSearch','youtubeRestrictedMode','blockBypass']
             const masterCatIds = new Set((master.parental?.categories||[]).map(c=>c.id))
             // Fetch fresh target parental to know which categories already exist there
-            const targetParental = await apiGet(`/profiles/${tid}/parentalControl`)
+            const targetParental = await apiGet(`/profiles/${tid}/parentalControl`, tctx)
             const targetCatIds = new Set((targetParental?.categories||[]).map(c=>c.id))
             if (toggleKeys.includes(item.id)) {
-              await apiPatch(`/profiles/${tid}/parentalControl`, {[item.id]: master.parental[item.id]})
+              await apiPatch(`/profiles/${tid}/parentalControl`, {[item.id]: master.parental[item.id]}, tctx)
             } else if (masterCatIds.has(item.id)) {
               const entry = (master.parental.categories||[]).find(c=>c.id===item.id)
               if (targetCatIds.has(item.id)) {
                 // Category exists in target — PATCH active state
-                await apiPatch(`/profiles/${tid}/parentalControl/categories/${encodeURIComponent(item.id)}`, {active: entry?.active??true})
+                await apiPatch(`/profiles/${tid}/parentalControl/categories/${encodeURIComponent(item.id)}`, {active: entry?.active??true}, tctx)
               } else {
                 // Category doesn't exist in target yet — POST to create it
-                await apiPost(`/profiles/${tid}/parentalControl/categories`, {id:item.id, active: entry?.active??true})
+                await apiPost(`/profiles/${tid}/parentalControl/categories`, {id:item.id, active: entry?.active??true}, tctx)
               }
             } else {
               // It's a service
               if (item.action==='add'||item.action==='overruled') {
                 const svc = (master.parental.services||[]).find(s=>s.id===item.id)
-                await apiPost(`/profiles/${tid}/parentalControl/services`, {id:item.id, active:svc?.active??true})
+                await apiPost(`/profiles/${tid}/parentalControl/services`, {id:item.id, active:svc?.active??true}, tctx)
               } else {
-                await apiDelete(`/profiles/${tid}/parentalControl/services/${encodeURIComponent(item.id)}`)
+                await apiDelete(`/profiles/${tid}/parentalControl/services/${encodeURIComponent(item.id)}`, tctx)
               }
             }
           }
@@ -1714,7 +3025,7 @@ async function applyChanges() {
         }
         if (Object.keys(patch).length) {
           try {
-            await apiPatch(`/profiles/${tid}/security`, patch)
+            await apiPatch(`/profiles/${tid}/security`, patch, tctx)
             log(`  ✓ [security] updated: ${Object.keys(patch).join(', ')}`,'ok')
           } catch(e) { log(`  ✗ [security]: ${e.message}`,'err'); errors++ }
         }
@@ -1724,21 +3035,55 @@ async function applyChanges() {
   }
 
   log('')
-  if (errors===0) { log('All changes applied successfully!','ok'); toast('Applied successfully!','ok') }
-  else { log(`Completed with ${errors} error(s).`,'err'); toast(`Applied with ${errors} error(s)`,'err') }
+  if (errors===0) { log(t('apply.success'),'ok'); toast(t('apply.successtoast'),'ok') }
+  else { log(t('apply.witherrors',{n:errors}),'err'); toast(t('apply.witherrors',{n:errors}),'err') }
+
+  // Record this sync in history (localStorage)
+  try {
+    let added=0, removed=0
+    for (const [key, data] of Object.entries(S.preview)) {
+      for (const [cat, items] of Object.entries(data.changes)) {
+        const sk = S.skipped[key]?.[cat] || new Set()
+        const fc = S.forced[key]?.[cat]  || new Set()
+        added   += items.filter(i=>i.action==='add'&&!sk.has(i.id)).length
+        added   += items.filter(i=>i.action==='overruled'&&fc.has(i.id)).length
+        removed += items.filter(i=>i.action==='remove'&&!sk.has(i.id)).length
+      }
+    }
+    const masterName = (masterProfile?.name||mid) + (S.accounts.length>1&&masterProfile?._acctName?' ('+masterProfile._acctName+')':'')
+    recordSync({
+      at: Date.now(),
+      kind: 'sync',
+      master: masterName,
+      targets: Object.values(S.preview).map(d=> d.name + (S.accounts.length>1&&d.acctName?' ('+d.acctName+')':'')),
+      cats: Object.keys(cats).filter(k=>cats[k]),
+      added, removed, errors,
+      demo: S.accounts.some(a=>a.isDemo)
+    })
+  } catch(e) { console.error('history record failed', e) }
 
   S.cache={}
-  btn.textContent='Done ✓'
+  btn.textContent=t('apply.done')
   document.getElementById('apply-btn').disabled=true
   const cancelBtn = document.getElementById('modal-actions').querySelector('.btn-ghost')
-  cancelBtn.textContent='Close'; cancelBtn.disabled=false
+  cancelBtn.textContent=t('apply.close'); cancelBtn.disabled=false
 }
 
 // ═══════════════════════════════════════════════
 //  PROFILE VIEWER
 // ═══════════════════════════════════════════════
-async function viewProfile(pid) {
-  const profile = S.profiles.find(p=>p.id===pid)
+async function viewProfile(idOrUid) {
+  // accept either a uid (acct:pid, from cross-account Sync) or a bare profile id (single-account tabs)
+  let profile, ctx, pid
+  if (idOrUid.indexOf('\x1f')>=0) {
+    profile = profileByUid(idOrUid)
+    pid = profile?.id
+    ctx = ctxForProfileUid(idOrUid)
+  } else {
+    pid = idOrUid
+    profile = S.profiles.find(p=>p.id===pid) || (getActiveAccount()?.profiles||[]).find(p=>p.id===pid)
+    ctx = activeCtx()
+  }
   if (!profile) return
   document.getElementById('pv-title').textContent = '🛡 '+profile.name
   document.getElementById('pv-body').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)"><span class="spinner spinner-dark"></span> Loading…</div>'
@@ -1746,12 +3091,12 @@ async function viewProfile(pid) {
 
   try {
     const [deny,allow,rew,sec,priv,par] = await Promise.all([
-      apiGetList(`/profiles/${pid}/denylist`),
-      apiGetList(`/profiles/${pid}/allowlist`),
-      apiGetList(`/profiles/${pid}/rewrites`),
-      apiGet(`/profiles/${pid}/security`),
-      apiGet(`/profiles/${pid}/privacy`),
-      apiGet(`/profiles/${pid}/parentalControl`)
+      apiGetList(`/profiles/${pid}/denylist`, ctx),
+      apiGetList(`/profiles/${pid}/allowlist`, ctx),
+      apiGetList(`/profiles/${pid}/rewrites`, ctx),
+      apiGet(`/profiles/${pid}/security`, ctx),
+      apiGet(`/profiles/${pid}/privacy`, ctx),
+      apiGet(`/profiles/${pid}/parentalControl`, ctx)
     ])
     document.getElementById('pv-body').innerHTML = buildPVHtml(deny,allow,rew,sec,priv,par)
   } catch(e) {
@@ -1844,7 +3189,7 @@ function closePV() { document.getElementById('pv-modal').classList.remove('open'
 // ═══════════════════════════════════════════════
 function logout() {
   stopLiveLog()
-  S = {isDemo:false, apiKey:'', email:'', profiles:[], cache:{}, preview:null, skipped:{}, forced:{}}
+  S = {isDemo:false, apiKey:'', email:'', profiles:[], cache:{}, accounts:[], activeAcct:null, preview:null, skipped:{}, forced:{}}
   DF = {running:false, sse:null, demoInterval:null, selectedDevices:new Set(), logs:[], searchTerm:'', stats:{total:0,blocked:0,allowed:0}}
   DV = {allDevices:[], filtered:[]}
   QE = {mode:'add', previewData:null}
@@ -1855,18 +3200,23 @@ function logout() {
   const cmCards = document.getElementById('cm-profile-cards')
   if (cmCards) cmCards.innerHTML = ''
   document.getElementById('apikey').value=''
+  document.getElementById('acctname').value=''
+  document.getElementById('opt-remember').checked=false
   document.getElementById('login-err').style.display='none'
   document.getElementById('login-cors').style.display='none'
   document.getElementById('df-profile-select').innerHTML=''
   document.getElementById('dv-profile-select').innerHTML=''
+  renderSavedSessions()  // saved sessions survive logout (they live in sessionStorage)
   show('sa',false); show('sw',false); show('sl',true)
+  setFootVisible(true)
+  relocateControls(false)
 }
 
 // ═══════════════════════════════════════════════
 //  NAV TABS
 // ═══════════════════════════════════════════════
 function switchTab(tab) {
-  const allTabs = ['sync','devices','flows','quickedit','configmgmt']
+  const allTabs = ['sync','devices','flows','quickedit','configmgmt','compare','history']
   allTabs.forEach(t => {
     const tabEl = document.getElementById('tab-'+t)
     if (tabEl) tabEl.classList.toggle('active', t===tab)
@@ -1877,16 +3227,18 @@ function switchTab(tab) {
   if (tab==='devices') {
     const sel = document.getElementById('dv-profile-select')
     if (sel.options.length === 0) {
-      sel.innerHTML = S.profiles.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
-      if (S.profiles.length) loadDvDevices(S.profiles[0].id)
+      const ap = activeProfiles()
+      sel.innerHTML = ap.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+      if (ap.length) loadDvDevices(ap[0].id)
     }
   }
 
   if (tab==='flows') {
     const sel = document.getElementById('df-profile-select')
     if (sel.options.length === 0) {
-      sel.innerHTML = S.profiles.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
-      if (S.profiles.length) loadDevices(S.profiles[0].id)
+      const ap = activeProfiles()
+      sel.innerHTML = ap.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+      if (ap.length) loadDevices(ap[0].id)
     }
   }
 
@@ -1898,6 +3250,14 @@ function switchTab(tab) {
   if (tab==='configmgmt') {
     const container = document.getElementById('cm-profile-cards')
     if (!container.children.length) initConfigMgmt()
+  }
+
+  if (tab==='compare') {
+    refreshCompareSelectors()
+  }
+
+  if (tab==='history') {
+    refreshHistoryUI()
   }
 }
 
@@ -2000,10 +3360,10 @@ function dvDeviceCard(d, totalQueries) {
   const pct = totalQueries > 0 ? Math.round((d.queries||0)/totalQueries*100) : 0
   const isUnid = d.name === 'Unidentified Devices'
   return `
-    <div style="background:#fff;border:1.5px solid var(--gray-border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);transition:border-color .15s"
+    <div style="background:var(--surface);border:1.5px solid var(--gray-border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);transition:border-color .15s"
          onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--gray-border)'">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-        <div style="width:36px;height:36px;border-radius:9px;background:${isUnid?'#f3f4f6':'var(--blue-light)'};display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid ${isUnid?'var(--gray-border)':'#bfdbfe'};flex-shrink:0">${isUnid?'❓':icon}</div>
+        <div style="width:36px;height:36px;border-radius:9px;background:${isUnid?'var(--gray-light)':'var(--blue-light)'};display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid ${isUnid?'var(--gray-border)':'var(--blue)'};flex-shrink:0">${isUnid?'❓':icon}</div>
         <div style="flex:1;min-width:0">
           <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:${isUnid?'var(--muted)':'var(--text)'}">${esc(d.name)}</div>
           ${d.model && d.model !== d.name ? `<div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.model)}</div>` : ''}
@@ -2011,8 +3371,8 @@ function dvDeviceCard(d, totalQueries) {
         ${d.queries !== undefined ? `<div style="font-size:11px;font-weight:700;color:var(--muted);background:var(--gray-light);padding:3px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0">${d.queries.toLocaleString()}</div>` : ''}
       </div>
       ${d.queries !== undefined ? `
-        <div style="height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden">
-          <div style="height:100%;width:${pct}%;background:${isUnid?'#d1d5db':'var(--blue)'};border-radius:3px;transition:width .3s"></div>
+        <div style="height:5px;background:var(--gray-border);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${isUnid?'var(--muted)':'var(--blue)'};border-radius:3px;transition:width .3s"></div>
         </div>
         <div style="font-size:10px;color:var(--muted);margin-top:4px">${pct}% van totale queries</div>
       ` : ''}
@@ -2413,6 +3773,34 @@ function onDfSearch() {
 // Close modals on overlay click
 document.getElementById('apply-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal() })
 document.getElementById('pv-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closePV() })
+document.getElementById('paction-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closePAction() })
+document.getElementById('about-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeAbout() })
+
+// ═══════════════════════════════════════════════
+//  PROFILE ACTION PICKER (rename / duplicate)
+// ═══════════════════════════════════════════════
+let PACTION = 'rename'
+function openProfileActions(kind) {
+  PACTION = kind
+  document.getElementById('paction-title').textContent = kind==='duplicate' ? t('pa.dup.title') : t('pa.rename.title')
+  const hint = document.getElementById('paction-hint')
+  if (kind==='duplicate') { hint.style.display='block'; hint.textContent = t('pa.dup.hint') }
+  else hint.style.display='none'
+  const sel = document.getElementById('paction-select')
+  const cur = document.getElementById('master-select')?.value
+  const multi = S.accounts.length>1
+  sel.innerHTML = S.profiles.map(p=>`<option value="${p._uid}">${esc(p.name)}${multi?' — '+esc(p._acctName):''}</option>`).join('')
+  if (cur && [...sel.options].some(o=>o.value===cur)) sel.value = cur
+  document.getElementById('paction-go').textContent = kind==='duplicate' ? t('pa.duplicate').replace(/^[^A-Za-z]+/,'') : t('common.save')
+  document.getElementById('paction-modal').classList.add('open')
+}
+function closePAction() { document.getElementById('paction-modal').classList.remove('open') }
+async function runPAction() {
+  const uid = document.getElementById('paction-select').value
+  closePAction()
+  if (PACTION==='duplicate') await duplicateProfile(uid)
+  else await renameProfile(uid)
+}
 
 // ═══════════════════════════════════════════════
 //  QUICK EDIT
@@ -2423,9 +3811,9 @@ let QE = {
 }
 
 function initQuickEdit() {
-  // Build profile cards — default none selected
+  // Build profile cards — default none selected (active account only)
   const container = document.getElementById('qe-profile-cards')
-  container.innerHTML = S.profiles.map(p => `
+  container.innerHTML = activeProfiles().map(p => `
     <div class="pcard" id="qe-card-${p.id}" onclick="qeToggleProfile('${p.id}')">
       <div class="pcard-check" id="qe-check-${p.id}"></div>
       <span>🛡</span>
@@ -2436,6 +3824,8 @@ function initQuickEdit() {
   document.getElementById('qe-preview-result').style.display = 'none'
   document.getElementById('qe-apply-btn').disabled = true
   QE.previewData = null
+  refreshQePresetsUI()
+  qeOnInput()
 }
 
 function setQeMode(mode) {
@@ -2447,14 +3837,14 @@ function setQeMode(mode) {
   if (mode === 'add') {
     addBtn.className = 'btn btn-primary btn-sm'
     remBtn.className = 'btn btn-ghost btn-sm'
-    hint.innerHTML = 'Domeinen worden <strong>toegevoegd</strong> aan de geselecteerde profielen.'
+    hint.innerHTML = t('qe.hint.add')
     if (rwCount) rwCount.textContent = qeParseRewrites(document.getElementById('qe-rewrite-input')?.value||'').length + ' rewrites'
   } else {
     addBtn.className = 'btn btn-ghost btn-sm'
     remBtn.className = 'btn btn-primary btn-sm'
     remBtn.style.background = 'var(--red)'; remBtn.style.color='#fff'; remBtn.style.borderColor='var(--red)'
-    hint.innerHTML = 'Domeinen worden <strong>verwijderd</strong> uit de geselecteerde profielen (als ze voorkomen in allow of deny).'
-    if (rwCount) rwCount.textContent = '0 rewrites · alleen beschikbaar in Add-modus'
+    hint.innerHTML = t('qe.hint.remove')
+    if (rwCount) rwCount.textContent = t('qe.rewrites',{n:0})
   }
   QE.previewData = null
   document.getElementById('qe-apply-btn').disabled = true
@@ -2473,7 +3863,7 @@ function qeSelectAll() {
 }
 
 function qeGetSelectedProfiles() {
-  return S.profiles.filter(p => document.getElementById('qe-card-'+p.id)?.classList.contains('selected'))
+  return activeProfiles().filter(p => document.getElementById('qe-card-'+p.id)?.classList.contains('selected'))
 }
 
 function qeParseDomains(text) {
@@ -2498,12 +3888,12 @@ function qeOnInput() {
   const denyDomains  = qeParseDomains(document.getElementById('qe-deny-input').value)
   const allowDomains = qeParseDomains(document.getElementById('qe-allow-input').value)
   const rewrites     = qeParseRewrites(document.getElementById('qe-rewrite-input')?.value||'')
-  document.getElementById('qe-deny-count').textContent  = denyDomains.length  + ' domein' + (denyDomains.length!==1?'en':'')
-  document.getElementById('qe-allow-count').textContent = allowDomains.length + ' domein' + (allowDomains.length!==1?'en':'')
+  document.getElementById('qe-deny-count').textContent  = t('qe.domains',{n:denyDomains.length})
+  document.getElementById('qe-allow-count').textContent = t('qe.domains',{n:allowDomains.length})
   const rwCount = document.getElementById('qe-rewrite-count')
   if (rwCount) rwCount.textContent = QE.mode==='add'
     ? rewrites.length + ' rewrite' + (rewrites.length!==1?'s':'')
-    : '0 rewrites · alleen beschikbaar in Add-modus'
+    : t('qe.rewrites',{n:0})
   QE.previewData = null
   document.getElementById('qe-apply-btn').disabled = true
   document.getElementById('qe-preview-result').style.display = 'none'
@@ -2645,7 +4035,7 @@ function renderQePreview() {
     // Rewrites (add mode only)
     if (rewItems && rewItems.length) {
       html += `<div style="border-top:1px solid var(--gray-border)">
-        <div style="padding:7px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#5b21b6;background:#f5f3ff">↩️ Rewrites</div>`
+        <div style="padding:7px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text);background:var(--surface-2)">↩️ Rewrites</div>`
       for (const item of rewItems) {
         const [dotClass, label2] = statusLabel[item.status]
         html += `<div class="qe-domain-row ${item.status}" style="grid-template-columns:10px 1fr auto auto;gap:10px">
@@ -2725,7 +4115,7 @@ let CM = {
 
 function initConfigMgmt() {
   const container = document.getElementById('cm-profile-cards')
-  container.innerHTML = S.profiles.map(p => `
+  container.innerHTML = activeProfiles().map(p => `
     <div class="pcard" id="cm-card-${p.id}" onclick="cmToggleProfile('${p.id}')">
       <div class="pcard-check" id="cm-check-${p.id}"></div>
       <span>🛡</span>
@@ -2746,7 +4136,7 @@ function cmToggleProfile(id) {
 }
 
 function cmGetSelectedProfiles() {
-  return S.profiles.filter(p => document.getElementById('cm-card-'+p.id)?.classList.contains('selected'))
+  return activeProfiles().filter(p => document.getElementById('cm-card-'+p.id)?.classList.contains('selected'))
 }
 
 function cmGetSelectedCats() {
@@ -2946,33 +4336,33 @@ async function cmCreateProfile() {
   const name = document.getElementById('cm-new-profile-name').value.trim()
   if (!name) { toast('Voer een naam in voor het nieuwe profiel.','err'); return }
 
+  const acct = getActiveAccount()
+  const ctx = activeCtx()
   const btn = document.querySelector('[onclick="cmCreateProfile()"]')
   btn.disabled = true; btn.innerHTML='<span class="spinner spinner-dark"></span>'
 
   try {
-    if (S.isDemo) {
+    let newProfile
+    if (ctx.isDemo) {
       // Demo: simulate creation
       const newId = 'new'+Math.random().toString(36).slice(2,8)
-      S.profiles.push({id:newId, name})
+      newProfile = {id:newId, name}
       toast(`Profiel "${name}" aangemaakt (demo)!`,'ok')
     } else {
       const r = await fetch(`${BASE}/profiles`, {
         method:'POST',
-        headers: headers(),
+        headers: headers(ctx),
         body: JSON.stringify({name})
       })
       if (!r.ok) throw new Error('API fout: '+r.status)
       const j = await r.json()
-      const newProfile = j.data || j
-      S.profiles.push(newProfile)
+      newProfile = j.data || j
       toast(`Profiel "${name}" aangemaakt!`,'ok')
     }
+    if (acct && newProfile?.id) acct.profiles.push({id:newProfile.id, name})
     document.getElementById('cm-new-profile-name').value = ''
+    rebuildAllProfileLists()
     initConfigMgmt()
-    initQuickEdit()
-    // Rebuild master-select in sync tab
-    document.getElementById('master-select').innerHTML = S.profiles.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
-    buildTargetCards()
   } catch(e) {
     toast('Fout bij aanmaken: '+e.message,'err')
   } finally {
@@ -3027,11 +4417,11 @@ function renderCmPreview() {
 
     if (pdata.rewrites?.length) {
       html += `<div class="cm-section">
-        <div class="cm-section-hdr">↩️ Rewrites <span style="margin-left:auto;background:#ede9fe;color:#5b21b6;padding:1px 7px;border-radius:10px;font-size:10px">${pdata.rewrites.length}</span></div>
+        <div class="cm-section-hdr">↩️ Rewrites <span style="margin-left:auto;background:var(--surface-2);color:var(--text);padding:1px 7px;border-radius:10px;font-size:10px">${pdata.rewrites.length}</span></div>
         <div class="cm-section-body" style="flex-direction:column;gap:4px;padding:10px 16px">
           ${pdata.rewrites.map(r=>`
-            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-family:'SF Mono',Monaco,Menlo,monospace;background:#f5f3ff;border:1px solid #ddd6fe;padding:4px 10px;border-radius:6px">
-              <span style="color:#5b21b6;font-weight:600">${esc(r.name)}</span>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-family:'SF Mono',Monaco,Menlo,monospace;background:var(--surface-2);border:1px solid var(--gray-border);padding:4px 10px;border-radius:6px">
+              <span style="color:var(--text);font-weight:600">${esc(r.name)}</span>
               <span style="color:var(--muted)">→</span>
               <span style="color:#1e40af">${esc(r.content)}</span>
             </div>`).join('')}
@@ -3097,6 +4487,32 @@ function cmToggleView() {
   document.getElementById('cm-json-view').style.display    = showJson ? 'block' : 'none'
   document.getElementById('cm-readable-view').style.display = showJson ? 'none'  : 'block'
 }
+
+// ═══════════════════════════════════════════════
+//  INIT ON LOAD
+// ═══════════════════════════════════════════════
+;(function init() {
+  // theme
+  let theme = localStorage.getItem(LS.theme)
+  if (theme!=='dark' && theme!=='light') {
+    theme = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light'
+  }
+  applyTheme(theme)
+  // language (browser-based default, NL only if browser is NL)
+  LANG = detectLang()
+  applyLang()
+  // make sure no remembered key lingers in the field
+  const k = document.getElementById('apikey'); if (k) k.value = ''
+  // about / footer
+  const av = document.getElementById('about-version'); if (av) av.textContent = APP_VERSION
+  renderLoginFooter()
+  renderSavedSessions()
+  updateEnterButton()
+  onRememberToggle()
+  setFootVisible(true)
+  refreshFavoritesUI()
+  refreshHistoryUI()
+})()
 </script>
 </body>
 </html>
