@@ -80,7 +80,6 @@ Features include:
 Monitor DNS traffic in real time using NextDNS Flow events.
 
 Filter queries by:
-
 - Device
 - Domain
 - Blocked requests only
