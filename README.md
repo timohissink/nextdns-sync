@@ -1,150 +1,277 @@
-# NextDNS Sync Tool
+NextDNS Sync Tool
 
-> A self-contained, single-file web app for managing and syncing your NextDNS profiles — no installation, no backend, no dependencies.
+A lightweight, self-contained web application for managing, comparing, backing up, and synchronizing NextDNS profiles — no installation, backend, or external dependencies required.
 
-![Version](https://img.shields.io/badge/Version-4.0-brightgreen.svg)
-![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)
-![HTML](https://img.shields.io/badge/Built%20with-HTML%2FJS-orange.svg)
-![NextDNS](https://img.shields.io/badge/API-NextDNS-blueviolet.svg)
+⸻
 
----
+Overview
 
-## What is this?
+Managing multiple NextDNS profiles can quickly become tedious. Whether you maintain separate profiles for different devices, family members, locations, or customers, keeping settings synchronized often means repeating the same changes multiple times.
 
-If you manage multiple [NextDNS](https://nextdns.io) profiles — for example, one per device, family member, or network — you know the pain of keeping them in sync. Adding a domain to the denylist of one profile means manually repeating that on every other profile.
+The NextDNS Sync Tool eliminates that hassle.
 
-**NextDNS Sync Tool** solves that. It's a single HTML file you open in your browser that connects directly to the NextDNS API using your API key. No server, no signup, no install. Just open and go.
+Built as a single HTML file, it runs entirely in your browser and connects directly to the NextDNS API using your personal API key. No installation, server, account registration, or third-party services are required.
 
----
+Simply open the app and start managing your profiles.
 
-## Features
+⸻
 
-### 🔄 Profile Sync
-Copy settings from a **master profile** to one or more target profiles. Choose exactly what to sync:
-- Denylist & Allowlist
-- DNS Rewrites
-- Security settings (threat intelligence, AI detection, Safe Browsing, etc.)
-- TLD Blocklist
-- Privacy settings & blocklists
-- Parental controls
+Features
 
-Before applying anything, you get a full **diff preview** — color-coded per profile, per category — showing exactly what will be added, removed, or left unchanged. Individual entries can be skipped or force-applied.
+🔄 Profile Synchronization
 
-**Preset selections** let you save your favorite sync configurations (source profile, targets, categories) and reload them with one click — no need to reconfigure every time.
+Synchronize settings from a designated master profile to one or more target profiles.
 
-### 🔑 Multi-Account Support
-Add multiple NextDNS API keys in a single session. Each key is added on the login screen and shown in a list with a name, profile count, and a 🗑 button to remove it. You can switch between accounts inside the app via the header switcher.
+Choose exactly which components should be included:
 
-**Cross-account sync** is fully supported: the master profile and target profiles can belong to different accounts. The correct API key is resolved per profile automatically.
+* Denylist & Allowlist
+* DNS Rewrites
+* Security settings (Threat Intelligence, AI Detection, Safe Browsing, etc.)
+* TLD Blocklists
+* Privacy settings & blocklists
+* Parental Controls
 
-Keys can optionally be remembered for the duration of the browser session (sessionStorage — cleared when you close the browser). A name field appears when you choose to remember a key.
+Before any changes are applied, the tool generates a detailed diff preview showing exactly what will be added, removed, or remain unchanged. Differences are grouped by profile and category with clear color-coded indicators.
 
-### 💻 Devices
-View all devices linked to a profile, filterable by name or model, with query counts and a usage bar.
+Individual entries can be excluded from the sync or force-applied when needed.
 
-### 📡 Flows (Live DNS Query Log)
-Stream live DNS queries per profile in real time using Server-Sent Events. Filter by device, domain, or blocked-only. Useful for diagnosing what's being blocked or allowed as it happens.
+Preset Configurations
 
-### ✏️ Quick Edit
-Rapidly add or remove domains from any profile's denylist, allowlist, or rewrites — without going through the full sync flow. Supports bulk input and file upload (`.txt`). **Preset selections** let you save common domain sets and reapply them instantly.
+Save commonly used synchronization setups—including source profile, target profiles, and selected categories—and restore them instantly with a single click.
 
-### 💾 Config Management
-Back up and export profiles to a portable JSON snapshot and import them back later — or onto a different account. Includes a human-readable preview with all settings, lists, and rules laid out clearly. Create new profiles directly from this tab.
+⸻
 
-### ⇄ Compare
-Place two profiles side by side and see exactly where they differ — per category, per entry — without changing anything. Works across accounts. Filter which components to compare using the sidebar checkboxes.
+🔑 Multi-Account Support
 
-### 🕘 History
-Every sync and duplication is logged automatically: when it ran, which profiles were involved, how many items were added or removed, and which categories were included. Export the full log as a `.txt` file, or clear it from the sidebar.
+Manage multiple NextDNS accounts simultaneously.
 
----
+Add multiple API keys during login and switch between accounts directly from the application header. Each account displays:
 
-## Getting Started
+* Custom name
+* Number of available profiles
+* Quick remove option
 
-### 1. Download
-Save `nextdns-sync.html` to your computer. That's the whole app.
+The tool fully supports cross-account synchronization, allowing a source profile from one account to synchronize with target profiles from another. API credentials are resolved automatically per profile.
 
-### 2. Serve it locally (required for API access)
-Most browsers block direct API calls from local `file://` pages due to CORS restrictions. Serve the file with a simple local server instead:
+Optionally, API keys can be remembered for the current browser session using sessionStorage. Stored keys are automatically removed when the browser is closed.
 
-```bash
-# Python (built-in)
+⸻
+
+💻 Device Management
+
+View all devices linked to a profile in a searchable interface.
+
+Features include:
+
+* Device name and model filtering
+* Query statistics
+* Visual usage indicators
+* Quick profile association overview
+
+⸻
+
+📡 Live DNS Query Monitoring (Flows)
+
+Monitor DNS traffic in real time using NextDNS Flow events.
+
+Filter queries by:
+
+* Device
+* Domain
+* Blocked requests only
+
+Ideal for troubleshooting filtering rules, identifying blocked services, or validating newly created policies.
+
+⸻
+
+✏️ Quick Edit
+
+Make rapid changes without opening the synchronization workflow.
+
+Supported actions:
+
+* Add or remove denylist entries
+* Add or remove allowlist entries
+* Manage DNS rewrites
+* Bulk domain input
+* .txt file import
+
+Save frequently used domain collections as presets and apply them whenever needed.
+
+⸻
+
+💾 Configuration Management
+
+Create complete backups of your NextDNS profiles and restore them at any time.
+
+Features include:
+
+* Export profiles to portable JSON snapshots
+* Import configurations into existing or new accounts
+* Human-readable configuration previews
+* Profile creation directly from the interface
+
+This makes migration, backup, and disaster recovery straightforward.
+
+⸻
+
+⇄ Profile Comparison
+
+Compare any two profiles side by side without making changes.
+
+The comparison view highlights differences across selected categories and displays individual additions, removals, and modifications.
+
+Supports comparisons across multiple accounts.
+
+⸻
+
+🕘 Activity History
+
+Every synchronization and duplication action is automatically recorded.
+
+History entries include:
+
+* Timestamp
+* Source and target profiles
+* Categories involved
+* Number of additions and removals
+
+Export the entire activity log as a text file or clear it whenever desired.
+
+⸻
+
+Getting Started
+
+1. Download
+
+Download or clone the repository and save nextdns-sync.html to your computer.
+
+2. Serve Locally
+
+Most browsers block API requests from file:// URLs due to CORS restrictions. Serve the file using a simple local web server:
+
+# Python
 python3 -m http.server 8080
-
-# Node.js (npx)
+# Node.js
 npx serve .
-
 # PHP
 php -S localhost:8080
-```
 
-Then open `http://localhost:8080/nextdns-sync.html` in your browser.
+Then open:
 
-### 3. Log in
-Enter your NextDNS API key. You can find it at [my.nextdns.io/account](https://my.nextdns.io/account) under **API**.
+http://localhost:8080/nextdns-sync.html
 
-> **No API key?** Type `demo` to explore the app with sample data. Nothing is sent to NextDNS.
+3. Log In
 
-You can add multiple keys on the login screen to manage several accounts simultaneously. Each key appears in a list with a name and profile count; click any to re-add it, or use 🗑 to forget it.
+Enter your NextDNS API key.
 
----
+You can find it at:
 
-## How to Sync Profiles
+https://my.nextdns.io/account
 
-1. Select a **Master Profile** from the dropdown — this is the source (any account).
-2. Check one or more **target profiles** to sync to (any account, grouped by account if you have multiple).
-3. Choose which **categories** to sync (denylist, security settings, etc.).
-4. Optionally enable **"Remove if not in master"** to clean up entries that no longer exist in the master.
-5. Click **Preview Changes** to see a full diff.
-6. Review, skip individual items if needed, then click **Apply Changes**.
+under Account → API Key.
 
-Save frequently-used configurations as **Preset selections** to skip steps 1–4 next time.
+Demo Mode
 
----
+Enter:
 
-## Other Actions
+demo
 
-| Action | Where |
-|---|---|
-| Rename a profile | Profile Sync sidebar → ✎ Rename |
-| Duplicate a profile | Profile Sync sidebar → ⧉ Duplicate |
-| Compare two profiles | Compare tab |
-| Create a new profile | Config Management tab |
-| View sync history | History tab |
+as your API key to explore the application using realistic sample data. No requests will be sent to NextDNS.
 
----
+⸻
 
-## Privacy & Security
+How to Synchronize Profiles
 
-- Your API key is **never stored in `localStorage`** or sent to any third party.
-- If you choose "Remember temporarily", the key is stored in `sessionStorage` only — it disappears when you close the browser.
-- All API calls go directly from your browser to `api.nextdns.io`. Nothing passes through any intermediate server.
-- The app is entirely client-side JavaScript in a single file. You can audit every line.
+1. Select a Master Profile (source profile).
+2. Select one or more Target Profiles.
+3. Choose the categories to synchronize.
+4. Optionally enable Remove if not in master to delete entries that no longer exist in the source profile.
+5. Click Preview Changes.
+6. Review the generated diff.
+7. Apply the changes.
 
----
+Frequently used configurations can be saved as Preset Configurations for one-click reuse.
 
-## Interface
+⸻
 
-- **Dark mode** — toggle in the top-right corner, respects your OS preference on first load.
-- **Language** — English and Dutch (NL), defaults to your browser language. Toggle in the top-right corner.
-- **Demo mode** — type `demo` as your API key to explore the full interface with realistic sample data.
+Additional Actions
 
----
+Action	Location
+Rename a profile	Profile Sync sidebar
+Duplicate a profile	Profile Sync sidebar
+Compare profiles	Compare tab
+Create a profile	Config Management tab
+View history	History tab
 
-## Browser Compatibility
+⸻
 
-Works in any modern browser (Chrome, Firefox, Edge, Safari). Requires JavaScript to be enabled.
+Privacy & Security
 
----
+Privacy is a core design principle of this project.
 
-## Contributing
+* API keys are never stored in localStorage
+* No data is sent to third-party services
+* All requests go directly to api.nextdns.io
+* The application runs entirely client-side
+* The full source code can be inspected and audited
 
-Found a bug or want to add something? Feel free to open an issue or pull request at [github.com/timohissink/nextdns-sync](https://github.com/timohissink/nextdns-sync).
+If enabled, API keys are stored only in sessionStorage and are automatically removed when the browser session ends.
 
----
+⸻
 
-## License
+Interface
 
-GNU General Public License v3.0 — see [LICENSE](LICENSE) for details.
+🌙 Dark Mode
 
-Maintained by [Timo Hissink](https://github.com/timohissink).
+Supports both light and dark themes.
+
+The application follows your operating system preference on first launch and can be changed at any time.
+
+🌍 Localization
+
+Available in:
+
+* English
+* Dutch (Nederlands)
+
+The default language is automatically selected based on your browser settings.
+
+🧪 Demo Mode
+
+Use demo as your API key to explore the full application without requiring a NextDNS account.
+
+⸻
+
+Browser Compatibility
+
+Compatible with all modern browsers:
+
+* Google Chrome
+* Mozilla Firefox
+* Microsoft Edge
+* Safari
+
+JavaScript must be enabled.
+
+⸻
+
+Contributing
+
+Bug reports, feature requests, and pull requests are welcome.
+
+GitHub repository:
+
+https://github.com/timohissink/nextdns-sync
+
+⸻
+
+License
+
+Licensed under the GNU General Public License v3.0 (GPL-3.0).
+
+See the LICENSE file for details.
+
+⸻
+
+Maintained by Timo Hissink.
