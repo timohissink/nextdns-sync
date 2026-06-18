@@ -40,7 +40,7 @@ Inspect recent DNS query logs per profile. Filter by device to see per-device tr
 Make rapid changes to any profile's denylist or allowlist without going through the full sync flow.
 
 ### 💾 Config Management
-Export your profiles to a portable JSON snapshot and import them back later — or onto a different account. Includes a human-readable preview with all settings, lists, and rules laid out clearly.
+Back-up and export your profiles to a portable JSON snapshot and import them back later — or onto a different account. Includes a human-readable preview with all settings, lists, and rules laid out clearly.
 
 ---
 
