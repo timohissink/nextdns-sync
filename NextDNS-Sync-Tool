@@ -1,0 +1,3102 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NextDNS Profile Sync</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#2563eb;--blue-h:#1d4ed8;--blue-light:#eff6ff;
+  --green:#16a34a;--green-bg:#f0fdf4;--green-b:#bbf7d0;
+  --red:#dc2626;--red-bg:#fef2f2;--red-b:#fecaca;
+  --orange:#d97706;--orange-bg:#fffbeb;--orange-b:#fde68a;
+  --gray:#6b7280;--gray-light:#f9fafb;--gray-border:#e5e7eb;
+  --text:#111827;--muted:#6b7280;--radius:10px;
+  --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,.1);
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f1f5f9;color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+
+/* ─── SHARED ─── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn:disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-h)}
+.btn-outline{background:#fff;color:var(--blue);border:1.5px solid var(--blue)}.btn-outline:hover{background:var(--blue-light)}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--gray-border)}.btn-ghost:hover{background:var(--gray-light);color:var(--text)}
+.btn-danger{background:#fff;color:var(--red);border:1.5px solid var(--red-b)}.btn-danger:hover{background:var(--red-bg)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px;border-radius:5px}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .65s linear infinite;flex-shrink:0}
+.spinner-dark{border-color:rgba(37,99,235,.25);border-top-color:var(--blue)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+label{font-size:13px;font-weight:600;color:var(--text)}
+input[type=password],input[type=text],select{width:100%;padding:8px 10px;border:1.5px solid var(--gray-border);border-radius:7px;font-size:13px;background:#fff;outline:none;transition:border .15s;font-family:inherit}
+input:focus,select:focus{border-color:var(--blue)}
+
+/* ─── LOGIN ─── */
+#sl{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+.login-box{background:#fff;border-radius:14px;box-shadow:var(--shadow-md);padding:2.5rem 2rem;width:100%;max-width:400px}
+.login-logo{color:var(--blue);font-size:18px;font-weight:800;margin-bottom:1.25rem;letter-spacing:-.3px}
+.login-title{font-size:22px;font-weight:700;margin-bottom:.4rem}
+.login-sub{color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:1.25rem}
+.login-sub strong{color:var(--text)}
+.field{display:flex;flex-direction:column;gap:5px}
+.field-help{font-size:12px;color:var(--muted)}.field-help a{color:var(--blue);text-decoration:none}.field-help a:hover{text-decoration:underline}
+.alert{border-radius:7px;padding:10px 12px;font-size:12.5px;margin-top:.75rem;display:none}
+.alert-error{background:var(--red-bg);border:1px solid var(--red-b);color:var(--red)}
+.alert-warn{background:var(--orange-bg);border:1px solid var(--orange-b);color:#92400e}
+.alert-warn strong{display:block;margin-bottom:3px;font-size:13px}
+
+/* ─── WELCOME ─── */
+#sw{display:none;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+.welcome-box{background:#fff;border-radius:14px;box-shadow:var(--shadow-md);padding:2rem;width:100%;max-width:400px;text-align:center}
+.avatar{width:52px;height:52px;background:var(--blue);border-radius:50%;color:#fff;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto .75rem}
+.welcome-email{font-weight:600;font-size:15px;margin-bottom:2px}
+.welcome-label{font-size:12px;color:var(--muted)}
+.divider{border:none;border-top:1px solid var(--gray-border);margin:1.25rem 0}
+.wpi{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;color:var(--muted);font-size:13px;background:var(--gray-light);margin-bottom:4px;text-align:left}
+.badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.03em}
+.b-editor{background:#dbeafe;color:#1e40af}.b-demo{background:#fef3c7;color:#92400e}
+.welcome-actions{display:flex;gap:8px;margin-top:1.25rem}
+.welcome-actions .btn{flex:1}
+
+/* ─── APP SHELL ─── */
+#sa{display:none;flex-direction:column;min-height:100vh}
+
+/* header */
+.app-header{
+  background:#fff;
+  border-bottom:1px solid var(--gray-border);
+  padding:0 20px;
+  height:52px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  flex-shrink:0;
+  position:sticky;top:0;z-index:10;
+}
+.header-left{display:flex;align-items:center;gap:0}
+.app-logo{color:var(--blue);font-weight:800;font-size:15px;letter-spacing:-.3px;margin-right:16px}
+.header-right{display:flex;align-items:center;gap:10px}
+.header-email{font-size:12px;color:var(--muted)}
+
+/* nav tabs */
+.nav-tabs{display:flex;align-items:stretch;height:52px;gap:0}
+.nav-tab{
+  display:flex;align-items:center;gap:6px;
+  padding:0 18px;font-size:13px;font-weight:600;
+  color:var(--muted);cursor:pointer;border:none;background:transparent;
+  border-bottom:2.5px solid transparent;margin-bottom:-1px;
+  transition:color .15s,border-color .15s;white-space:nowrap;
+}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.nav-tab-icon{font-size:14px}
+
+/* demo banner */
+.demo-banner{background:#fef9c3;border-bottom:1px solid #fde68a;padding:7px 20px;font-size:12px;color:#854d0e;text-align:center;flex-shrink:0}
+
+/* body layout */
+.app-body{display:flex;flex:1;min-height:0;overflow:hidden}
+
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:268px;min-width:268px;
+  background:#fff;
+  border-right:1px solid var(--gray-border);
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  flex-shrink:0;
+}
+.sb-section{padding:14px 16px;border-bottom:1px solid var(--gray-border)}
+.sb-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+
+/* profile cards */
+.profile-cards{display:flex;flex-direction:column;gap:5px}
+.pcard{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 10px;border:1.5px solid var(--gray-border);
+  border-radius:8px;cursor:pointer;font-size:13px;
+  transition:border-color .15s,background .15s;user-select:none;
+}
+.pcard:hover{border-color:var(--blue);background:var(--blue-light)}
+.pcard.selected{border-color:var(--blue);background:var(--blue-light)}
+.pcard-check{width:17px;height:17px;border:2px solid var(--gray-border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;transition:.15s}
+.pcard.selected .pcard-check{background:var(--blue);border-color:var(--blue)}
+.pcard.selected .pcard-check::after{content:'✓'}
+.pcard-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pcard-view{opacity:0;font-size:11px;color:var(--blue);text-decoration:none;padding:2px 6px;border-radius:4px;background:transparent;border:none;cursor:pointer;font-weight:600;flex-shrink:0;transition:.15s}
+.pcard:hover .pcard-view{opacity:1}
+.pcard-view:hover{background:rgba(37,99,235,.1)}
+
+/* sync options */
+.sync-cats{display:flex;flex-direction:column;gap:6px}
+.cat-row{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;user-select:none}
+.cat-row input{cursor:pointer;width:14px;height:14px;accent-color:var(--blue)}
+
+/* remove toggle */
+.remove-toggle{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;
+  background:#fff8f0;
+  border:1.5px solid #fed7aa;
+  border-radius:8px;
+  cursor:pointer;
+  user-select:none;
+}
+.remove-toggle input{cursor:pointer;width:14px;height:14px;accent-color:var(--orange);margin-top:2px;flex-shrink:0}
+.remove-toggle-text{font-size:12px;line-height:1.5;color:#9a3412}
+.remove-toggle-text strong{display:block;font-size:13px;color:#7c2d12;margin-bottom:1px}
+
+/* sidebar actions */
+.sb-actions{padding:14px 16px;display:flex;flex-direction:column;gap:8px;margin-top:auto;border-top:1px solid var(--gray-border)}
+
+/* ─── PREVIEW PANEL ─── */
+.preview-panel{flex:1;overflow-y:auto;padding:20px;background:#f1f5f9;min-width:0}
+
+.preview-empty{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  height:100%;color:var(--muted);text-align:center;gap:8px;min-height:300px;
+}
+.preview-empty .empty-icon{font-size:36px;opacity:.35}
+.preview-empty h3{font-size:15px;color:var(--text)}
+.preview-empty p{font-size:13px;max-width:260px;line-height:1.5}
+
+/* preview header */
+.preview-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;flex-wrap:wrap;gap:8px;
+  background:#f1f5f9;padding-bottom:12px;
+  position:sticky;top:0;z-index:5;
+  padding-top:2px;
+}
+.preview-hdr-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.preview-hdr-title{font-size:16px;font-weight:700}
+.legend{display:flex;gap:12px;font-size:12px;align-items:center;flex-wrap:wrap}
+.leg{display:flex;align-items:center;gap:5px}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dot-g{background:var(--green)}.dot-r{background:var(--red)}.dot-gr{background:#9ca3af}.dot-o{background:var(--orange)}
+
+/* target block */
+.target-block{background:#fff;border-radius:12px;border:1px solid var(--gray-border);margin-bottom:20px;overflow:hidden;box-shadow:var(--shadow)}
+.target-hdr{
+  padding:14px 18px;
+  border-bottom:2px solid var(--gray-border);
+  display:flex;align-items:center;gap:10px;
+  flex-wrap:wrap;
+  background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);
+}
+.target-name{font-weight:700;font-size:15px;color:#fff}
+.target-id-tag{font-size:11px;background:rgba(255,255,255,.18);padding:2px 8px;border-radius:4px;color:rgba(255,255,255,.85);font-family:monospace;border:1px solid rgba(255,255,255,.2)}
+
+/* count badges */
+.counts{display:flex;gap:5px;margin-left:auto;flex-wrap:wrap;align-items:center}
+.cbadge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px}
+.cb-add{background:#d1fae5;color:#065f46}
+.cb-rem{background:#fee2e2;color:#991b1b}
+.cb-unch{background:rgba(255,255,255,.2);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.2)}
+.cb-over{background:#fef3c7;color:#92400e}
+
+/* category section inside target block */
+.cat-section{border-bottom:1px solid var(--gray-border)}
+.cat-section:last-child{border-bottom:none}
+.cat-hdr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 16px 8px;
+  background:#f8fafc;
+  border-bottom:1px solid #eef2f7;
+  cursor:pointer;
+  user-select:none;
+}
+.cat-hdr-left{display:flex;align-items:center;gap:8px}
+.cat-hdr-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.cat-hdr-counts{display:flex;gap:4px}
+.cat-hdr-count{font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px}
+.chc-add{background:var(--green-bg);color:var(--green)}
+.chc-rem{background:var(--red-bg);color:var(--red)}
+.chc-over{background:var(--orange-bg);color:var(--orange)}
+.chc-unch{background:var(--gray-light);color:var(--muted)}
+.cat-collapse-icon{font-size:11px;color:var(--muted);transition:transform .2s}
+.cat-section.collapsed .cat-collapse-icon{transform:rotate(-90deg)}
+.cat-rows{display:none}
+.cat-section.open .cat-rows{display:block}
+
+/* change row */
+.change-row{
+  display:grid;
+  grid-template-columns:28px 1fr auto auto;
+  align-items:center;gap:10px;
+  padding:7px 16px;
+  border-bottom:1px solid #f3f6fa;
+  transition:background .1s;
+  min-height:36px;
+}
+.change-row:last-child{border-bottom:none}
+.change-row:hover{background:#fafbfc}
+.change-row.row-add{background:#f0fdf4}
+.change-row.row-add:hover{background:#e8faf0}
+.change-row.row-rem{background:#fef5f5}
+.change-row.row-rem:hover{background:#fdecea}
+.change-row.row-over{background:#fffcf5}
+.change-row.row-over:hover{background:#fef9ec}
+.change-row.row-unch{background:#fff}
+.change-row.skipped{opacity:.4}
+.change-row.skipped .change-domain{text-decoration:line-through}
+
+.ci{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;color:#fff}
+.ci-add{background:var(--green)}.ci-rem{background:var(--red)}.ci-unch{background:#c4c9d4}.ci-over{background:var(--orange)}
+
+.change-domain{font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text)}
+.change-note{font-size:11px;color:var(--muted);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;text-align:right}
+.row-btns{display:flex;gap:4px;flex-shrink:0}
+.skip-btn{font-size:11px;color:var(--muted);background:none;border:1px solid var(--gray-border);border-radius:4px;padding:2px 8px;cursor:pointer;white-space:nowrap;transition:.15s;flex-shrink:0;line-height:1.4}
+.skip-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.skipped .skip-btn{color:var(--orange);border-color:var(--orange-b);background:var(--orange-bg)}
+.force-btn{font-size:11px;color:var(--orange);background:none;border:1px solid var(--orange-b);border-radius:4px;padding:2px 8px;cursor:pointer;white-space:nowrap;transition:.15s;flex-shrink:0;line-height:1.4}
+.force-btn:hover{border-color:var(--orange);color:#fff;background:var(--orange)}
+.change-row.forced{background:#fff8f0}
+.change-row.forced .force-btn{color:#fff;background:var(--orange);border-color:var(--orange)}
+.change-row.forced .ci-over{background:var(--green)}
+/* forced overruled item looks like an add */
+.change-row.forced .change-note{color:var(--green);font-style:normal;font-weight:600}
+
+/* ─── MODAL ─── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:12px;padding:1.75rem;max-width:460px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;display:flex;flex-direction:column;gap:12px}
+.modal-title{font-size:16px;font-weight:700}
+.modal-body{font-size:13px;color:var(--muted);line-height:1.6}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+.progress-log{background:#0f172a;border-radius:8px;padding:10px 14px;font-family:'SF Mono',Monaco,monospace;font-size:11.5px;color:#94a3b8;max-height:220px;overflow-y:auto;display:none;flex:none}
+.progress-log .ok{color:#4ade80}.progress-log .err{color:#f87171}.progress-log .info{color:#60a5fa}
+
+/* ─── PROFILE VIEWER MODAL ─── */
+.profile-viewer{max-width:600px;overflow-y:auto}
+.pv-section{margin-bottom:14px}
+.pv-section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;padding-bottom:5px;border-bottom:1px solid var(--gray-border)}
+.pv-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.pv-item{display:flex;align-items:center;gap:7px;font-size:12.5px;padding:5px 8px;border-radius:5px;background:var(--gray-light)}
+.pv-item .pv-key{flex:1;color:var(--muted)}.pv-item .pv-val{font-weight:600;font-size:11px;padding:1px 6px;border-radius:3px}
+.pv-on{background:#dcfce7;color:#166534}.pv-off{background:#f3f4f6;color:#6b7280}
+.pv-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;background:var(--gray-light);padding:4px 8px;border-radius:5px;margin:2px}
+.pv-list{display:flex;flex-wrap:wrap}
+.pv-domain{font-family:monospace;font-size:12px}
+.pv-active{color:var(--green)}.pv-inactive{color:var(--muted)}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:20px;right:20px;background:#1e293b;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;z-index:200;transform:translateY(60px);opacity:0;transition:.25s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast.ok{background:var(--green)}.toast.err{background:var(--red)}
+
+/* ─── DEVICES & FLOWS ─── */
+.df-body{display:flex;flex:1;min-height:0;overflow:hidden}
+
+/* df sidebar */
+.df-sidebar{
+  width:260px;min-width:260px;background:#fff;
+  border-right:1px solid var(--gray-border);
+  display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;
+}
+
+/* device cards in df */
+.dev-card{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-bottom:1px solid #f3f6fa;
+  cursor:pointer;transition:background .1s;user-select:none;
+}
+.dev-card:hover{background:#f8fafc}
+.dev-card.selected{background:var(--blue-light)}
+.dev-check{width:16px;height:16px;border:2px solid var(--gray-border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:#fff;transition:.15s}
+.dev-card.selected .dev-check{background:var(--blue);border-color:var(--blue)}
+.dev-card.selected .dev-check::after{content:'✓'}
+.dev-icon{width:30px;height:30px;border-radius:8px;background:var(--gray-light);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;border:1px solid var(--gray-border)}
+.dev-info{flex:1;min-width:0}
+.dev-name{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dev-model{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dev-qcount{font-size:11px;font-weight:700;color:var(--muted);background:var(--gray-light);padding:2px 7px;border-radius:10px;flex-shrink:0}
+
+/* df controls bar */
+.df-controls{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;border-bottom:1px solid var(--gray-border);
+  background:#fff;flex-shrink:0;flex-wrap:wrap;
+}
+.df-search{
+  flex:1;min-width:180px;padding:7px 10px 7px 32px;
+  border:1.5px solid var(--gray-border);border-radius:7px;
+  font-size:13px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 10px center;
+  outline:none;transition:border .15s;
+}
+.df-search:focus{border-color:var(--blue)}
+.df-search:disabled{background-color:#f9fafb;cursor:not-allowed;opacity:.6}
+
+.toggle-wrap{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;user-select:none;white-space:nowrap}
+.toggle-wrap input{display:none}
+.toggle{width:32px;height:18px;background:#d1d5db;border-radius:9px;position:relative;transition:.2s;flex-shrink:0}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-wrap input:checked + .toggle{background:var(--blue)}
+.toggle-wrap input:checked + .toggle::after{left:16px}
+.toggle-wrap input:disabled + .toggle{opacity:.5;cursor:not-allowed}
+
+/* df log panel */
+.df-log-panel{flex:1;display:flex;flex-direction:column;min-width:0;background:#f8fafc}
+.df-log-inner{flex:1;overflow-y:auto;min-height:0}
+
+.df-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;color:var(--muted);min-height:200px}
+.df-empty .empty-icon{font-size:36px;opacity:.3}
+.df-empty h3{font-size:15px;color:var(--text)}
+.df-empty p{font-size:13px;max-width:280px;text-align:center;line-height:1.5}
+
+/* log row */
+.log-row{
+  display:grid;
+  grid-template-columns:26px 1fr auto auto auto;
+  align-items:center;gap:10px;
+  padding:7px 16px;
+  border-bottom:1px solid #f0f4f8;
+  font-size:13px;transition:background .08s;
+}
+.log-row:hover{background:#fff}
+.log-row.blocked{background:#fff5f5}
+.log-row.blocked:hover{background:#fff0f0}
+.log-row.allowed{background:#f8fff8}
+
+.log-favicon{width:20px;height:20px;border-radius:4px;background:var(--gray-light);display:flex;align-items:center;justify-content:center;font-size:10px;overflow:hidden;flex-shrink:0}
+.log-favicon img{width:20px;height:20px;border-radius:4px}
+
+.log-domain{font-weight:600;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.log-root{color:var(--muted);font-weight:400}
+.log-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:1px}
+.log-type-badge{font-size:10px;font-weight:700;padding:1px 5px;border-radius:3px;background:#e2e8f0;color:#475569;letter-spacing:.03em}
+.log-dev-badge{font-size:10px;padding:1px 6px;border-radius:3px;background:var(--blue-light);color:var(--blue);font-weight:600}
+.log-reason{font-size:10px;padding:1px 6px;border-radius:3px;background:#fee2e2;color:#991b1b;font-weight:600}
+
+.log-status{flex-shrink:0}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sd-block{background:var(--red)}.sd-allow{background:var(--green)}.sd-default{background:#94a3b8}
+
+.log-ip{font-size:11px;color:var(--muted);font-family:monospace;white-space:nowrap}
+.log-time{font-size:11px;color:var(--muted);white-space:nowrap;text-align:right}
+
+/* live indicator */
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 1.2s ease-in-out infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.live-label{font-size:11px;font-weight:700;color:var(--red);letter-spacing:.04em}
+
+/* stat pills in df sidebar footer */
+.df-stat{display:flex;justify-content:space-between;padding:10px 14px;background:#f8fafc;border-top:1px solid var(--gray-border);font-size:12px;gap:8px;flex-shrink:0}
+.df-stat-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.df-stat-val{font-size:16px;font-weight:700}
+.df-stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.stat-total{color:var(--text)}.stat-blocked{color:var(--red)}.stat-allowed{color:var(--green)}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+
+/* ─── QUICK EDIT ─── */
+.qe-mode-active{background:var(--blue)!important;color:#fff!important;border-color:var(--blue)!important}
+.qe-result-block{background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+.qe-result-hdr{padding:12px 16px;background:#f8fafc;border-bottom:1px solid var(--gray-border);display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+.qe-domain-row{display:flex;align-items:center;gap:10px;padding:6px 16px;border-bottom:1px solid #f3f6fa;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12.5px}
+.qe-domain-row:last-child{border-bottom:none}
+.qe-domain-row.will-add{background:#f0fdf4}.qe-domain-row.will-remove{background:#fef5f5}
+.qe-domain-row.already-exists{opacity:.55}.qe-domain-row.not-found{opacity:.55}
+
+/* ─── CONFIG MANAGEMENT ─── */
+.cm-profile-block{background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px}
+.cm-profile-hdr{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);padding:14px 18px;display:flex;align-items:center;gap:10px}
+.cm-section{border-bottom:1px solid var(--gray-border)}
+.cm-section:last-child{border-bottom:none}
+.cm-section-hdr{padding:9px 16px;background:#f8fafc;border-bottom:1px solid #eef2f7;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.cm-section-body{padding:10px 16px;display:flex;flex-wrap:wrap;gap:6px}
+.cm-tag{display:inline-flex;align-items:center;gap:4px;font-size:12px;background:var(--gray-light);border:1px solid var(--gray-border);padding:3px 9px;border-radius:20px;font-family:'SF Mono',Monaco,Menlo,monospace}
+.cm-tag-deny{background:var(--red-bg);border-color:var(--red-b);color:var(--red)}
+.cm-tag-allow{background:var(--green-bg);border-color:var(--green-b);color:var(--green)}
+.cm-tag-on{background:#dbeafe;border-color:#bfdbfe;color:#1e40af}
+.cm-tag-off{background:#f3f4f6;border-color:#e5e7eb;color:#6b7280}
+.cm-kv{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;border-radius:6px;background:var(--gray-light);font-size:12.5px;min-width:160px;flex:1}
+.cm-kv-key{color:var(--muted);font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="sl">
+  <div class="login-box">
+    <div class="login-logo">NextDNS</div>
+    <h1 class="login-title">Welcome back</h1>
+    <p class="login-sub">Enter your API key to manage your NextDNS profiles.<br>Type <strong>demo</strong> to explore with sample data.</p>
+    <div class="field">
+      <label for="apikey">API Key</label>
+      <input type="password" id="apikey" placeholder="API key or 'demo'" autocomplete="off">
+      <div class="field-help">Find your key at <a href="https://my.nextdns.io/account" target="_blank">my.nextdns.io/account</a></div>
+    </div>
+    <div class="alert alert-error" id="login-err"></div>
+    <div class="alert alert-warn" id="login-cors">
+      <strong>⚠️ Browser security restriction (CORS)</strong>
+      Your browser blocks direct access to the NextDNS API from local files.<br><br>
+      <strong>Options:</strong> Type <strong>demo</strong> to explore, or serve this file via a local web server.
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:14px" id="login-btn" onclick="doLogin()">Continue →</button>
+  </div>
+</div>
+
+<!-- ═══ WELCOME ═══ -->
+<div id="sw">
+  <div class="welcome-box">
+    <div class="avatar" id="wavatar">?</div>
+    <div class="welcome-email" id="wname">Your Account</div>
+    <div class="welcome-label">NextDNS Account</div>
+    <hr class="divider">
+    <div style="font-size:13px;font-weight:600;text-align:left;margin-bottom:8px">Your Profiles</div>
+    <div id="wprofiles"></div>
+    <div class="welcome-actions">
+      <button class="btn btn-ghost" onclick="logout()">← Back</button>
+      <button class="btn btn-primary" onclick="openDashboard()">Open Dashboard →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="sa">
+  <header class="app-header">
+    <div class="header-left">
+      <span class="app-logo">NextDNS</span>
+      <nav class="nav-tabs">
+        <button class="nav-tab active" id="tab-sync" onclick="switchTab('sync')">
+          <span class="nav-tab-icon">🔄</span> Profile Sync
+        </button>
+        <button class="nav-tab" id="tab-devices" onclick="switchTab('devices')">
+          <span class="nav-tab-icon">💻</span> Devices
+        </button>
+        <button class="nav-tab" id="tab-flows" onclick="switchTab('flows')">
+          <span class="nav-tab-icon">📡</span> Flows
+        </button>
+        <button class="nav-tab" id="tab-quickedit" onclick="switchTab('quickedit')">
+          <span class="nav-tab-icon">✏️</span> Quick Edit
+        </button>
+        <button class="nav-tab" id="tab-configmgmt" onclick="switchTab('configmgmt')">
+          <span class="nav-tab-icon">💾</span> Config Management
+        </button>
+      </nav>
+    </div>
+    <div class="header-right">
+      <span class="header-email" id="app-email"></span>
+      <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
+    </div>
+  </header>
+  <div class="demo-banner" id="demo-banner" style="display:none">
+    🧪 <strong>Demo mode</strong> — Exploring with sample data. No real API calls are made.
+  </div>
+  <!-- Profile Sync page -->
+  <div id="page-sync" class="app-body">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Master Profile</div>
+        <select id="master-select" onchange="onMasterChange()"></select>
+        <div style="font-size:11px;color:var(--muted);margin-top:5px">Settings will be <em>copied from</em> this profile.</div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px;width:100%" onclick="viewProfile(document.getElementById('master-select').value)">👁 View profile</button>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Copy To</div>
+        <div class="profile-cards" id="target-cards"></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">Select one or more destination profiles.</div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">What to Sync</div>
+        <div class="sync-cats">
+          <label class="cat-row"><input type="checkbox" id="cat-denylist" checked> Denylist</label>
+          <label class="cat-row"><input type="checkbox" id="cat-allowlist" checked> Allowlist</label>
+          <label class="cat-row"><input type="checkbox" id="cat-rewrites"> Rewrites</label>
+          <label class="cat-row"><input type="checkbox" id="cat-security"> Security settings</label>
+          <label class="cat-row"><input type="checkbox" id="cat-tlds"> TLD Blocklist</label>
+          <label class="cat-row"><input type="checkbox" id="cat-privacy"> Privacy &amp; blocklists</label>
+          <label class="cat-row"><input type="checkbox" id="cat-parental"> Parental Control</label>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Options</div>
+        <label class="remove-toggle" id="remove-toggle-label">
+          <input type="checkbox" id="opt-remove" onchange="onRemoveToggle()">
+          <div class="remove-toggle-text">
+            <strong>Remove if not in master</strong>
+            Items in destination that don't exist in master will be removed. Off by default.
+          </div>
+        </label>
+      </div>
+
+      <div class="sb-actions">
+        <button class="btn btn-outline" id="preview-btn" onclick="previewChanges()">Preview Changes</button>
+        <button class="btn btn-primary" id="apply-btn" onclick="openApplyModal()" disabled>Apply Changes</button>
+      </div>
+    </aside>
+
+    <!-- Preview panel -->
+    <main class="preview-panel" id="preview-panel">
+      <div class="preview-empty" id="preview-empty">
+        <div class="empty-icon">🔄</div>
+        <h3>No preview yet</h3>
+        <p>Select a master profile, one or more destination profiles, and click "Preview Changes".</p>
+      </div>
+      <div id="preview-content" style="display:none"></div>
+    </main>
+  </div>
+
+  <!-- ═══ DEVICES PAGE ═══ -->
+  <div id="page-devices" class="app-body" style="display:none">
+    <aside class="sidebar" style="width:240px;min-width:240px">
+      <div class="sb-section">
+        <div class="sb-label">Profiel</div>
+        <select id="dv-profile-select" onchange="onDvProfileChange()"></select>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Zoeken</div>
+        <input type="text" id="dv-search" placeholder="Naam of model…" oninput="onDvSearch()">
+      </div>
+      <div class="sb-actions">
+        <div style="background:var(--blue-light);border:1.5px solid #bfdbfe;border-radius:8px;padding:12px;text-align:center">
+          <div style="font-size:28px;font-weight:800;color:var(--blue);line-height:1" id="dv-count">—</div>
+          <div style="font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.07em;margin-top:3px">Devices</div>
+        </div>
+      </div>
+    </aside>
+    <main class="preview-panel" id="dv-main">
+      <div class="preview-empty" id="dv-empty">
+        <div class="empty-icon">💻</div>
+        <h3>Geen profiel geselecteerd</h3>
+        <p>Selecteer een profiel om de gekoppelde devices te bekijken.</p>
+      </div>
+      <div id="dv-content" style="display:none"></div>
+    </main>
+  </div>
+
+  <!-- ═══ FLOWS PAGE ═══ -->
+  <div id="page-flows" class="df-body" style="display:none">
+    <aside class="df-sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Profiel</div>
+        <select id="df-profile-select" onchange="onDfProfileChange()"></select>
+      </div>
+      <div class="sb-section" style="padding-bottom:8px">
+        <div class="sb-label">Filter op device</div>
+        <div id="df-devices-list">
+          <div style="color:var(--muted);font-size:12px;font-style:italic">Selecteer een profiel</div>
+        </div>
+      </div>
+      <div class="df-stat" id="df-stat">
+        <div class="df-stat-item">
+          <span class="df-stat-val stat-total" id="df-stat-total">0</span>
+          <span class="df-stat-lbl">Queries</span>
+        </div>
+        <div class="df-stat-item">
+          <span class="df-stat-val stat-blocked" id="df-stat-blocked">0</span>
+          <span class="df-stat-lbl">Blocked</span>
+        </div>
+        <div class="df-stat-item">
+          <span class="df-stat-val stat-allowed" id="df-stat-allowed">0</span>
+          <span class="df-stat-lbl">Allowed</span>
+        </div>
+      </div>
+    </aside>
+    <div class="df-log-panel">
+      <div class="df-controls">
+        <button class="btn btn-primary btn-sm" id="df-start-btn" onclick="toggleLiveLog()">▶ Start</button>
+        <input class="df-search" type="text" id="df-search" placeholder="Search domain…" disabled oninput="onDfSearch()">
+        <label class="toggle-wrap">
+          <input type="checkbox" id="df-blocked-only" onchange="onDfFilterChange()">
+          <span class="toggle"></span>
+          Blocked only
+        </label>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="df-raw" onchange="onDfFilterChange()">
+          <span class="toggle"></span>
+          Raw DNS
+        </label>
+        <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
+          <div class="live-dot" id="df-live-dot" style="display:none"></div>
+          <span class="live-label" id="df-live-label" style="display:none">LIVE</span>
+        </div>
+      </div>
+      <div class="df-log-inner" id="df-log-inner">
+        <div class="df-empty" id="df-empty">
+          <div class="empty-icon">📡</div>
+          <h3>Nog geen live data</h3>
+          <p>Selecteer een profiel, optioneel een device, en klik Start om live DNS-queries te streamen.</p>
+        </div>
+        <div id="df-log-rows" style="display:none"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══ QUICK EDIT PAGE ═══ -->
+  <div id="page-quickedit" class="app-body" style="display:none">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Modus</div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-primary btn-sm" id="qe-mode-add" onclick="setQeMode('add')" style="flex:1">+ Add Domains</button>
+          <button class="btn btn-ghost btn-sm" id="qe-mode-remove" onclick="setQeMode('remove')" style="flex:1">− Remove Domains</button>
+        </div>
+        <div id="qe-mode-hint" style="font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5">
+          Domeinen worden <strong>toegevoegd</strong> aan de geselecteerde profielen.
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div class="sb-label" style="margin-bottom:0">Profielen</div>
+          <button class="btn btn-ghost btn-xs" onclick="qeSelectAll()">Alles selecteren</button>
+        </div>
+        <div class="profile-cards" id="qe-profile-cards"></div>
+      </div>
+
+      <div class="sb-actions">
+        <button class="btn btn-outline" id="qe-preview-btn" onclick="qePreview()">Preview</button>
+        <button class="btn btn-primary" id="qe-apply-btn" onclick="qeApply()" disabled>Toepassen</button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="preview-panel" style="display:flex;flex-direction:column;gap:16px;overflow-y:auto">
+
+      <!-- Deny section -->
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
+        <div style="background:linear-gradient(135deg,#7f1d1d 0%,#dc2626 100%);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:16px">🚫</span>
+            <span style="font-weight:700;color:#fff;font-size:14px">Denylist</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <label class="btn btn-xs" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer" title="Upload .txt bestand">
+              📂 Upload
+              <input type="file" accept=".txt" style="display:none" onchange="qeLoadFile(event,'deny')">
+            </label>
+            <button class="btn btn-xs" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)" onclick="qeClear('deny')">Leegmaken</button>
+          </div>
+        </div>
+        <div style="padding:12px 16px">
+          <textarea id="qe-deny-input" placeholder="Voer domeinnamen in, één per regel:&#10;ads.example.com&#10;tracker.example.net" style="width:100%;height:160px;border:1.5px solid var(--gray-border);border-radius:7px;padding:10px;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12.5px;resize:vertical;outline:none;transition:border .15s;line-height:1.6" onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--gray-border)'" oninput="qeOnInput()"></textarea>
+          <div style="font-size:11px;color:var(--muted);margin-top:5px" id="qe-deny-count">0 domeinen</div>
+        </div>
+      </div>
+
+      <!-- Allow section -->
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
+        <div style="background:linear-gradient(135deg,#14532d 0%,#16a34a 100%);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:16px">✅</span>
+            <span style="font-weight:700;color:#fff;font-size:14px">Allowlist</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <label class="btn btn-xs" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);cursor:pointer" title="Upload .txt bestand">
+              📂 Upload
+              <input type="file" accept=".txt" style="display:none" onchange="qeLoadFile(event,'allow')">
+            </label>
+            <button class="btn btn-xs" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)" onclick="qeClear('allow')">Leegmaken</button>
+          </div>
+        </div>
+        <div style="padding:12px 16px">
+          <textarea id="qe-allow-input" placeholder="Voer domeinnamen in, één per regel:&#10;intranet.example.com&#10;api.example.net" style="width:100%;height:160px;border:1.5px solid var(--gray-border);border-radius:7px;padding:10px;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12.5px;resize:vertical;outline:none;transition:border .15s;line-height:1.6" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--gray-border)'" oninput="qeOnInput()"></textarea>
+          <div style="font-size:11px;color:var(--muted);margin-top:5px" id="qe-allow-count">0 domeinen</div>
+        </div>
+      </div>
+
+      <!-- Rewrites section -->
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--gray-border);box-shadow:var(--shadow);overflow:hidden">
+        <div style="background:linear-gradient(135deg,#3b0764 0%,#7c3aed 100%);padding:12px 18px;display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:16px">↩️</span>
+            <div>
+              <span style="font-weight:700;color:#fff;font-size:14px">Rewrites</span>
+              <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:1px">Formaat: <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px">naam.lan=192.168.1.1</code> of <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px">naam.lan=alias.local</code></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button class="btn btn-xs" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3)" onclick="qeClear('rewrite')">Leegmaken</button>
+          </div>
+        </div>
+        <div style="padding:12px 16px">
+          <textarea id="qe-rewrite-input" placeholder="Één rewrite per regel (naam=doel):&#10;home.lan=192.168.1.1&#10;nas.lan=192.168.1.10&#10;pi.lan=pi.hole" style="width:100%;height:140px;border:1.5px solid var(--gray-border);border-radius:7px;padding:10px;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12.5px;resize:vertical;outline:none;transition:border .15s;line-height:1.6" onfocus="this.style.borderColor='#7c3aed'" onblur="this.style.borderColor='var(--gray-border)'" oninput="qeOnInput()"></textarea>
+          <div style="font-size:11px;color:var(--muted);margin-top:5px" id="qe-rewrite-count">0 rewrites · alleen beschikbaar in Add-modus</div>
+        </div>
+      </div>
+
+      <!-- Preview result -->
+      <div id="qe-preview-result" style="display:none"></div>
+    </main>
+  </div>
+
+  <!-- ═══ CONFIG MANAGEMENT PAGE ═══ -->
+  <div id="page-configmgmt" class="app-body" style="display:none">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sb-section">
+        <div class="sb-label">Profiel(en)</div>
+        <div class="profile-cards" id="cm-profile-cards"></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:6px">Selecteer één of meerdere profielen.</div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Onderdelen</div>
+        <div class="sync-cats" id="cm-cats">
+          <label class="cat-row"><input type="checkbox" id="cm-cat-denylist" checked onchange="cmClearPreview()"> Denylist</label>
+          <label class="cat-row"><input type="checkbox" id="cm-cat-allowlist" checked onchange="cmClearPreview()"> Allowlist</label>
+          <label class="cat-row"><input type="checkbox" id="cm-cat-rewrites" checked onchange="cmClearPreview()"> Rewrites</label>
+          <label class="cat-row"><input type="checkbox" id="cm-cat-security" checked onchange="cmClearPreview()"> Security settings</label>
+          <label class="cat-row"><input type="checkbox" id="cm-cat-tlds" checked onchange="cmClearPreview()"> TLD Blocklist</label>
+          <label class="cat-row"><input type="checkbox" id="cm-cat-privacy" checked onchange="cmClearPreview()"> Privacy &amp; blocklists</label>
+          <label class="cat-row"><input type="checkbox" id="cm-cat-parental" checked onchange="cmClearPreview()"> Parental Control</label>
+        </div>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Exporteren</div>
+        <button class="btn btn-outline" style="width:100%;margin-bottom:6px" onclick="cmExport()">📤 Preview export</button>
+        <button class="btn btn-ghost" style="width:100%" onclick="cmDownload()" id="cm-download-btn" disabled>⬇ Download JSON</button>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Importeren</div>
+        <label class="btn btn-ghost" style="width:100%;margin-bottom:6px;cursor:pointer;justify-content:flex-start;gap:6px">
+          📂 <span>Bestand kiezen…</span>
+          <input type="file" id="cm-import-file" accept=".json" style="display:none" onchange="cmLoadImport(event)">
+        </label>
+        <button class="btn btn-outline" style="width:100%;margin-bottom:6px" id="cm-import-preview-btn" onclick="cmImportPreview()" disabled>👁 Preview import</button>
+        <button class="btn btn-primary" style="width:100%" id="cm-import-apply-btn" onclick="cmImportApply()" disabled>📥 Import toepassen</button>
+      </div>
+
+      <div class="sb-section">
+        <div class="sb-label">Nieuw profiel</div>
+        <div class="field" style="gap:5px;margin-bottom:8px">
+          <label for="cm-new-profile-name">Naam</label>
+          <input type="text" id="cm-new-profile-name" placeholder="Bijv. Thuis — Gasten">
+        </div>
+        <button class="btn btn-ghost" style="width:100%" onclick="cmCreateProfile()">➕ Aanmaken</button>
+      </div>
+    </aside>
+
+    <!-- Preview panel -->
+    <main class="preview-panel" id="cm-preview-panel">
+      <div class="preview-empty" id="cm-preview-empty">
+        <div class="empty-icon">💾</div>
+        <h3>Geen preview</h3>
+        <p>Selecteer profielen en klik op "Preview export" of laad een importbestand.</p>
+      </div>
+      <div id="cm-preview-content" style="display:none">
+        <div class="preview-hdr">
+          <div class="preview-hdr-left">
+            <div class="preview-hdr-title" id="cm-preview-title">Config Preview</div>
+            <div id="cm-preview-badge" style="font-size:11px;color:var(--muted)"></div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <label class="toggle-wrap" id="cm-view-toggle-wrap" title="Schakel tussen JSON-weergave en leesbare tekst">
+              <input type="checkbox" id="cm-view-toggle" onchange="cmToggleView()">
+              <span class="toggle"></span>
+              <span style="font-size:12px">JSON weergave</span>
+            </label>
+            <button class="btn btn-ghost btn-sm" onclick="cmClearPreview()">↺ Reset</button>
+          </div>
+        </div>
+
+        <!-- Human-readable view -->
+        <div id="cm-readable-view"></div>
+
+        <!-- JSON view -->
+        <div id="cm-json-view" style="display:none">
+          <div style="background:#0f172a;border-radius:10px;padding:16px;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12px;color:#e2e8f0;white-space:pre-wrap;word-break:break-all;max-height:calc(100vh - 200px);overflow-y:auto;line-height:1.6" id="cm-json-content"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</div>
+
+<!-- ═══ APPLY MODAL ═══ -->
+<div class="overlay" id="apply-modal">
+  <div class="modal">
+    <div class="modal-title">Apply Changes?</div>
+    <div class="modal-body" id="apply-modal-body"></div>
+    <div class="progress-log" id="progress-log"></div>
+    <div class="modal-actions" id="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary btn-sm" id="confirm-btn" onclick="applyChanges()">Apply</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROFILE VIEWER MODAL ═══ -->
+<div class="overlay" id="pv-modal">
+  <div class="modal profile-viewer" style="max-width:600px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="modal-title" id="pv-title">Profile</div>
+      <button class="btn btn-ghost btn-sm" onclick="closePV()">✕ Close</button>
+    </div>
+    <div id="pv-body" style="overflow-y:auto;max-height:70vh"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let S = {
+  isDemo: false, apiKey: '', email: '',
+  profiles: [], cache: {},
+  preview: null,    // { [tid]: { changes, totals, name } }
+  skipped: {},      // { [tid]: { [cat]: Set<id> } }  — skip add/remove
+  forced: {}        // { [tid]: { [cat]: Set<id> } }  — force overruled items
+}
+
+// ═══════════════════════════════════════════════
+//  DEMO DATA
+// ═══════════════════════════════════════════════
+const DEMO = {
+  user: { email: 'nextdns@example.com' },
+  profiles: [
+    { id: 'abc123', name: 'Global | Windows, macOS, iPadOS' },
+    { id: 'bf72e1', name: 'Gasten & Vrienden' },
+    { id: 'c91d3f', name: 'Kids & Gezin' },
+    { id: 'd04a88', name: 'IoT Devices' }
+  ],
+  data: {
+    abc123: {
+      denylist: [
+        {id:'ads.google.com',active:true},{id:'telemetry.microsoft.com',active:true},
+        {id:'sb.scorecardresearch.com',active:true},{id:'analytics.twitter.com',active:true},
+        {id:'newdomain-recently-added.com',active:true},{id:'adservice.google.com',active:true},
+        {id:'pixel.facebook.com',active:true},{id:'pagead2.googlesyndication.com',active:true},
+        {id:'tiktok.com',active:true},{id:'facebook.com',active:true},{id:'doubleclick.net',active:true}
+      ],
+      allowlist: [
+        {id:'intranet.novacorp.nl',active:true},{id:'api.novacorp.com',active:true},{id:'meet.novacorp.nl',active:true}
+      ],
+      rewrites: [
+        {name:'home.lan',content:'192.168.1.1'},
+        {name:'nas.lan',content:'192.168.1.10'},
+        {name:'printer.lan',content:'192.168.1.20'},
+        {name:'plex.lan',content:'192.168.1.30'}
+      ],
+      security: {
+        threatIntelligenceFeeds:true,aiThreatDetection:true,googleSafeBrowsing:true,
+        cryptojacking:true,dnsRebinding:false,idnHomographs:true,typosquatting:true,
+        dga:false,nrd:true,ddns:false,parking:true,csam:true,
+        tlds:[{id:'ru'},{id:'cn'},{id:'tk'},{id:'xyz'}]
+      },
+      privacy: {
+        disguisedTrackers:true,allowAffiliate:false,
+        blocklists:[{id:'nextdns-recommended'},{id:'easyprivacy'}],
+        natives:[]
+      },
+      parental: {
+        safeSearch:false,youtubeRestrictedMode:false,blockBypass:false,
+        categories:[{id:'gambling',active:false},{id:'pornography',active:false},{id:'dating',active:false}],
+        services:[]
+      }
+    },
+    bf72e1: {
+      denylist: [
+        {id:'reddit.com',active:true},{id:'tiktok.com',active:false},
+        {id:'facebook.com',active:true},{id:'doubleclick.net',active:true}
+      ],
+      allowlist: [],
+      rewrites: [
+        {name:'home.lan',content:'192.168.1.1'}
+      ],
+      security: {
+        threatIntelligenceFeeds:true,aiThreatDetection:false,googleSafeBrowsing:true,
+        cryptojacking:false,dnsRebinding:false,idnHomographs:true,typosquatting:false,
+        dga:false,nrd:false,ddns:false,parking:false,csam:false,tlds:[]
+      },
+      privacy: {
+        disguisedTrackers:false,allowAffiliate:false,
+        blocklists:[{id:'easyprivacy'}],natives:[]
+      },
+      parental: {
+        safeSearch:false,youtubeRestrictedMode:false,blockBypass:false,
+        categories:[{id:'gambling',active:false},{id:'pornography',active:false},{id:'dating',active:false}],
+        services:[]
+      }
+    },
+    c91d3f: {
+      denylist: [
+        {id:'tiktok.com',active:true},{id:'facebook.com',active:true},
+        {id:'doubleclick.net',active:true},{id:'gaming-site.com',active:true}
+      ],
+      allowlist: [{id:'intranet.novacorp.nl',active:true}],
+      rewrites: [
+        {name:'home.lan',content:'192.168.1.1'},
+        {name:'nas.lan',content:'192.168.1.10'}
+      ],
+      security: {
+        threatIntelligenceFeeds:true,aiThreatDetection:true,googleSafeBrowsing:true,
+        cryptojacking:true,dnsRebinding:true,idnHomographs:true,typosquatting:true,
+        dga:false,nrd:true,ddns:false,parking:true,csam:true,tlds:[]
+      },
+      privacy: {
+        disguisedTrackers:true,allowAffiliate:false,
+        blocklists:[{id:'nextdns-recommended'},{id:'easyprivacy'},{id:'oisd'}],natives:[]
+      },
+      parental: {
+        safeSearch:true,youtubeRestrictedMode:true,blockBypass:true,
+        categories:[{id:'gambling',active:true},{id:'pornography',active:true},{id:'dating',active:true}],
+        services:[{id:'tiktok',active:true},{id:'discord',active:true}]
+      }
+    },
+    d04a88: {
+      denylist: [
+        {id:'ads.google.com',active:true},{id:'telemetry.microsoft.com',active:true}
+      ],
+      allowlist: [],
+      rewrites: [],
+      security: {
+        threatIntelligenceFeeds:false,aiThreatDetection:false,googleSafeBrowsing:false,
+        cryptojacking:false,dnsRebinding:false,idnHomographs:false,typosquatting:false,
+        dga:false,nrd:false,ddns:false,parking:false,csam:false,tlds:[]
+      },
+      privacy: {disguisedTrackers:false,allowAffiliate:false,blocklists:[],natives:[]},
+      parental: {
+        safeSearch:false,youtubeRestrictedMode:false,blockBypass:false,
+        categories:[{id:'gambling',active:false},{id:'pornography',active:false},{id:'dating',active:false}],
+        services:[]
+      }
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════
+function show(id, v) {
+  const el = document.getElementById(id)
+  if (!el) return
+  el.style.display = v ? (['sw','sa','page-sync','page-devices','page-quickedit','page-configmgmt','df-body'].includes(id) ? 'flex' : 'block') : 'none'
+}
+
+function toast(msg, type='') {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.className = 'toast show' + (type ? ' '+type : '')
+  clearTimeout(t._t)
+  t._t = setTimeout(() => t.className = 'toast', 3000)
+}
+
+function esc(s) {
+  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+// ═══════════════════════════════════════════════
+//  API
+// ═══════════════════════════════════════════════
+const BASE = 'https://api.nextdns.io'
+
+function headers() { return {'X-Api-Key': S.apiKey, 'Content-Type': 'application/json'} }
+
+function getDemoData(path) {
+  const p = path.split('/').filter(Boolean)
+  if (p.length===1 && p[0]==='profiles') return DEMO.profiles
+  if (p.length===4 && p[2]==='security' && p[3]==='tlds') {
+    const d = DEMO.data[p[1]]
+    return d?.security?.tlds ?? []
+  }
+  if (p.length===3) {
+    const d = DEMO.data[p[1]]
+    if (!d) return []
+    const map = {denylist:'denylist',allowlist:'allowlist',rewrites:'rewrites',security:'security',privacy:'privacy',parentalControl:'parental'}
+    return d[map[p[2]]] ?? []
+  }
+  return null
+}
+
+async function apiGet(path) {
+  if (S.isDemo) return getDemoData(path)
+  const r = await fetch(BASE+path, {headers: {'X-Api-Key': S.apiKey}})
+  const j = await r.json()
+  if (j.errors) throw new Error(j.errors.map(e=>e.detail||e.code).join(', '))
+  return j.data
+}
+
+async function apiGetList(path) {
+  if (S.isDemo) return getDemoData(path) ?? []
+  let results=[], cursor=null
+  do {
+    const url = path + (cursor ? '?cursor='+encodeURIComponent(cursor) : '')
+    const r = await fetch(BASE+url, {headers: {'X-Api-Key': S.apiKey}})
+    const j = await r.json()
+    if (j.errors) throw new Error(j.errors.map(e=>e.detail||e.code).join(', '))
+    results = results.concat(j.data||[])
+    cursor = j.meta?.pagination?.cursor || null
+  } while(cursor)
+  return results
+}
+
+async function apiPost(path, body) {
+  if (S.isDemo) return {}
+  const r = await fetch(BASE+path, {method:'POST', headers:headers(), body:JSON.stringify(body)})
+  if (!r.ok) { const j=await r.json(); throw new Error((j.errors||[]).map(e=>e.detail||e.code).join(', ')||r.status) }
+}
+
+async function apiDelete(path) {
+  if (S.isDemo) return {}
+  const r = await fetch(BASE+path, {method:'DELETE', headers:{'X-Api-Key':S.apiKey}})
+  if (!r.ok && r.status!==204) throw new Error('DELETE failed: '+r.status)
+}
+
+async function apiPatch(path, body) {
+  if (S.isDemo) return {}
+  const r = await fetch(BASE+path, {method:'PATCH', headers:headers(), body:JSON.stringify(body)})
+  if (!r.ok) { const j=await r.json(); throw new Error((j.errors||[]).map(e=>e.detail||e.code).join(', ')||r.status) }
+}
+
+async function apiPut(path, body) {
+  if (S.isDemo) return {}
+  const r = await fetch(BASE+path, {method:'PUT', headers:headers(), body:JSON.stringify(body)})
+  if (!r.ok) { const j=await r.json(); throw new Error((j.errors||[]).map(e=>e.detail||e.code).join(', ')||r.status) }
+}
+
+// ═══════════════════════════════════════════════
+//  LOGIN
+// ═══════════════════════════════════════════════
+async function doLogin() {
+  const key = document.getElementById('apikey').value.trim()
+  const errEl = document.getElementById('login-err')
+  const corsEl = document.getElementById('login-cors')
+  const btn = document.getElementById('login-btn')
+  errEl.style.display = 'none'; corsEl.style.display = 'none'
+
+  if (!key) { errEl.textContent='Please enter your API key.'; errEl.style.display='block'; return }
+
+  if (key.toLowerCase()==='demo') {
+    S = {...S, isDemo:true, apiKey:'demo', email:DEMO.user.email, profiles:DEMO.profiles}
+    showWelcome(); return
+  }
+
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Connecting…'
+  try {
+    S.apiKey = key
+    const profiles = await apiGetList('/profiles')
+    S.profiles = profiles; S.email = ''
+    showWelcome()
+  } catch(e) {
+    S.apiKey = ''
+    const msg = e.message||''
+    const isCors = msg.includes('Load failed')||msg.includes('Failed to fetch')||msg.includes('NetworkError')||e instanceof TypeError
+    if (isCors) corsEl.style.display='block'
+    else { errEl.textContent = msg.includes('invalid_api_key') ? 'Invalid API key. Please check and try again.' : ('Error: '+(msg||'Unknown. Check your API key.')); errEl.style.display='block' }
+  } finally {
+    btn.disabled=false; btn.textContent='Continue →'
+  }
+}
+document.getElementById('apikey').addEventListener('keydown', e => { if(e.key==='Enter') doLogin() })
+
+// ═══════════════════════════════════════════════
+//  WELCOME
+// ═══════════════════════════════════════════════
+function showWelcome() {
+  show('sl',false); show('sw',true)
+  document.getElementById('wavatar').textContent = (S.email||'Y')[0].toUpperCase()
+  document.getElementById('wname').textContent = S.email||'Your Account'
+  document.getElementById('wprofiles').innerHTML = S.profiles.map(p=>`
+    <div class="wpi">🛡 ${esc(p.name)}${p.editor?'<span class="badge b-editor" style="margin-left:auto">EDITOR</span>':''}${S.isDemo?'<span class="badge b-demo" style="margin-left:auto">DEMO</span>':''}</div>
+  `).join('')
+}
+
+function openDashboard() {
+  show('sw',false); show('sa',true)
+  document.getElementById('app-email').textContent = S.email || (S.isDemo?'Demo Mode':'')
+  document.getElementById('demo-banner').style.display = S.isDemo?'block':'none'
+  const ms = document.getElementById('master-select')
+  ms.innerHTML = S.profiles.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+  buildTargetCards()
+  // Reset tabs to Profile Sync
+  ['sync','devices','flows','quickedit','configmgmt'].forEach(t => {
+    const tabEl = document.getElementById('tab-'+t)
+    if (tabEl) tabEl.classList.toggle('active', t==='sync')
+    const page = document.getElementById('page-'+t)
+    if (page) page.style.display = t==='sync' ? 'flex' : 'none'
+  })
+  // Reset selectors (populated on tab open)
+  document.getElementById('df-profile-select').innerHTML = ''
+  document.getElementById('dv-profile-select').innerHTML = ''
+}
+
+// ═══════════════════════════════════════════════
+//  SIDEBAR
+// ═══════════════════════════════════════════════
+function onMasterChange() { buildTargetCards(); clearPreview() }
+
+function buildTargetCards() {
+  const mid = document.getElementById('master-select').value
+  document.getElementById('target-cards').innerHTML = S.profiles
+    .filter(p=>p.id!==mid)
+    .map(p=>`
+      <div class="pcard" id="card-${p.id}" onclick="toggleTarget('${p.id}')">
+        <div class="pcard-check" id="check-${p.id}"></div>
+        <span>🛡</span>
+        <span class="pcard-name">${esc(p.name)}</span>
+        <button class="pcard-view" onclick="event.stopPropagation();viewProfile('${p.id}')">👁</button>
+      </div>
+    `).join('')
+}
+
+function toggleTarget(id) {
+  document.getElementById('card-'+id).classList.toggle('selected')
+  clearPreview()
+}
+
+function getSelectedTargets() {
+  return S.profiles.filter(p => document.getElementById('card-'+p.id)?.classList.contains('selected'))
+}
+
+function getCats() {
+  return {
+    denylist: document.getElementById('cat-denylist').checked,
+    allowlist: document.getElementById('cat-allowlist').checked,
+    rewrites: document.getElementById('cat-rewrites').checked,
+    security: document.getElementById('cat-security').checked,
+    tlds: document.getElementById('cat-tlds').checked,
+    privacy: document.getElementById('cat-privacy').checked,
+    parental: document.getElementById('cat-parental').checked
+  }
+}
+
+function getRemoveOpt() { return document.getElementById('opt-remove').checked }
+
+function onRemoveToggle() {
+  // If a preview exists, re-run it immediately so removes appear/disappear live
+  if (S.preview) previewChanges()
+}
+
+function clearPreview() {
+  S.preview = null; S.skipped = {}
+  document.getElementById('preview-empty').style.display='flex'
+  document.getElementById('preview-content').style.display='none'
+  document.getElementById('apply-btn').disabled=true
+}
+
+// ═══════════════════════════════════════════════
+//  COMPUTE
+// ═══════════════════════════════════════════════
+// Both denylist/allowlist style: [{id, active}]
+function computeListChanges(master, target, removeOrphans) {
+  const tMap = {}
+  for (const i of target) tMap[i.id] = i
+  const results = []
+  for (const m of master) {
+    const t = tMap[m.id]
+    if (!t) results.push({id:m.id, action:'add', note:'will be added'})
+    else if (m.active===t.active) results.push({id:m.id, action:'unchanged', note:''})
+    else results.push({id:m.id, action:'overruled', note:`master: ${m.active}, target: ${t.active} (preserved)`})
+  }
+  if (removeOrphans) {
+    const mIds = new Set(master.map(i=>i.id))
+    for (const t of target) {
+      if (!mIds.has(t.id)) results.push({id:t.id, action:'remove', note:'not in master — will be removed'})
+    }
+  }
+  return results
+}
+
+// Boolean settings object
+function computeSettingsChanges(master, target) {
+  const results = []
+  for (const key of Object.keys(master)) {
+    if (typeof master[key]==='boolean') {
+      const mv=master[key], tv=target[key]
+      if (tv===undefined) results.push({id:key, action:'add', note:`will be set to ${mv}`})
+      else if (mv===tv) results.push({id:key, action:'unchanged', note:''})
+      else results.push({id:key, action:'overruled', note:`master: ${mv}, target: ${tv} (preserved)`})
+    }
+  }
+  return results
+}
+
+// Blocklists: [{id}] — no active flag, just presence
+function computeBlocklistChanges(master, target, removeOrphans) {
+  const toIds = arr => arr.map(x => typeof x==='string' ? x : x.id)
+  const mIds = toIds(master), tIds = toIds(target)
+  const mSet = new Set(mIds), tSet = new Set(tIds)
+  const results = []
+  for (const b of mSet) {
+    if (!tSet.has(b)) results.push({id:b, action:'add', note:'will be added'})
+    else results.push({id:b, action:'unchanged', note:''})
+  }
+  if (removeOrphans) {
+    for (const b of tSet) {
+      if (!mSet.has(b)) results.push({id:b, action:'remove', note:'not in master — will be removed'})
+    }
+  }
+  return results
+}
+
+// Rewrites: [{name, content}] — unique key is name+content (multiple entries per name are allowed)
+function rewriteKey(r) { return r.name + '\x00' + r.content }
+function computeRewriteChanges(master, target, removeOrphans) {
+  const tSet = new Set(target.map(rewriteKey))
+  const mSet = new Set(master.map(rewriteKey))
+  const results = []
+  for (const m of master) {
+    const k = rewriteKey(m)
+    if (tSet.has(k)) results.push({id:k, name:m.name, content:m.content, action:'unchanged', note:m.content})
+    else results.push({id:k, name:m.name, content:m.content, action:'add', note:`→ ${m.content}`})
+  }
+  if (removeOrphans) {
+    for (const t of target) {
+      const k = rewriteKey(t)
+      if (!mSet.has(k)) results.push({id:k, name:t.name, content:t.content, action:'remove', note:'not in master — will be removed'})
+    }
+  }
+  return results
+}
+
+function sortChanges(arr) {
+  const o = {add:0, remove:1, overruled:2, unchanged:3}
+  return [...arr].sort((a,b) => o[a.action]-o[b.action])
+}
+
+function countActive(changes, tid, cat, skipped) {
+  const sk = skipped[tid]?.[cat] || new Set()
+  return {
+    added:   changes.filter(i=>i.action==='add'&&!sk.has(i.id)).length,
+    removed: changes.filter(i=>i.action==='remove'&&!sk.has(i.id)).length,
+    unchanged: changes.filter(i=>i.action==='unchanged').length,
+    overruled: changes.filter(i=>i.action==='overruled').length
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  PREVIEW
+// ═══════════════════════════════════════════════
+async function previewChanges() {
+  const mid = document.getElementById('master-select').value
+  const targets = getSelectedTargets()
+  const cats = getCats()
+  const removeOrphans = getRemoveOpt()
+
+  if (!targets.length) { toast('Select at least one destination profile.','err'); return }
+  if (!Object.values(cats).some(Boolean)) { toast('Select at least one category to sync.','err'); return }
+
+  const btn = document.getElementById('preview-btn')
+  btn.disabled=true; btn.innerHTML='<span class="spinner spinner-dark"></span> Loading…'
+
+  try {
+    const master = {}
+    if (cats.denylist)  master.denylist  = await apiGetList(`/profiles/${mid}/denylist`)
+    if (cats.allowlist) master.allowlist = await apiGetList(`/profiles/${mid}/allowlist`)
+    if (cats.rewrites)  master.rewrites  = await apiGetList(`/profiles/${mid}/rewrites`)
+    if (cats.security)  master.security  = await apiGet(`/profiles/${mid}/security`)
+    if (cats.tlds)      master.tlds      = await apiGetList(`/profiles/${mid}/security/tlds`)
+    if (cats.privacy)   master.privacy   = await apiGet(`/profiles/${mid}/privacy`)
+    if (cats.parental)  master.parental  = await apiGet(`/profiles/${mid}/parentalControl`)
+
+    S.preview = {}; S.skipped = {}; S.forced = {}
+
+    for (const target of targets) {
+      const tid = target.id
+      const td = {}
+      if (cats.denylist)  td.denylist  = await apiGetList(`/profiles/${tid}/denylist`)
+      if (cats.allowlist) td.allowlist = await apiGetList(`/profiles/${tid}/allowlist`)
+      if (cats.rewrites)  td.rewrites  = await apiGetList(`/profiles/${tid}/rewrites`)
+      if (cats.security)  td.security  = await apiGet(`/profiles/${tid}/security`)
+      if (cats.tlds)      td.tlds      = await apiGetList(`/profiles/${tid}/security/tlds`)
+      if (cats.privacy)   td.privacy   = await apiGet(`/profiles/${tid}/privacy`)
+      if (cats.parental)  td.parental  = await apiGet(`/profiles/${tid}/parentalControl`)
+
+      S.skipped[tid] = {}
+
+      const changes = {}
+      if (cats.denylist)  changes.denylist  = sortChanges(computeListChanges(master.denylist||[], td.denylist||[], removeOrphans))
+      if (cats.allowlist) changes.allowlist = sortChanges(computeListChanges(master.allowlist||[], td.allowlist||[], removeOrphans))
+      if (cats.rewrites)  changes.rewrites  = sortChanges(computeRewriteChanges(master.rewrites||[], td.rewrites||[], removeOrphans))
+      if (cats.tlds)      changes.tlds      = sortChanges(computeBlocklistChanges(master.tlds||[], td.tlds||[], removeOrphans))
+      if (cats.security) {
+        const sec = master.security||{}, tsec = td.security||{}
+        changes.security = sortChanges(computeSettingsChanges(sec, tsec))
+      }
+      if (cats.privacy) {
+        const mp=master.privacy||{}, tp=td.privacy||{}
+        const bl = sortChanges(computeBlocklistChanges(mp.blocklists||[], tp.blocklists||[], removeOrphans))
+        const tog = sortChanges(computeSettingsChanges(
+          {disguisedTrackers:mp.disguisedTrackers??false, allowAffiliate:mp.allowAffiliate??false},
+          {disguisedTrackers:tp.disguisedTrackers??false, allowAffiliate:tp.allowAffiliate??false}
+        ))
+        changes.privacy = [...bl, ...tog]
+      }
+      if (cats.parental) {
+        const mp=master.parental||{}, tp=td.parental||{}
+        const tog = sortChanges(computeSettingsChanges(
+          {safeSearch:mp.safeSearch??false, youtubeRestrictedMode:mp.youtubeRestrictedMode??false, blockBypass:mp.blockBypass??false},
+          {safeSearch:tp.safeSearch??false, youtubeRestrictedMode:tp.youtubeRestrictedMode??false, blockBypass:tp.blockBypass??false}
+        ))
+        const catC = sortChanges(computeListChanges(mp.categories||[], tp.categories||[], removeOrphans))
+        const svcC = sortChanges(computeListChanges(mp.services||[], tp.services||[], removeOrphans))
+        changes.parental = [...tog, ...catC, ...svcC]
+      }
+
+      // compute totals
+      const totals = {added:0, removed:0, unchanged:0, overruled:0}
+      for (const arr of Object.values(changes)) {
+        for (const i of arr) totals[i.action==='add'?'added':i.action==='remove'?'removed':i.action]++
+      }
+
+      S.preview[tid] = {changes, totals, name:target.name, masterData:master}
+    }
+
+    renderPreview(cats)
+    document.getElementById('apply-btn').disabled=false
+  } catch(e) {
+    toast('Error loading data: '+(e.message||'unknown'),'err')
+    console.error(e)
+  } finally {
+    btn.disabled=false; btn.textContent='Preview Changes'
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER PREVIEW
+// ═══════════════════════════════════════════════
+function toggleSkip(tid, cat, id, btn) {
+  if (!S.skipped[tid]) S.skipped[tid] = {}
+  if (!S.skipped[tid][cat]) S.skipped[tid][cat] = new Set()
+  const sk = S.skipped[tid][cat]
+  if (sk.has(id)) { sk.delete(id); btn.textContent='Skip' }
+  else { sk.add(id); btn.textContent='Undo' }
+  const row = document.getElementById(`row-${tid}-${cat}-${CSS.escape(id)}`)
+  if (row) row.classList.toggle('skipped', sk.has(id))
+  updateCounts(tid)
+}
+
+function toggleForce(tid, cat, id, btn) {
+  if (!S.forced[tid]) S.forced[tid] = {}
+  if (!S.forced[tid][cat]) S.forced[tid][cat] = new Set()
+  const fc = S.forced[tid][cat]
+  const row = document.getElementById(`row-${tid}-${cat}-${CSS.escape(id)}`)
+  if (fc.has(id)) {
+    fc.delete(id)
+    btn.textContent = 'Override'
+    if (row) {
+      row.classList.remove('forced')
+      // restore note text
+      const noteEl = row.querySelector('.change-note')
+      const item = S.preview[tid]?.changes[cat]?.find(i=>i.id===id)
+      if (noteEl && item) noteEl.textContent = item.note
+      // restore icon
+      const ciEl = row.querySelector('.ci')
+      if (ciEl) { ciEl.className='ci ci-over'; ciEl.textContent='⚑' }
+    }
+  } else {
+    fc.add(id)
+    btn.textContent = 'Undo'
+    if (row) {
+      row.classList.add('forced')
+      // update note to show it will be applied
+      const noteEl = row.querySelector('.change-note')
+      if (noteEl) noteEl.textContent = '→ will be overridden'
+      // update icon to green
+      const ciEl = row.querySelector('.ci')
+      if (ciEl) { ciEl.className='ci ci-add'; ciEl.textContent='+' }
+    }
+  }
+  updateCounts(tid)
+}
+
+function updateCounts(tid) {
+  const data = S.preview[tid]
+  if (!data) return
+  let added=0,removed=0,unchanged=0,overruled=0
+  for (const [cat, arr] of Object.entries(data.changes)) {
+    const c = countActive(arr, tid, cat, S.skipped)
+    added+=c.added; removed+=c.removed; unchanged+=c.unchanged; overruled+=c.overruled
+    // Update per-category header counts too
+    const catHdr = document.getElementById(`cathdr-${tid}-${cat}`)
+    if (catHdr) catHdr.innerHTML = catCountsHtml(arr, tid, cat)
+  }
+  const el = document.getElementById('counts-'+tid)
+  if (el) el.innerHTML = renderCounts({added,removed,unchanged,overruled})
+}
+
+function renderCounts(t) {
+  return [
+    t.added   ? `<span class="cbadge cb-add">+${t.added} added</span>` : '',
+    t.removed ? `<span class="cbadge cb-rem">-${t.removed} removed</span>` : '',
+    t.unchanged ? `<span class="cbadge cb-unch">=${t.unchanged} unchanged</span>` : '',
+    t.overruled ? `<span class="cbadge cb-over">⚑${t.overruled} overruled</span>` : ''
+  ].join('')
+}
+
+function actionIcon(action) {
+  const m = {add:['ci-add','+'], remove:['ci-rem','−'], unchanged:['ci-unch','='], overruled:['ci-over','⚑']}
+  const [cls,sym]=m[action]||['ci-unch','?']
+  return `<div class="ci ${cls}">${sym}</div>`
+}
+
+function rowClass(action) {
+  return {add:'row-add', remove:'row-rem', overruled:'row-over', unchanged:'row-unch'}[action]||'row-unch'
+}
+
+function renderRows(items, tid, cat) {
+  if (!items||!items.length) return `<div style="padding:12px 16px;color:var(--muted);font-size:12px;font-style:italic">No changes in this category</div>`
+  return items.map(item => {
+    const canSkip     = item.action==='add' || item.action==='remove'
+    const canOverride = item.action==='overruled'
+    const safeId = CSS.escape(item.id)
+    const tidE = esc(tid), idE = esc(item.id)
+    let btns = '<span></span>'
+    if (canSkip) {
+      btns = `<button class="skip-btn" onclick="toggleSkip('${tidE}','${cat}','${idE}',this)">Skip</button>`
+    } else if (canOverride) {
+      btns = `<button class="force-btn" onclick="toggleForce('${tidE}','${cat}','${idE}',this)" title="Force master value onto destination">Override</button>`
+    }
+    // For rewrites show name → content inline; item.id is composite key
+    const displayId = cat==='rewrites'
+      ? `${esc(item.name)} <span style="color:var(--muted);font-weight:400">→ ${esc(item.content)}</span>`
+      : esc(item.id)
+    // For rewrites the note is the content itself, keep change-note empty to avoid duplication
+    const displayNote = cat==='rewrites' ? '' : esc(item.note)
+    return `
+      <div class="change-row ${rowClass(item.action)}" id="row-${tid}-${cat}-${safeId}">
+        ${actionIcon(item.action)}
+        <span class="change-domain">${displayId}</span>
+        <span class="change-note">${displayNote}</span>
+        ${btns}
+      </div>
+    `
+  }).join('')
+}
+
+function catCountsHtml(items, tid, cat) {
+  const sk = S.skipped[tid]?.[cat]||new Set()
+  const fc = S.forced[tid]?.[cat]||new Set()
+  const adds    = items.filter(i=>i.action==='add'&&!sk.has(i.id)).length
+             + items.filter(i=>i.action==='overruled'&&fc.has(i.id)).length
+  const removes = items.filter(i=>i.action==='remove'&&!sk.has(i.id)).length
+  const over    = items.filter(i=>i.action==='overruled'&&!fc.has(i.id)).length
+  const unch    = items.filter(i=>i.action==='unchanged').length
+  const parts = []
+  if (adds)    parts.push(`<span class="cat-hdr-count chc-add">+${adds}</span>`)
+  if (removes) parts.push(`<span class="cat-hdr-count chc-rem">−${removes}</span>`)
+  if (over)    parts.push(`<span class="cat-hdr-count chc-over">⚑${over}</span>`)
+  if (unch)    parts.push(`<span class="cat-hdr-count chc-unch">=${unch}</span>`)
+  return parts.join('')
+}
+
+function toggleCatSection(el) {
+  const section = el.closest('.cat-section')
+  section.classList.toggle('open')
+}
+
+function renderPreview(cats) {
+  document.getElementById('preview-empty').style.display='none'
+  const content = document.getElementById('preview-content')
+  content.style.display='block'
+
+  const catLabels = {
+    denylist:'Denylist', allowlist:'Allowlist',
+    rewrites:'Rewrites',
+    security:'Security', tlds:'TLD Blocklist', privacy:'Privacy & Blocklists', parental:'Parental Control'
+  }
+  const catIcons = {denylist:'🚫', allowlist:'✅', rewrites:'↩️', security:'🔒', tlds:'🌐', privacy:'👁', parental:'👨‍👧'}
+
+  let html = `
+    <div class="preview-hdr">
+      <div class="preview-hdr-left">
+        <div class="preview-hdr-title">Change Preview</div>
+        <div class="legend">
+          <div class="leg"><div class="dot dot-g"></div> Added</div>
+          <div class="leg"><div class="dot dot-r"></div> Removed</div>
+          <div class="leg"><div class="dot dot-gr"></div> Unchanged</div>
+          <div class="leg"><div class="dot dot-o"></div> Overruled</div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="clearPreview()" title="Reset preview and start over">↺ Reset</button>
+    </div>
+  `
+
+  for (const [tid, data] of Object.entries(S.preview)) {
+    // Determine which cats have actionable changes (non-unchanged) — auto-expand those
+    html += `
+      <div class="target-block">
+        <div class="target-hdr">
+          <span style="font-size:18px">🛡</span>
+          <div>
+            <div class="target-name">${esc(data.name)}</div>
+            <div class="target-id-tag">${esc(tid)}</div>
+          </div>
+          <div class="counts" id="counts-${tid}">${renderCounts(data.totals)}</div>
+        </div>
+    `
+    for (const [cat, label] of Object.entries(catLabels)) {
+      if (!cats[cat] || !data.changes[cat]) continue
+      const items = data.changes[cat]
+      const hasAction = items.some(i=>i.action!=='unchanged')
+      const open = hasAction ? 'open' : ''
+      html += `
+        <div class="cat-section ${open}" id="catsec-${tid}-${cat}">
+          <div class="cat-hdr" onclick="toggleCatSection(this)">
+            <div class="cat-hdr-left">
+              <span style="font-size:14px">${catIcons[cat]||''}</span>
+              <span class="cat-hdr-label">${label}</span>
+              <div class="cat-hdr-counts" id="cathdr-${tid}-${cat}">${catCountsHtml(items,tid,cat)}</div>
+            </div>
+            <span class="cat-collapse-icon">▾</span>
+          </div>
+          <div class="cat-rows">${renderRows(items, tid, cat)}</div>
+        </div>
+      `
+    }
+    html += `</div>`
+  }
+
+  content.innerHTML = html
+}
+
+// ═══════════════════════════════════════════════
+//  APPLY
+// ═══════════════════════════════════════════════
+function openApplyModal() {
+  if (!S.preview) return
+  const nTargets = Object.keys(S.preview).length
+  const nChanges = Object.entries(S.preview).reduce((sum,[tid,d]) => {
+    let n=0
+    for (const [cat,arr] of Object.entries(d.changes)) {
+      const sk = S.skipped[tid]?.[cat]||new Set()
+      const fc = S.forced[tid]?.[cat]||new Set()
+      n += arr.filter(i=>(i.action==='add'||i.action==='remove')&&!sk.has(i.id)).length
+      n += arr.filter(i=>i.action==='overruled'&&fc.has(i.id)).length
+    }
+    return sum+n
+  },0)
+  document.getElementById('apply-modal-body').textContent =
+    `This will apply ${nChanges} change(s) across ${nTargets} profile(s). Overruled and skipped items will not be modified.`
+  document.getElementById('progress-log').style.display='none'
+  document.getElementById('progress-log').innerHTML=''
+  document.getElementById('modal-actions').style.display='flex'
+  document.getElementById('confirm-btn').disabled=false
+  document.getElementById('confirm-btn').textContent='Apply'
+  document.getElementById('apply-modal').classList.add('open')
+}
+
+function closeModal() { document.getElementById('apply-modal').classList.remove('open') }
+
+function log(msg, type='') {
+  const el = document.getElementById('progress-log')
+  el.style.display='block'
+  const d=document.createElement('div'); d.className=type; d.textContent=msg
+  el.appendChild(d); el.scrollTop=el.scrollHeight
+}
+
+async function applyChanges() {
+  const btn=document.getElementById('confirm-btn')
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Applying…'
+  document.getElementById('modal-actions').querySelector('.btn-ghost').disabled=true
+
+  let errors=0
+  const mid = document.getElementById('master-select').value
+  const cats = getCats()
+
+  // Reload master fresh
+  const master = {}
+  try {
+    if (cats.denylist)  master.denylist  = await apiGetList(`/profiles/${mid}/denylist`)
+    if (cats.allowlist) master.allowlist = await apiGetList(`/profiles/${mid}/allowlist`)
+    if (cats.rewrites)  master.rewrites  = await apiGetList(`/profiles/${mid}/rewrites`)
+    if (cats.security)  master.security  = await apiGet(`/profiles/${mid}/security`)
+    if (cats.tlds)      master.tlds      = await apiGetList(`/profiles/${mid}/security/tlds`)
+    if (cats.privacy)   master.privacy   = await apiGet(`/profiles/${mid}/privacy`)
+    if (cats.parental)  master.parental  = await apiGet(`/profiles/${mid}/parentalControl`)
+  } catch(e) { log('Failed to reload master: '+e.message,'err'); return }
+
+  for (const [tid, data] of Object.entries(S.preview)) {
+    log(`→ ${data.name}`, 'info')
+
+    for (const [cat, items] of Object.entries(data.changes)) {
+      const sk = S.skipped[tid]?.[cat] || new Set()
+      const fc = S.forced[tid]?.[cat]  || new Set()
+
+      // Items to execute: normal add/remove (not skipped) + forced overruled
+      const active = items.filter(i =>
+        ((i.action==='add'||i.action==='remove') && !sk.has(i.id)) ||
+        (i.action==='overruled' && fc.has(i.id))
+      )
+      if (!active.length && cat!=='security') continue
+
+      for (const item of active) {
+        if (cat==='security') continue // handled in batch below
+        try {
+          if (cat==='denylist'||cat==='allowlist') {
+            // For forced-overruled: master value wins → treat as 'add' with master active state
+            if (item.action==='add'||item.action==='overruled') {
+              const masterItem = (master[cat]||[]).find(i=>i.id===item.id)
+              await apiPost(`/profiles/${tid}/${cat}`, {id:item.id, active: masterItem?.active??true})
+            } else {
+              await apiDelete(`/profiles/${tid}/${cat}/${encodeURIComponent(item.id)}`)
+            }
+          }
+          else if (cat==='rewrites') {
+            // item.name + item.content is the unique pair
+            if (item.action==='remove') {
+              // Try to delete by name (API deletes one entry per call; if multiple exist, call per entry)
+              try { await apiDelete(`/profiles/${tid}/rewrites/${encodeURIComponent(item.name)}`) } catch(e2){}
+            } else {
+              // 'add': the exact name+content combo doesn't exist in target yet, so just POST it
+              await apiPost(`/profiles/${tid}/rewrites`, {name:item.name, content:item.content})
+            }
+          }
+          else if (cat==='tlds') {
+            if (item.action==='add'||item.action==='overruled') {
+              await apiPost(`/profiles/${tid}/security/tlds`, {id:item.id})
+            } else {
+              await apiDelete(`/profiles/${tid}/security/tlds/${encodeURIComponent(item.id)}`)
+            }
+          }
+          else if (cat==='privacy') {
+            const boolKeys=['disguisedTrackers','allowAffiliate']
+            if (boolKeys.includes(item.id)) {
+              await apiPatch(`/profiles/${tid}/privacy`, {[item.id]: master.privacy[item.id]})
+            } else {
+              if (item.action==='add'||item.action==='overruled') await apiPost(`/profiles/${tid}/privacy/blocklists`, {id:item.id})
+              else await apiDelete(`/profiles/${tid}/privacy/blocklists/${encodeURIComponent(item.id)}`)
+            }
+          }
+          else if (cat==='parental') {
+            const toggleKeys=['safeSearch','youtubeRestrictedMode','blockBypass']
+            const masterCatIds = new Set((master.parental?.categories||[]).map(c=>c.id))
+            // Fetch fresh target parental to know which categories already exist there
+            const targetParental = await apiGet(`/profiles/${tid}/parentalControl`)
+            const targetCatIds = new Set((targetParental?.categories||[]).map(c=>c.id))
+            if (toggleKeys.includes(item.id)) {
+              await apiPatch(`/profiles/${tid}/parentalControl`, {[item.id]: master.parental[item.id]})
+            } else if (masterCatIds.has(item.id)) {
+              const entry = (master.parental.categories||[]).find(c=>c.id===item.id)
+              if (targetCatIds.has(item.id)) {
+                // Category exists in target — PATCH active state
+                await apiPatch(`/profiles/${tid}/parentalControl/categories/${encodeURIComponent(item.id)}`, {active: entry?.active??true})
+              } else {
+                // Category doesn't exist in target yet — POST to create it
+                await apiPost(`/profiles/${tid}/parentalControl/categories`, {id:item.id, active: entry?.active??true})
+              }
+            } else {
+              // It's a service
+              if (item.action==='add'||item.action==='overruled') {
+                const svc = (master.parental.services||[]).find(s=>s.id===item.id)
+                await apiPost(`/profiles/${tid}/parentalControl/services`, {id:item.id, active:svc?.active??true})
+              } else {
+                await apiDelete(`/profiles/${tid}/parentalControl/services/${encodeURIComponent(item.id)}`)
+              }
+            }
+          }
+          const verb = item.action==='overruled' ? 'overridden' : item.action==='add' ? 'added' : 'removed'
+          log(`  ✓ [${cat}] ${verb}: ${item.id}`,'ok')
+        } catch(e) {
+          log(`  ✗ [${cat}] ${item.id}: ${e.message}`,'err'); errors++
+        }
+      }
+
+      // Batch security PATCH (normal adds + forced overruled)
+      if (cat==='security') {
+        const patch = {}
+        for (const i of (data.changes.security||[])) {
+          if (i.action==='add' && !sk.has(i.id)) patch[i.id]=master.security[i.id]
+          if (i.action==='overruled' && fc.has(i.id)) patch[i.id]=master.security[i.id]
+        }
+        if (Object.keys(patch).length) {
+          try {
+            await apiPatch(`/profiles/${tid}/security`, patch)
+            log(`  ✓ [security] updated: ${Object.keys(patch).join(', ')}`,'ok')
+          } catch(e) { log(`  ✗ [security]: ${e.message}`,'err'); errors++ }
+        }
+      }
+    }
+    log(`✅ Done: ${data.name}`,'ok')
+  }
+
+  log('')
+  if (errors===0) { log('All changes applied successfully!','ok'); toast('Applied successfully!','ok') }
+  else { log(`Completed with ${errors} error(s).`,'err'); toast(`Applied with ${errors} error(s)`,'err') }
+
+  S.cache={}
+  btn.textContent='Done ✓'
+  document.getElementById('apply-btn').disabled=true
+  const cancelBtn = document.getElementById('modal-actions').querySelector('.btn-ghost')
+  cancelBtn.textContent='Close'; cancelBtn.disabled=false
+}
+
+// ═══════════════════════════════════════════════
+//  PROFILE VIEWER
+// ═══════════════════════════════════════════════
+async function viewProfile(pid) {
+  const profile = S.profiles.find(p=>p.id===pid)
+  if (!profile) return
+  document.getElementById('pv-title').textContent = '🛡 '+profile.name
+  document.getElementById('pv-body').innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted)"><span class="spinner spinner-dark"></span> Loading…</div>'
+  document.getElementById('pv-modal').classList.add('open')
+
+  try {
+    const [deny,allow,rew,sec,priv,par] = await Promise.all([
+      apiGetList(`/profiles/${pid}/denylist`),
+      apiGetList(`/profiles/${pid}/allowlist`),
+      apiGetList(`/profiles/${pid}/rewrites`),
+      apiGet(`/profiles/${pid}/security`),
+      apiGet(`/profiles/${pid}/privacy`),
+      apiGet(`/profiles/${pid}/parentalControl`)
+    ])
+    document.getElementById('pv-body').innerHTML = buildPVHtml(deny,allow,rew,sec,priv,par)
+  } catch(e) {
+    document.getElementById('pv-body').innerHTML = `<div style="color:var(--red);padding:16px">Error: ${esc(e.message)}</div>`
+  }
+}
+
+function boolBadge(v) { return v ? '<span class="pv-val pv-on">ON</span>' : '<span class="pv-val pv-off">OFF</span>' }
+
+function buildPVHtml(deny, allow, rew, sec, priv, par) {
+  let html=''
+
+  // Security
+  if (sec) {
+    const boolKeys=['threatIntelligenceFeeds','aiThreatDetection','googleSafeBrowsing','cryptojacking','dnsRebinding','idnHomographs','typosquatting','dga','nrd','ddns','parking','csam']
+    html += `<div class="pv-section"><div class="pv-section-title">Security</div><div class="pv-grid">`
+    for (const k of boolKeys) {
+      if (k in sec) html += `<div class="pv-item"><span class="pv-key">${k}</span>${boolBadge(sec[k])}</div>`
+    }
+    html += `</div>`
+    if (sec.tlds?.length) html += `<div style="margin-top:8px"><div class="pv-list">${sec.tlds.map(t=>`<span class="pv-tag">.${esc(t.id)}</span>`).join('')}</div></div>`
+    html += `</div>`
+  }
+
+  // Privacy
+  if (priv) {
+    html += `<div class="pv-section"><div class="pv-section-title">Privacy</div><div class="pv-grid">`
+    html += `<div class="pv-item"><span class="pv-key">disguisedTrackers</span>${boolBadge(priv.disguisedTrackers)}</div>`
+    html += `<div class="pv-item"><span class="pv-key">allowAffiliate</span>${boolBadge(priv.allowAffiliate)}</div>`
+    html += `</div>`
+    if (priv.blocklists?.length) {
+      html += `<div style="margin-top:8px;font-size:12px;color:var(--muted);margin-bottom:4px">Blocklists</div><div class="pv-list">${priv.blocklists.map(b=>`<span class="pv-tag">📋 ${esc(b.id)}</span>`).join('')}</div>`
+    }
+    html += `</div>`
+  }
+
+  // Parental Control
+  if (par) {
+    html += `<div class="pv-section"><div class="pv-section-title">Parental Control</div><div class="pv-grid">`
+    html += `<div class="pv-item"><span class="pv-key">safeSearch</span>${boolBadge(par.safeSearch)}</div>`
+    html += `<div class="pv-item"><span class="pv-key">youtubeRestricted</span>${boolBadge(par.youtubeRestrictedMode)}</div>`
+    html += `<div class="pv-item"><span class="pv-key">blockBypass</span>${boolBadge(par.blockBypass)}</div>`
+    html += `</div>`
+    if (par.categories?.length) {
+      html += `<div style="margin-top:8px;font-size:12px;color:var(--muted);margin-bottom:4px">Categories</div><div class="pv-list">`
+      html += par.categories.map(c=>`<span class="pv-tag ${c.active?'':'pv-inactive'}">${c.active?'🚫':'○'} ${esc(c.id)}</span>`).join('')
+      html += `</div>`
+    }
+    if (par.services?.length) {
+      html += `<div style="margin-top:8px;font-size:12px;color:var(--muted);margin-bottom:4px">Blocked Services</div><div class="pv-list">`
+      html += par.services.map(s=>`<span class="pv-tag">${esc(s.id)}</span>`).join('')
+      html += `</div>`
+    }
+    html += `</div>`
+  }
+
+  // Rewrites
+  if (rew?.length) {
+    html += `<div class="pv-section"><div class="pv-section-title">Rewrites (${rew.length})</div>`
+    html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;padding:6px 0">`
+    html += rew.map(r=>`
+      <div class="pv-item" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--gray-light);border-radius:6px;padding:6px 10px">
+        <span class="pv-domain" style="font-weight:600;color:var(--text)">↩️ ${esc(r.name)}</span>
+        <span class="pv-domain" style="color:var(--blue)">${esc(r.content)}</span>
+      </div>`).join('')
+    html += `</div></div>`
+  }
+
+  // Denylist
+  if (deny?.length) {
+    html += `<div class="pv-section"><div class="pv-section-title">Denylist (${deny.length})</div><div class="pv-list">`
+    html += deny.map(d=>`<span class="pv-tag pv-domain ${d.active?'pv-active':'pv-inactive'}">${d.active?'🚫':'○'} ${esc(d.id)}</span>`).join('')
+    html += `</div></div>`
+  }
+
+  // Allowlist
+  if (allow?.length) {
+    html += `<div class="pv-section"><div class="pv-section-title">Allowlist (${allow.length})</div><div class="pv-list">`
+    html += allow.map(a=>`<span class="pv-tag pv-domain pv-active">✓ ${esc(a.id)}</span>`).join('')
+    html += `</div></div>`
+  }
+
+  return html || '<div style="color:var(--muted);padding:16px">No data available.</div>'
+}
+
+function closePV() { document.getElementById('pv-modal').classList.remove('open') }
+
+// ═══════════════════════════════════════════════
+//  LOGOUT
+// ═══════════════════════════════════════════════
+function logout() {
+  stopLiveLog()
+  S = {isDemo:false, apiKey:'', email:'', profiles:[], cache:{}, preview:null, skipped:{}, forced:{}}
+  DF = {running:false, sse:null, demoInterval:null, selectedDevices:new Set(), logs:[], searchTerm:'', stats:{total:0,blocked:0,allowed:0}}
+  DV = {allDevices:[], filtered:[]}
+  QE = {mode:'add', previewData:null}
+  CM = {exportData:null, importData:null, mode:null}
+  // Reset quick edit & config mgmt profile cards
+  const qeCards = document.getElementById('qe-profile-cards')
+  if (qeCards) qeCards.innerHTML = ''
+  const cmCards = document.getElementById('cm-profile-cards')
+  if (cmCards) cmCards.innerHTML = ''
+  document.getElementById('apikey').value=''
+  document.getElementById('login-err').style.display='none'
+  document.getElementById('login-cors').style.display='none'
+  document.getElementById('df-profile-select').innerHTML=''
+  document.getElementById('dv-profile-select').innerHTML=''
+  show('sa',false); show('sw',false); show('sl',true)
+}
+
+// ═══════════════════════════════════════════════
+//  NAV TABS
+// ═══════════════════════════════════════════════
+function switchTab(tab) {
+  const allTabs = ['sync','devices','flows','quickedit','configmgmt']
+  allTabs.forEach(t => {
+    const tabEl = document.getElementById('tab-'+t)
+    if (tabEl) tabEl.classList.toggle('active', t===tab)
+    const page = document.getElementById('page-'+t)
+    if (page) page.style.display = t===tab ? 'flex' : 'none'
+  })
+
+  if (tab==='devices') {
+    const sel = document.getElementById('dv-profile-select')
+    if (sel.options.length === 0) {
+      sel.innerHTML = S.profiles.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+      if (S.profiles.length) loadDvDevices(S.profiles[0].id)
+    }
+  }
+
+  if (tab==='flows') {
+    const sel = document.getElementById('df-profile-select')
+    if (sel.options.length === 0) {
+      sel.innerHTML = S.profiles.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+      if (S.profiles.length) loadDevices(S.profiles[0].id)
+    }
+  }
+
+  if (tab==='quickedit') {
+    const container = document.getElementById('qe-profile-cards')
+    if (!container.children.length) initQuickEdit()
+  }
+
+  if (tab==='configmgmt') {
+    const container = document.getElementById('cm-profile-cards')
+    if (!container.children.length) initConfigMgmt()
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  DEVICES PAGE
+// ═══════════════════════════════════════════════
+let DV = {
+  allDevices: [],   // full list loaded from API
+  filtered: []      // filtered by search
+}
+
+async function onDvProfileChange() {
+  const pid = document.getElementById('dv-profile-select').value
+  DV.allDevices = []; DV.filtered = []
+  document.getElementById('dv-count').textContent = '—'
+  document.getElementById('dv-content').style.display = 'none'
+  document.getElementById('dv-empty').style.display = 'flex'
+  document.getElementById('dv-empty').innerHTML = `
+    <div class="empty-icon">⏳</div>
+    <h3>Laden…</h3>
+    <p></p>
+  `
+  await loadDvDevices(pid)
+}
+
+async function loadDvDevices(pid) {
+  try {
+    let devices
+    if (S.isDemo) {
+      await new Promise(r=>setTimeout(r,300))
+      // Generate a bigger demo set to test scrolling
+      devices = [
+        ...DEMO_DEVICES,
+        { id: '__Unidentified__', name: '__Unidentified__', model: '', queries: 52 },
+        { id: 'Raspberry-Pi', name: 'Raspberry Pi', model: 'Raspberry Pi 4', queries: 127 },
+        { id: 'Xbox-Series-X', name: 'Xbox Series X', model: 'Microsoft Xbox', queries: 341 },
+        { id: 'iPad-Pro', name: 'iPad Pro', model: 'Apple iPad Pro 12.9"', queries: 289 }
+      ]
+    } else {
+      devices = await apiGetList(`/profiles/${pid}/analytics/devices`)
+    }
+
+    // Rename __Unidentified__ devices
+    devices = devices.map(d => ({
+      ...d,
+      name: (d.name === '__Unidentified__' || d.id === '__Unidentified__') ? 'Unidentified Devices' : (d.name || d.id)
+    }))
+
+    DV.allDevices = devices
+    renderDvDevices(devices)
+  } catch(e) {
+    document.getElementById('dv-empty').innerHTML = `
+      <div class="empty-icon">⚠️</div>
+      <h3>Fout bij laden</h3>
+      <p>${esc(e.message)}</p>
+    `
+    document.getElementById('dv-empty').style.display = 'flex'
+    document.getElementById('dv-content').style.display = 'none'
+  }
+}
+
+function renderDvDevices(devices) {
+  const count = devices.length
+  document.getElementById('dv-count').textContent = count
+
+  if (count === 0) {
+    document.getElementById('dv-empty').innerHTML = `
+      <div class="empty-icon">💻</div>
+      <h3>Geen devices gevonden</h3>
+      <p>Er zijn geen devices gekoppeld aan dit profiel, of de zoekopdracht leverde geen resultaten op.</p>
+    `
+    document.getElementById('dv-empty').style.display = 'flex'
+    document.getElementById('dv-content').style.display = 'none'
+    return
+  }
+
+  document.getElementById('dv-empty').style.display = 'none'
+  const content = document.getElementById('dv-content')
+  content.style.display = 'block'
+
+  // Sort: identified devices first (by query count desc), then unidentified
+  const sorted = [...devices].sort((a,b) => {
+    const aUnid = a.name === 'Unidentified Devices'
+    const bUnid = b.name === 'Unidentified Devices'
+    if (aUnid !== bUnid) return aUnid ? 1 : -1
+    return (b.queries||0) - (a.queries||0)
+  })
+
+  const totalQueries = sorted.reduce((s,d)=>s+(d.queries||0),0)
+
+  content.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;padding:4px 0">
+      ${sorted.map(d => dvDeviceCard(d, totalQueries)).join('')}
+    </div>
+  `
+}
+
+function dvDeviceCard(d, totalQueries) {
+  const icon = deviceIcon(d.name)
+  const pct = totalQueries > 0 ? Math.round((d.queries||0)/totalQueries*100) : 0
+  const isUnid = d.name === 'Unidentified Devices'
+  return `
+    <div style="background:#fff;border:1.5px solid var(--gray-border);border-radius:10px;padding:14px 16px;box-shadow:var(--shadow);transition:border-color .15s"
+         onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--gray-border)'">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:36px;height:36px;border-radius:9px;background:${isUnid?'#f3f4f6':'var(--blue-light)'};display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid ${isUnid?'var(--gray-border)':'#bfdbfe'};flex-shrink:0">${isUnid?'❓':icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:${isUnid?'var(--muted)':'var(--text)'}">${esc(d.name)}</div>
+          ${d.model && d.model !== d.name ? `<div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.model)}</div>` : ''}
+        </div>
+        ${d.queries !== undefined ? `<div style="font-size:11px;font-weight:700;color:var(--muted);background:var(--gray-light);padding:3px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0">${d.queries.toLocaleString()}</div>` : ''}
+      </div>
+      ${d.queries !== undefined ? `
+        <div style="height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${isUnid?'#d1d5db':'var(--blue)'};border-radius:3px;transition:width .3s"></div>
+        </div>
+        <div style="font-size:10px;color:var(--muted);margin-top:4px">${pct}% van totale queries</div>
+      ` : ''}
+    </div>
+  `
+}
+
+function onDvSearch() {
+  const q = document.getElementById('dv-search').value.trim().toLowerCase()
+  const filtered = q
+    ? DV.allDevices.filter(d =>
+        d.name?.toLowerCase().includes(q) ||
+        d.model?.toLowerCase().includes(q) ||
+        d.id?.toLowerCase().includes(q)
+      )
+    : DV.allDevices
+  document.getElementById('dv-count').textContent = filtered.length
+  renderDvDevices(filtered)
+}
+
+// ═══════════════════════════════════════════════
+//  DEVICES & FLOWS — STATE
+// ═══════════════════════════════════════════════
+let DF = {
+  running: false,
+  sse: null,           // EventSource handle
+  demoInterval: null,  // polling interval for demo
+  selectedDevices: new Set(),
+  logs: [],            // all collected log entries (max 500)
+  searchTerm: '',
+  stats: { total: 0, blocked: 0, allowed: 0 }
+}
+
+// Demo devices data
+const DEMO_DEVICES = [
+  { id: 'MacBook-Pro', name: 'MacBook Pro', model: 'Apple MacBook Pro', queries: 1847 },
+  { id: 'iPhone-Timo', name: "Timo's iPhone", model: 'Apple iPhone 15 Pro', queries: 934 },
+  { id: 'SmartTV-Samsung', name: 'Samsung TV', model: 'Samsung Smart TV', queries: 412 },
+  { id: 'NAS-Synology', name: 'Synology NAS', model: 'Synology DS920+', queries: 203 },
+  { id: 'iPad-Kids', name: "iPad Kids", model: 'Apple iPad Air', queries: 688 }
+]
+
+const DEMO_DOMAINS = [
+  { domain: 'pagead2.googlesyndication.com', root: 'googlesyndication.com', status: 'blocked', reason: 'Ads & Trackers', type: 'A' },
+  { domain: 'connect.facebook.net', root: 'facebook.net', status: 'blocked', reason: 'Ads & Trackers', type: 'HTTPS' },
+  { domain: 'api.spotify.com', root: 'spotify.com', status: 'allowed', reason: '', type: 'A' },
+  { domain: 'telemetry.microsoft.com', root: 'microsoft.com', status: 'blocked', reason: 'Denylist', type: 'A' },
+  { domain: 'fonts.googleapis.com', root: 'googleapis.com', status: 'allowed', reason: '', type: 'AAAA' },
+  { domain: 'pixel.facebook.com', root: 'facebook.com', status: 'blocked', reason: 'Denylist', type: 'A' },
+  { domain: 'cdn.jsdelivr.net', root: 'jsdelivr.net', status: 'allowed', reason: '', type: 'A' },
+  { domain: 'analytics.twitter.com', root: 'twitter.com', status: 'blocked', reason: 'Ads & Trackers', type: 'A' },
+  { domain: 'icloud.com', root: 'icloud.com', status: 'allowed', reason: '', type: 'A' },
+  { domain: 'sb.scorecardresearch.com', root: 'scorecardresearch.com', status: 'blocked', reason: 'Ads & Trackers', type: 'HTTPS' },
+  { domain: 'update.googleapis.com', root: 'googleapis.com', status: 'allowed', reason: '', type: 'A' },
+  { domain: 'safebrowsing.google.com', root: 'google.com', status: 'allowed', reason: '', type: 'A' },
+  { domain: 'tr.snapchat.com', root: 'snapchat.com', status: 'blocked', reason: 'Ads & Trackers', type: 'A' },
+  { domain: 'static.doubleclick.net', root: 'doubleclick.net', status: 'blocked', reason: 'Denylist', type: 'A' },
+  { domain: 'gateway.icloud.com', root: 'icloud.com', status: 'allowed', reason: '', type: 'HTTPS' }
+]
+
+// ═══════════════════════════════════════════════
+//  DEVICES & FLOWS — LOAD DEVICES
+// ═══════════════════════════════════════════════
+async function onDfProfileChange() {
+  const pid = document.getElementById('df-profile-select').value
+  stopLiveLog()
+  DF.selectedDevices.clear()
+  DF.logs = []
+  DF.stats = { total: 0, blocked: 0, allowed: 0 }
+  updateDfStats()
+  document.getElementById('df-log-inner').innerHTML = `
+    <div class="df-empty" id="df-empty">
+      <div class="empty-icon">📡</div>
+      <h3>No live data yet</h3>
+      <p>Optionally pick devices, then click Start to stream live DNS queries.</p>
+    </div>
+    <div id="df-log-rows" style="display:none"></div>
+  `
+  loadDevices(pid)
+}
+
+async function loadDevices(pid) {
+  const list = document.getElementById('df-devices-list')
+  list.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:4px 0"><span class="spinner spinner-dark" style="width:11px;height:11px;border-width:1.5px"></span> Laden…</div>'
+
+  try {
+    let devices
+    if (S.isDemo) {
+      await new Promise(r=>setTimeout(r,400))
+      devices = DEMO_DEVICES
+    } else {
+      devices = await apiGetList(`/profiles/${pid}/analytics/devices`)
+    }
+
+    if (!devices || devices.length === 0) {
+      list.innerHTML = '<div style="color:var(--muted);font-size:12px;font-style:italic">Geen devices gevonden voor dit profiel.</div>'
+      return
+    }
+
+    // Rename unidentified
+    devices = devices.map(d => ({
+      ...d,
+      name: (d.name === '__Unidentified__' || d.id === '__Unidentified__') ? 'Unidentified Devices' : (d.name || d.id)
+    }))
+
+    list.innerHTML = devices.map(d => {
+      const icon = deviceIcon(d.name)
+      const safeId = CSS.escape(d.id)
+      return `
+        <div class="dev-card" id="devcard-${safeId}" onclick="toggleDevice('${esc(d.id)}')">
+          <div class="dev-check" id="devcheck-${safeId}"></div>
+          <div class="dev-icon">${icon}</div>
+          <div class="dev-info">
+            <div class="dev-name">${esc(d.name)}</div>
+            ${d.model && d.model !== d.name ? `<div class="dev-model">${esc(d.model)}</div>` : ''}
+          </div>
+          ${d.queries ? `<div class="dev-qcount">${d.queries.toLocaleString()}</div>` : ''}
+        </div>
+      `
+    }).join('')
+  } catch(e) {
+    list.innerHTML = `<div style="color:var(--red);font-size:12px">Fout: ${esc(e.message)}</div>`
+  }
+}
+
+function deviceIcon(name) {
+  const n = (name||'').toLowerCase()
+  if (n.includes('iphone')||n.includes('phone')) return '📱'
+  if (n.includes('ipad')||n.includes('tablet')) return '📱'
+  if (n.includes('mac')||n.includes('laptop')||n.includes('macbook')) return '💻'
+  if (n.includes('tv')||n.includes('samsung')||n.includes('lg')) return '📺'
+  if (n.includes('nas')||n.includes('server')) return '🖥'
+  if (n.includes('router')||n.includes('synology')||n.includes('unifi')) return '📡'
+  return '🔌'
+}
+
+function toggleDevice(id) {
+  const card = document.getElementById('devcard-'+id)
+  const check = document.getElementById('devcheck-'+id)
+  if (!card) return
+  if (DF.selectedDevices.has(id)) {
+    DF.selectedDevices.delete(id)
+    card.classList.remove('selected')
+  } else {
+    DF.selectedDevices.add(id)
+    card.classList.add('selected')
+  }
+  // Restart stream with new device filter if already running
+  if (DF.running) { stopLiveLog(); startLiveLog() }
+}
+
+// ═══════════════════════════════════════════════
+//  DEVICES & FLOWS — STREAMING
+// ═══════════════════════════════════════════════
+function toggleLiveLog() {
+  if (DF.running) stopLiveLog()
+  else startLiveLog()
+}
+
+function startLiveLog() {
+  const pid = document.getElementById('df-profile-select').value
+  if (!pid) { toast('Select a profile first.','err'); return }
+
+  DF.running = true
+  DF.logs = []
+  DF.stats = { total: 0, blocked: 0, allowed: 0 }
+  updateDfStats()
+
+  // Show rows container, hide empty state
+  const logInner = document.getElementById('df-log-inner')
+  logInner.innerHTML = '<div id="df-log-rows"></div>'
+
+  // Enable search
+  document.getElementById('df-search').disabled = false
+  document.getElementById('df-start-btn').textContent = '⏸ Pause'
+  document.getElementById('df-start-btn').className = 'btn btn-ghost btn-sm'
+
+  // Show live indicator
+  document.getElementById('df-live-dot').style.display = 'block'
+  document.getElementById('df-live-label').style.display = 'block'
+
+  if (S.isDemo) {
+    startDemoStream()
+  } else {
+    startSseStream(pid)
+  }
+}
+
+function stopLiveLog() {
+  if (!DF) return
+  DF.running = false
+  if (DF.sse) { try { DF.sse.close() } catch(e){} DF.sse = null }
+  if (DF.demoInterval) { clearInterval(DF.demoInterval); DF.demoInterval = null }
+
+  const btn = document.getElementById('df-start-btn')
+  if (btn) { btn.textContent = '▶ Start'; btn.className = 'btn btn-primary btn-sm' }
+
+  const dot = document.getElementById('df-live-dot')
+  const lbl = document.getElementById('df-live-label')
+  if (dot) dot.style.display = 'none'
+  if (lbl) lbl.style.display = 'none'
+}
+
+function startSseStream(pid) {
+  const blockedOnly = document.getElementById('df-blocked-only').checked
+  const raw = document.getElementById('df-raw').checked
+  const devices = [...DF.selectedDevices]
+
+  let url = `${BASE}/profiles/${pid}/logs/stream?`
+  const params = []
+  if (blockedOnly) params.push('status=blocked')
+  if (raw) params.push('raw=1')
+  if (devices.length === 1) params.push('device='+encodeURIComponent(devices[0]))
+  url += params.join('&')
+
+  try {
+    const sse = new EventSource(url, { headers: { 'X-Api-Key': S.apiKey } })
+    DF.sse = sse
+
+    sse.addEventListener('message', e => {
+      try {
+        const entry = JSON.parse(e.data)
+        appendLogEntry(entry)
+      } catch {}
+    })
+
+    sse.addEventListener('error', () => {
+      if (DF.running) {
+        toast('Stream disconnected. Retrying…', 'err')
+        stopLiveLog()
+      }
+    })
+  } catch(e) {
+    toast('Could not start stream: '+e.message, 'err')
+    stopLiveLog()
+  }
+}
+
+function startDemoStream() {
+  // Emit a random demo log entry every ~800ms
+  const emit = () => {
+    if (!DF.running) return
+    const template = DEMO_DOMAINS[Math.floor(Math.random()*DEMO_DOMAINS.length)]
+    const device = DEMO_DEVICES[Math.floor(Math.random()*DEMO_DEVICES.length)]
+    const entry = {
+      domain: template.domain,
+      root: template.root,
+      status: template.status,
+      reason: template.reason,
+      type: template.type,
+      device: { id: device.id, name: device.name },
+      clientIp: `192.168.1.${Math.floor(Math.random()*200+10)}`,
+      timestamp: new Date().toISOString()
+    }
+    appendLogEntry(entry)
+  }
+  emit()
+  DF.demoInterval = setInterval(emit, 700 + Math.random()*600)
+}
+
+// ═══════════════════════════════════════════════
+//  DEVICES & FLOWS — LOG RENDERING
+// ═══════════════════════════════════════════════
+function appendLogEntry(entry) {
+  // Filter: device selection
+  if (DF.selectedDevices.size > 0 && entry.device?.id && !DF.selectedDevices.has(entry.device.id)) return
+
+  // Filter: blocked only
+  if (document.getElementById('df-blocked-only').checked && entry.status !== 'blocked') return
+
+  // Update stats
+  DF.stats.total++
+  if (entry.status === 'blocked') DF.stats.blocked++
+  else DF.stats.allowed++
+  updateDfStats()
+
+  // Store (cap at 500)
+  DF.logs.unshift(entry)
+  if (DF.logs.length > 500) DF.logs.pop()
+
+  // Render to DOM (prepend)
+  const container = document.getElementById('df-log-rows')
+  if (!container) return
+
+  const search = DF.searchTerm.toLowerCase()
+  if (search && !entry.domain?.toLowerCase().includes(search)) return
+
+  const row = document.createElement('div')
+  row.className = 'log-row' + (entry.status==='blocked' ? ' blocked' : ' allowed')
+
+  const isBlocked = entry.status === 'blocked'
+  const timeStr = formatLogTime(entry.timestamp)
+  const domainParts = highlightDomain(entry.domain || '', entry.root || '')
+  const faviconUrl = entry.root ? `https://icons.duckduckgo.com/ip3/${entry.root}.ico` : ''
+
+  row.innerHTML = `
+    <div class="log-favicon">
+      ${faviconUrl ? `<img src="${faviconUrl}" onerror="this.parentNode.innerHTML='🌐'" alt="">` : '🌐'}
+    </div>
+    <div>
+      <div class="log-domain">${domainParts}</div>
+      <div class="log-meta">
+        <span class="log-type-badge">${esc(entry.type||'A')}</span>
+        ${entry.device?.name ? `<span class="log-dev-badge">${esc(entry.device.name)}</span>` : ''}
+        ${isBlocked && entry.reason ? `<span class="log-reason">${esc(entry.reason)}</span>` : ''}
+      </div>
+    </div>
+    <div class="log-ip">${esc(entry.clientIp||'')}</div>
+    <div class="log-status"><div class="status-dot ${isBlocked?'sd-block':'sd-allow'}"></div></div>
+    <div class="log-time">${timeStr}</div>
+  `
+
+  // Prepend (newest first), keep max 200 in DOM
+  container.insertBefore(row, container.firstChild)
+  while (container.children.length > 200) {
+    container.removeChild(container.lastChild)
+  }
+}
+
+function highlightDomain(domain, root) {
+  if (!root || !domain.endsWith(root)) return `<span>${esc(domain)}</span>`
+  const sub = domain.slice(0, domain.length - root.length)
+  return `<span>${esc(sub)}</span><span class="log-root">${esc(root)}</span>`
+}
+
+function formatLogTime(ts) {
+  if (!ts) return ''
+  try {
+    const d = new Date(ts)
+    const h = String(d.getHours()).padStart(2,'0')
+    const m = String(d.getMinutes()).padStart(2,'0')
+    const s = String(d.getSeconds()).padStart(2,'0')
+    return `${h}:${m}:${s}`
+  } catch { return '' }
+}
+
+function updateDfStats() {
+  const t = document.getElementById('df-stat-total')
+  const b = document.getElementById('df-stat-blocked')
+  const a = document.getElementById('df-stat-allowed')
+  if (t) t.textContent = DF.stats.total
+  if (b) b.textContent = DF.stats.blocked
+  if (a) a.textContent = DF.stats.allowed
+}
+
+// ═══════════════════════════════════════════════
+//  DEVICES & FLOWS — FILTERS & SEARCH
+// ═══════════════════════════════════════════════
+function onDfFilterChange() {
+  if (DF.running) {
+    // Restart stream to apply new server-side filters
+    stopLiveLog()
+    startLiveLog()
+  }
+}
+
+function onDfSearch() {
+  DF.searchTerm = document.getElementById('df-search').value.trim()
+  // Re-render visible rows from stored logs
+  const container = document.getElementById('df-log-rows')
+  if (!container) return
+  const search = DF.searchTerm.toLowerCase()
+  const blockedOnly = document.getElementById('df-blocked-only').checked
+  container.innerHTML = ''
+  let count = 0
+  for (const entry of DF.logs) {
+    if (count >= 200) break
+    if (search && !entry.domain?.toLowerCase().includes(search)) continue
+    if (blockedOnly && entry.status !== 'blocked') continue
+    // Re-create row
+    const row = document.createElement('div')
+    row.className = 'log-row' + (entry.status==='blocked' ? ' blocked' : ' allowed')
+    const isBlocked = entry.status === 'blocked'
+    const timeStr = formatLogTime(entry.timestamp)
+    const domainParts = highlightDomain(entry.domain || '', entry.root || '')
+    const faviconUrl = entry.root ? `https://icons.duckduckgo.com/ip3/${entry.root}.ico` : ''
+    row.innerHTML = `
+      <div class="log-favicon">
+        ${faviconUrl ? `<img src="${faviconUrl}" onerror="this.parentNode.innerHTML='🌐'" alt="">` : '🌐'}
+      </div>
+      <div>
+        <div class="log-domain">${domainParts}</div>
+        <div class="log-meta">
+          <span class="log-type-badge">${esc(entry.type||'A')}</span>
+          ${entry.device?.name ? `<span class="log-dev-badge">${esc(entry.device.name)}</span>` : ''}
+          ${isBlocked && entry.reason ? `<span class="log-reason">${esc(entry.reason)}</span>` : ''}
+        </div>
+      </div>
+      <div class="log-ip">${esc(entry.clientIp||'')}</div>
+      <div class="log-status"><div class="status-dot ${isBlocked?'sd-block':'sd-allow'}"></div></div>
+      <div class="log-time">${timeStr}</div>
+    `
+    container.appendChild(row)
+    count++
+  }
+}
+
+// Close modals on overlay click
+document.getElementById('apply-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closeModal() })
+document.getElementById('pv-modal').addEventListener('click', e => { if(e.target===e.currentTarget) closePV() })
+
+// ═══════════════════════════════════════════════
+//  QUICK EDIT
+// ═══════════════════════════════════════════════
+let QE = {
+  mode: 'add',   // 'add' | 'remove'
+  previewData: null
+}
+
+function initQuickEdit() {
+  // Build profile cards — default none selected
+  const container = document.getElementById('qe-profile-cards')
+  container.innerHTML = S.profiles.map(p => `
+    <div class="pcard" id="qe-card-${p.id}" onclick="qeToggleProfile('${p.id}')">
+      <div class="pcard-check" id="qe-check-${p.id}"></div>
+      <span>🛡</span>
+      <span class="pcard-name">${esc(p.name)}</span>
+    </div>
+  `).join('')
+  setQeMode('add')
+  document.getElementById('qe-preview-result').style.display = 'none'
+  document.getElementById('qe-apply-btn').disabled = true
+  QE.previewData = null
+}
+
+function setQeMode(mode) {
+  QE.mode = mode
+  const addBtn = document.getElementById('qe-mode-add')
+  const remBtn = document.getElementById('qe-mode-remove')
+  const hint   = document.getElementById('qe-mode-hint')
+  const rwCount = document.getElementById('qe-rewrite-count')
+  if (mode === 'add') {
+    addBtn.className = 'btn btn-primary btn-sm'
+    remBtn.className = 'btn btn-ghost btn-sm'
+    hint.innerHTML = 'Domeinen worden <strong>toegevoegd</strong> aan de geselecteerde profielen.'
+    if (rwCount) rwCount.textContent = qeParseRewrites(document.getElementById('qe-rewrite-input')?.value||'').length + ' rewrites'
+  } else {
+    addBtn.className = 'btn btn-ghost btn-sm'
+    remBtn.className = 'btn btn-primary btn-sm'
+    remBtn.style.background = 'var(--red)'; remBtn.style.color='#fff'; remBtn.style.borderColor='var(--red)'
+    hint.innerHTML = 'Domeinen worden <strong>verwijderd</strong> uit de geselecteerde profielen (als ze voorkomen in allow of deny).'
+    if (rwCount) rwCount.textContent = '0 rewrites · alleen beschikbaar in Add-modus'
+  }
+  QE.previewData = null
+  document.getElementById('qe-apply-btn').disabled = true
+  document.getElementById('qe-preview-result').style.display = 'none'
+}
+
+function qeToggleProfile(id) {
+  const card = document.getElementById('qe-card-'+id)
+  card.classList.toggle('selected')
+  QE.previewData = null
+  document.getElementById('qe-apply-btn').disabled = true
+}
+
+function qeSelectAll() {
+  document.querySelectorAll('#qe-profile-cards .pcard').forEach(c => c.classList.add('selected'))
+}
+
+function qeGetSelectedProfiles() {
+  return S.profiles.filter(p => document.getElementById('qe-card-'+p.id)?.classList.contains('selected'))
+}
+
+function qeParseDomains(text) {
+  return text.split('\n')
+    .map(l => l.trim().toLowerCase().replace(/^https?:\/\//,'').replace(/\/.*$/,''))
+    .filter(l => l && !l.startsWith('#'))
+}
+
+// Parse "name=content" lines for rewrites
+function qeParseRewrites(text) {
+  return text.split('\n')
+    .map(l => l.trim())
+    .filter(l => l && !l.startsWith('#') && l.includes('='))
+    .map(l => {
+      const eq = l.indexOf('=')
+      return { name: l.slice(0, eq).trim().toLowerCase(), content: l.slice(eq+1).trim() }
+    })
+    .filter(r => r.name && r.content)
+}
+
+function qeOnInput() {
+  const denyDomains  = qeParseDomains(document.getElementById('qe-deny-input').value)
+  const allowDomains = qeParseDomains(document.getElementById('qe-allow-input').value)
+  const rewrites     = qeParseRewrites(document.getElementById('qe-rewrite-input')?.value||'')
+  document.getElementById('qe-deny-count').textContent  = denyDomains.length  + ' domein' + (denyDomains.length!==1?'en':'')
+  document.getElementById('qe-allow-count').textContent = allowDomains.length + ' domein' + (allowDomains.length!==1?'en':'')
+  const rwCount = document.getElementById('qe-rewrite-count')
+  if (rwCount) rwCount.textContent = QE.mode==='add'
+    ? rewrites.length + ' rewrite' + (rewrites.length!==1?'s':'')
+    : '0 rewrites · alleen beschikbaar in Add-modus'
+  QE.previewData = null
+  document.getElementById('qe-apply-btn').disabled = true
+  document.getElementById('qe-preview-result').style.display = 'none'
+}
+
+function qeLoadFile(e, listType) {
+  const file = e.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = ev => {
+    const el = document.getElementById('qe-'+(listType==='deny'?'deny':'allow')+'-input')
+    el.value = (el.value.trim() ? el.value.trim()+'\n' : '') + ev.target.result.trim()
+    qeOnInput()
+    toast('Bestand geladen: '+file.name, 'ok')
+  }
+  reader.readAsText(file)
+  e.target.value = ''
+}
+
+function qeClear(listType) {
+  if (listType === 'rewrite') {
+    document.getElementById('qe-rewrite-input').value = ''
+  } else {
+    document.getElementById('qe-'+(listType==='deny'?'deny':'allow')+'-input').value = ''
+  }
+  qeOnInput()
+}
+
+async function qePreview() {
+  const profiles = qeGetSelectedProfiles()
+  if (!profiles.length) { toast('Selecteer minimaal één profiel.','err'); return }
+
+  const denyDomains  = qeParseDomains(document.getElementById('qe-deny-input').value)
+  const allowDomains = qeParseDomains(document.getElementById('qe-allow-input').value)
+  const rewriteItems = QE.mode==='add' ? qeParseRewrites(document.getElementById('qe-rewrite-input')?.value||'') : []
+  if (!denyDomains.length && !allowDomains.length && !rewriteItems.length) { toast('Voer minimaal één domein of rewrite in.','err'); return }
+
+  const btn = document.getElementById('qe-preview-btn')
+  btn.disabled = true; btn.innerHTML = '<span class="spinner spinner-dark"></span> Laden…'
+
+  try {
+    QE.previewData = []
+
+    for (const profile of profiles) {
+      const pid = profile.id
+      const currentDeny  = await apiGetList(`/profiles/${pid}/denylist`)
+      const currentAllow = await apiGetList(`/profiles/${pid}/allowlist`)
+      const currentRew   = QE.mode==='add' ? await apiGetList(`/profiles/${pid}/rewrites`) : []
+      const denySet  = new Set(currentDeny.map(i=>i.id))
+      const allowSet = new Set(currentAllow.map(i=>i.id))
+      // Use name+content as unique key — multiple entries per name are allowed
+      const rewSet   = new Set(currentRew.map(r => r.name + '\x00' + r.content))
+
+      const denyItems  = denyDomains.map(d => ({
+        domain: d, list: 'deny',
+        status: QE.mode==='add'
+          ? (denySet.has(d) ? 'already-exists' : 'will-add')
+          : (denySet.has(d) ? 'will-remove'    : 'not-found')
+      }))
+      const allowItems = allowDomains.map(d => ({
+        domain: d, list: 'allow',
+        status: QE.mode==='add'
+          ? (allowSet.has(d) ? 'already-exists' : 'will-add')
+          : (allowSet.has(d) ? 'will-remove'    : 'not-found')
+      }))
+      const rewItems = rewriteItems.map(r => {
+        const key = r.name + '\x00' + r.content
+        return {
+          name: r.name, content: r.content, list: 'rewrite',
+          status: rewSet.has(key) ? 'already-exists' : 'will-add'
+        }
+      })
+
+      QE.previewData.push({ profile, denyItems, allowItems, rewItems, denySet, allowSet, rewSet })
+    }
+
+    renderQePreview()
+    document.getElementById('qe-apply-btn').disabled = false
+  } catch(e) {
+    toast('Fout bij laden: '+e.message,'err')
+  } finally {
+    btn.disabled=false; btn.textContent='Preview'
+  }
+}
+
+function renderQePreview() {
+  const el = document.getElementById('qe-preview-result')
+  el.style.display = 'block'
+
+  const modeLabel = QE.mode==='add' ? 'Toevoegen aan' : 'Verwijderen uit'
+  const statusLabel = {
+    'will-add':      ['dot-g','Wordt toegevoegd'],
+    'already-exists':['dot-gr','Al aanwezig (overgeslagen)'],
+    'will-update':   ['dot-o','Wordt bijgewerkt'],
+    'will-remove':   ['dot-r','Wordt verwijderd'],
+    'not-found':     ['dot-gr','Niet gevonden (overgeslagen)']
+  }
+
+  let html = `<div class="preview-hdr">
+    <div class="preview-hdr-left">
+      <div class="preview-hdr-title">Preview — ${QE.mode==='add'?'Domeinen toevoegen':'Domeinen verwijderen'}</div>
+      <div class="legend">
+        ${QE.mode==='add'
+          ? `<div class="leg"><div class="dot dot-g"></div> Wordt toegevoegd</div><div class="leg"><div class="dot dot-gr"></div> Al aanwezig</div>`
+          : `<div class="leg"><div class="dot dot-r"></div> Wordt verwijderd</div><div class="leg"><div class="dot dot-gr"></div> Niet gevonden</div>`
+        }
+      </div>
+    </div>
+  </div>`
+
+  for (const {profile, denyItems, allowItems, rewItems} of QE.previewData) {
+    const allItems = [...denyItems, ...allowItems, ...(rewItems||[])]
+    const actionCount = allItems.filter(i=>i.status==='will-add'||i.status==='will-remove'||i.status==='will-update').length
+    html += `<div class="qe-result-block">
+      <div class="qe-result-hdr" style="background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%)">
+        <span style="font-size:16px">🛡</span>
+        <span style="color:#fff">${esc(profile.name)}</span>
+        <span style="margin-left:auto;background:rgba(255,255,255,.2);color:#fff;font-size:11px;padding:2px 9px;border-radius:12px;font-weight:700">${actionCount} actie${actionCount!==1?'s':''}</span>
+      </div>`
+
+    for (const listType of ['deny','allow']) {
+      const items = listType==='deny' ? denyItems : allowItems
+      if (!items.length) continue
+      const icon  = listType==='deny' ? '🚫' : '✅'
+      const label = listType==='deny' ? 'Denylist' : 'Allowlist'
+      html += `<div style="border-top:1px solid var(--gray-border)">
+        <div style="padding:7px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);background:#f8fafc">${icon} ${label}</div>`
+      for (const item of items) {
+        const [dotClass, label2] = statusLabel[item.status]
+        html += `<div class="qe-domain-row ${item.status}">
+          <div class="dot ${dotClass}" style="flex-shrink:0"></div>
+          <span style="flex:1">${esc(item.domain)}</span>
+          <span style="font-size:11px;color:var(--muted)">${label2}</span>
+        </div>`
+      }
+      html += `</div>`
+    }
+
+    // Rewrites (add mode only)
+    if (rewItems && rewItems.length) {
+      html += `<div style="border-top:1px solid var(--gray-border)">
+        <div style="padding:7px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#5b21b6;background:#f5f3ff">↩️ Rewrites</div>`
+      for (const item of rewItems) {
+        const [dotClass, label2] = statusLabel[item.status]
+        html += `<div class="qe-domain-row ${item.status}" style="grid-template-columns:10px 1fr auto auto;gap:10px">
+          <div class="dot ${dotClass}" style="flex-shrink:0"></div>
+          <span style="flex:1;font-family:'SF Mono',Monaco,Menlo,monospace;font-size:12px"><strong>${esc(item.name)}</strong> <span style="color:var(--muted)">→ ${esc(item.content)}</span></span>
+          <span style="font-size:11px;color:var(--muted)">${label2}</span>
+        </div>`
+      }
+      html += `</div>`
+    }
+
+    html += `</div>`
+  }
+
+  el.innerHTML = html
+}
+
+async function qeApply() {
+  if (!QE.previewData) return
+  const btn = document.getElementById('qe-apply-btn')
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Bezig…'
+
+  let errors = 0
+  try {
+    for (const {profile, denyItems, allowItems, rewItems} of QE.previewData) {
+      const pid = profile.id
+      // Deny + allow
+      for (const item of [...denyItems, ...allowItems]) {
+        const listType = item.list === 'deny' ? 'denylist' : 'allowlist'
+        try {
+          if (QE.mode === 'add' && item.status === 'will-add') {
+            await apiPost(`/profiles/${pid}/${listType}`, {id: item.domain, active: true})
+          } else if (QE.mode === 'remove' && item.status === 'will-remove') {
+            await apiDelete(`/profiles/${pid}/${listType}/${encodeURIComponent(item.domain)}`)
+          }
+        } catch(e) {
+          errors++
+          console.error(`[${profile.name}] ${item.domain}: ${e.message}`)
+        }
+      }
+      // Rewrites (add mode only)
+      if (QE.mode === 'add' && rewItems?.length) {
+        for (const rw of rewItems) {
+          if (rw.status !== 'will-add') continue  // 'already-exists' = skip
+          try {
+            // name+content combo doesn't exist yet — just POST it
+            await apiPost(`/profiles/${pid}/rewrites`, {name: rw.name, content: rw.content})
+          } catch(e) {
+            errors++
+            console.error(`[${profile.name}] rewrite ${rw.name}: ${e.message}`)
+          }
+        }
+      }
+    }
+    if (errors === 0) {
+      toast('Alle wijzigingen toegepast!', 'ok')
+    } else {
+      toast(`Klaar met ${errors} fout(en).`, 'err')
+    }
+    // Re-run preview to refresh state
+    await qePreview()
+  } catch(e) {
+    toast('Fout: '+e.message, 'err')
+  } finally {
+    btn.disabled = false; btn.textContent = 'Toepassen'
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  CONFIG MANAGEMENT
+// ═══════════════════════════════════════════════
+let CM = {
+  exportData: null,
+  importData: null,
+  mode: null    // 'export' | 'import'
+}
+
+function initConfigMgmt() {
+  const container = document.getElementById('cm-profile-cards')
+  container.innerHTML = S.profiles.map(p => `
+    <div class="pcard" id="cm-card-${p.id}" onclick="cmToggleProfile('${p.id}')">
+      <div class="pcard-check" id="cm-check-${p.id}"></div>
+      <span>🛡</span>
+      <span class="pcard-name">${esc(p.name)}</span>
+    </div>
+  `).join('')
+  cmClearPreview()
+  document.getElementById('cm-download-btn').disabled = true
+  document.getElementById('cm-import-preview-btn').disabled = true
+  document.getElementById('cm-import-apply-btn').disabled = true
+  CM.exportData = null
+  CM.importData = null
+}
+
+function cmToggleProfile(id) {
+  document.getElementById('cm-card-'+id).classList.toggle('selected')
+  cmClearPreview()
+}
+
+function cmGetSelectedProfiles() {
+  return S.profiles.filter(p => document.getElementById('cm-card-'+p.id)?.classList.contains('selected'))
+}
+
+function cmGetSelectedCats() {
+  return {
+    denylist:  document.getElementById('cm-cat-denylist').checked,
+    allowlist: document.getElementById('cm-cat-allowlist').checked,
+    rewrites:  document.getElementById('cm-cat-rewrites').checked,
+    security:  document.getElementById('cm-cat-security').checked,
+    tlds:      document.getElementById('cm-cat-tlds').checked,
+    privacy:   document.getElementById('cm-cat-privacy').checked,
+    parental:  document.getElementById('cm-cat-parental').checked,
+  }
+}
+
+function cmClearPreview() {
+  document.getElementById('cm-preview-empty').style.display = 'flex'
+  document.getElementById('cm-preview-content').style.display = 'none'
+  document.getElementById('cm-download-btn').disabled = true
+  CM.exportData = null
+}
+
+async function cmExport() {
+  const profiles = cmGetSelectedProfiles()
+  if (!profiles.length) { toast('Selecteer minimaal één profiel.','err'); return }
+  const cats = cmGetSelectedCats()
+  if (!Object.values(cats).some(Boolean)) { toast('Selecteer minimaal één onderdeel.','err'); return }
+
+  const btn = document.querySelector('[onclick="cmExport()"]')
+  const prevText = btn.textContent
+  btn.disabled = true; btn.innerHTML = '<span class="spinner spinner-dark"></span> Laden…'
+
+  try {
+    CM.exportData = {
+      _meta: {
+        exportedAt: new Date().toISOString(),
+        tool: 'NextDNS Manager',
+        profiles: profiles.map(p=>({id:p.id, name:p.name})),
+        cats: Object.keys(cats).filter(k=>cats[k])
+      },
+      profiles: {}
+    }
+
+    for (const profile of profiles) {
+      const pid = profile.id
+      const data = {}
+      if (cats.denylist)  data.denylist  = await apiGetList(`/profiles/${pid}/denylist`)
+      if (cats.allowlist) data.allowlist = await apiGetList(`/profiles/${pid}/allowlist`)
+      if (cats.rewrites)  data.rewrites  = await apiGetList(`/profiles/${pid}/rewrites`)
+      if (cats.security)  data.security  = await apiGet(`/profiles/${pid}/security`)
+      if (cats.tlds)      data.tlds      = await apiGetList(`/profiles/${pid}/security/tlds`)
+      if (cats.privacy)   data.privacy   = await apiGet(`/profiles/${pid}/privacy`)
+      if (cats.parental)  data.parental  = await apiGet(`/profiles/${pid}/parentalControl`)
+      CM.exportData.profiles[pid] = { name: profile.name, ...data }
+    }
+
+    CM.mode = 'export'
+    renderCmPreview()
+    document.getElementById('cm-download-btn').disabled = false
+    toast('Export klaar — controleer de preview.','ok')
+  } catch(e) {
+    toast('Fout bij exporteren: '+e.message,'err')
+  } finally {
+    btn.disabled=false; btn.textContent=prevText
+  }
+}
+
+function cmDownload() {
+  if (!CM.exportData) return
+  const json = JSON.stringify(CM.exportData, null, 2)
+  const blob = new Blob([json], {type:'application/json'})
+  const url  = URL.createObjectURL(blob)
+  const a    = document.createElement('a')
+  const profileNames = Object.values(CM.exportData.profiles).map(p=>p.name).join('_').replace(/[^a-z0-9_-]/gi,'_').slice(0,40)
+  a.href = url
+  a.download = `nextdns-config_${profileNames}_${new Date().toISOString().slice(0,10)}.json`
+  a.click()
+  URL.revokeObjectURL(url)
+  toast('JSON gedownload!','ok')
+}
+
+function cmLoadImport(e) {
+  const file = e.target.files[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = ev => {
+    try {
+      CM.importData = JSON.parse(ev.target.result)
+      document.getElementById('cm-import-preview-btn').disabled = false
+      document.getElementById('cm-import-apply-btn').disabled = true
+      toast('Bestand geladen: '+file.name+'. Klik "Preview import" om te controleren.','ok')
+    } catch(err) {
+      toast('Ongeldig JSON-bestand: '+err.message,'err')
+      CM.importData = null
+    }
+  }
+  reader.readAsText(file)
+  e.target.value = ''
+}
+
+function cmImportPreview() {
+  if (!CM.importData) return
+  CM.mode = 'import'
+  renderCmPreview()
+  document.getElementById('cm-import-apply-btn').disabled = false
+  toast('Importbestand in preview. Controleer vóór toepassen.','')
+}
+
+async function cmImportApply() {
+  if (!CM.importData || CM.mode !== 'import') return
+  const profiles = cmGetSelectedProfiles()
+  if (!profiles.length) { toast('Selecteer minimaal één doelprofiel.','err'); return }
+
+  const confirmed = confirm(`Import toepassen op ${profiles.length} profiel(en)? De bestaande instellingen worden overschreven voor de geselecteerde onderdelen.`)
+  if (!confirmed) return
+
+  const btn = document.getElementById('cm-import-apply-btn')
+  btn.disabled = true; btn.innerHTML='<span class="spinner"></span> Bezig…'
+
+  let errors = 0
+  const cats = cmGetSelectedCats()
+
+  try {
+    // Use the first profile's data in the import (or allow mapping)
+    const importProfileData = Object.values(CM.importData.profiles || {})[0]
+    if (!importProfileData) throw new Error('Geen profieldata gevonden in importbestand.')
+
+    for (const profile of profiles) {
+      const pid = profile.id
+      try {
+        if (cats.denylist && importProfileData.denylist) {
+          // Delete existing + re-add
+          const existing = await apiGetList(`/profiles/${pid}/denylist`)
+          for (const item of existing) {
+            await apiDelete(`/profiles/${pid}/denylist/${encodeURIComponent(item.id)}`)
+          }
+          for (const item of importProfileData.denylist) {
+            await apiPost(`/profiles/${pid}/denylist`, {id:item.id, active:item.active})
+          }
+        }
+        if (cats.allowlist && importProfileData.allowlist) {
+          const existing = await apiGetList(`/profiles/${pid}/allowlist`)
+          for (const item of existing) {
+            await apiDelete(`/profiles/${pid}/allowlist/${encodeURIComponent(item.id)}`)
+          }
+          for (const item of importProfileData.allowlist) {
+            await apiPost(`/profiles/${pid}/allowlist`, {id:item.id, active:item.active})
+          }
+        }
+        if (cats.rewrites && importProfileData.rewrites) {
+          const existing = await apiGetList(`/profiles/${pid}/rewrites`)
+          for (const item of existing) {
+            await apiDelete(`/profiles/${pid}/rewrites/${encodeURIComponent(item.name)}`)
+          }
+          for (const item of importProfileData.rewrites) {
+            await apiPost(`/profiles/${pid}/rewrites`, {name:item.name, content:item.content})
+          }
+        }
+        if (cats.security && importProfileData.security) {
+          await apiPatch(`/profiles/${pid}/security`, importProfileData.security)
+        }
+        if (cats.tlds && importProfileData.tlds) {
+          const existing = await apiGetList(`/profiles/${pid}/security/tlds`)
+          for (const item of existing) {
+            await apiDelete(`/profiles/${pid}/security/tlds/${encodeURIComponent(item.id)}`)
+          }
+          for (const item of importProfileData.tlds) {
+            await apiPost(`/profiles/${pid}/security/tlds`, {id:item.id})
+          }
+        }
+        if (cats.privacy && importProfileData.privacy) {
+          await apiPatch(`/profiles/${pid}/privacy`, {
+            disguisedTrackers: importProfileData.privacy.disguisedTrackers,
+            allowAffiliate: importProfileData.privacy.allowAffiliate
+          })
+        }
+        if (cats.parental && importProfileData.parental) {
+          const par = importProfileData.parental
+          await apiPatch(`/profiles/${pid}/parentalControl`, {
+            safeSearch: par.safeSearch, youtubeRestrictedMode: par.youtubeRestrictedMode, blockBypass: par.blockBypass
+          })
+        }
+      } catch(e) {
+        console.error(`Import fout voor ${profile.name}:`, e)
+        errors++
+      }
+    }
+    if (errors === 0) toast('Import succesvol toegepast!','ok')
+    else toast(`Import klaar met ${errors} fout(en).`,'err')
+  } catch(e) {
+    toast('Fout bij importeren: '+e.message,'err')
+  } finally {
+    btn.disabled=false; btn.textContent='📥 Import toepassen'
+  }
+}
+
+async function cmCreateProfile() {
+  const name = document.getElementById('cm-new-profile-name').value.trim()
+  if (!name) { toast('Voer een naam in voor het nieuwe profiel.','err'); return }
+
+  const btn = document.querySelector('[onclick="cmCreateProfile()"]')
+  btn.disabled = true; btn.innerHTML='<span class="spinner spinner-dark"></span>'
+
+  try {
+    if (S.isDemo) {
+      // Demo: simulate creation
+      const newId = 'new'+Math.random().toString(36).slice(2,8)
+      S.profiles.push({id:newId, name})
+      toast(`Profiel "${name}" aangemaakt (demo)!`,'ok')
+    } else {
+      const r = await fetch(`${BASE}/profiles`, {
+        method:'POST',
+        headers: headers(),
+        body: JSON.stringify({name})
+      })
+      if (!r.ok) throw new Error('API fout: '+r.status)
+      const j = await r.json()
+      const newProfile = j.data || j
+      S.profiles.push(newProfile)
+      toast(`Profiel "${name}" aangemaakt!`,'ok')
+    }
+    document.getElementById('cm-new-profile-name').value = ''
+    initConfigMgmt()
+    initQuickEdit()
+    // Rebuild master-select in sync tab
+    document.getElementById('master-select').innerHTML = S.profiles.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('')
+    buildTargetCards()
+  } catch(e) {
+    toast('Fout bij aanmaken: '+e.message,'err')
+  } finally {
+    btn.disabled=false; btn.textContent='➕ Aanmaken'
+  }
+}
+
+function renderCmPreview() {
+  const data    = CM.mode==='export' ? CM.exportData : CM.importData
+  const isImport = CM.mode==='import'
+
+  document.getElementById('cm-preview-empty').style.display = 'none'
+  document.getElementById('cm-preview-content').style.display = 'block'
+  document.getElementById('cm-view-toggle').checked = false
+
+  const title = isImport ? '📂 Import Preview' : '📤 Export Preview'
+  document.getElementById('cm-preview-title').textContent = title
+
+  const profileCount = Object.keys(data.profiles||{}).length
+  document.getElementById('cm-preview-badge').textContent =
+    `${profileCount} profiel${profileCount!==1?'en':''} · ${new Date(data._meta?.exportedAt||Date.now()).toLocaleString('nl-NL')}`
+
+  // JSON view
+  document.getElementById('cm-json-content').textContent = JSON.stringify(data, null, 2)
+
+  // Readable view
+  let html = ''
+  for (const [pid, pdata] of Object.entries(data.profiles||{})) {
+    const profile = S.profiles.find(p=>p.id===pid) || {name: pdata.name||pid}
+    html += `<div class="cm-profile-block">
+      <div class="cm-profile-hdr">
+        <span style="font-size:18px">🛡</span>
+        <div>
+          <div style="font-weight:700;font-size:15px;color:#fff">${esc(pdata.name||profile.name)}</div>
+          <div style="font-size:11px;background:rgba(255,255,255,.18);padding:2px 8px;border-radius:4px;color:rgba(255,255,255,.85);font-family:monospace;border:1px solid rgba(255,255,255,.2);display:inline-block;margin-top:2px">${esc(pid)}</div>
+        </div>
+      </div>`
+
+    if (pdata.denylist?.length) {
+      html += `<div class="cm-section">
+        <div class="cm-section-hdr">🚫 Denylist <span style="margin-left:auto;background:var(--red-bg);color:var(--red);padding:1px 7px;border-radius:10px;font-size:10px">${pdata.denylist.length}</span></div>
+        <div class="cm-section-body">${pdata.denylist.map(d=>`<span class="cm-tag cm-tag-deny">${d.active?'🚫':'○'} ${esc(d.id)}</span>`).join('')}</div>
+      </div>`
+    }
+
+    if (pdata.allowlist?.length) {
+      html += `<div class="cm-section">
+        <div class="cm-section-hdr">✅ Allowlist <span style="margin-left:auto;background:var(--green-bg);color:var(--green);padding:1px 7px;border-radius:10px;font-size:10px">${pdata.allowlist.length}</span></div>
+        <div class="cm-section-body">${pdata.allowlist.map(d=>`<span class="cm-tag cm-tag-allow">✓ ${esc(d.id)}</span>`).join('')}</div>
+      </div>`
+    }
+
+    if (pdata.rewrites?.length) {
+      html += `<div class="cm-section">
+        <div class="cm-section-hdr">↩️ Rewrites <span style="margin-left:auto;background:#ede9fe;color:#5b21b6;padding:1px 7px;border-radius:10px;font-size:10px">${pdata.rewrites.length}</span></div>
+        <div class="cm-section-body" style="flex-direction:column;gap:4px;padding:10px 16px">
+          ${pdata.rewrites.map(r=>`
+            <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;font-family:'SF Mono',Monaco,Menlo,monospace;background:#f5f3ff;border:1px solid #ddd6fe;padding:4px 10px;border-radius:6px">
+              <span style="color:#5b21b6;font-weight:600">${esc(r.name)}</span>
+              <span style="color:var(--muted)">→</span>
+              <span style="color:#1e40af">${esc(r.content)}</span>
+            </div>`).join('')}
+        </div>
+      </div>`
+    }
+
+    if (pdata.security) {
+      const sec = pdata.security
+      const boolKeys=['threatIntelligenceFeeds','aiThreatDetection','googleSafeBrowsing','cryptojacking','dnsRebinding','idnHomographs','typosquatting','dga','nrd','ddns','parking','csam']
+      html += `<div class="cm-section">
+        <div class="cm-section-hdr">🔒 Security</div>
+        <div class="cm-section-body" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:5px;padding:10px 16px">
+          ${boolKeys.filter(k=>k in sec).map(k=>`
+            <div class="cm-kv">
+              <span class="cm-kv-key">${k}</span>
+              <span class="${sec[k]?'cm-tag cm-tag-on':'cm-tag cm-tag-off'}" style="font-size:11px;padding:1px 7px">${sec[k]?'ON':'OFF'}</span>
+            </div>`).join('')}
+        </div>
+      </div>`
+    }
+
+    if (pdata.privacy) {
+      const priv = pdata.privacy
+      html += `<div class="cm-section">
+        <div class="cm-section-hdr">👁 Privacy</div>
+        <div class="cm-section-body" style="flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div class="cm-kv"><span class="cm-kv-key">disguisedTrackers</span><span class="${priv.disguisedTrackers?'cm-tag cm-tag-on':'cm-tag cm-tag-off'}" style="font-size:11px;padding:1px 7px">${priv.disguisedTrackers?'ON':'OFF'}</span></div>
+            <div class="cm-kv"><span class="cm-kv-key">allowAffiliate</span><span class="${priv.allowAffiliate?'cm-tag cm-tag-on':'cm-tag cm-tag-off'}" style="font-size:11px;padding:1px 7px">${priv.allowAffiliate?'ON':'OFF'}</span></div>
+          </div>
+          ${priv.blocklists?.length ? `<div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">Blocklists</div><div style="display:flex;flex-wrap:wrap;gap:5px">${priv.blocklists.map(b=>`<span class="cm-tag">📋 ${esc(b.id||b)}</span>`).join('')}</div></div>` : ''}
+        </div>
+      </div>`
+    }
+
+    if (pdata.parental) {
+      const par = pdata.parental
+      html += `<div class="cm-section">
+        <div class="cm-section-hdr">👨‍👧 Parental Control</div>
+        <div class="cm-section-body" style="flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div class="cm-kv"><span class="cm-kv-key">safeSearch</span><span class="${par.safeSearch?'cm-tag cm-tag-on':'cm-tag cm-tag-off'}" style="font-size:11px;padding:1px 7px">${par.safeSearch?'ON':'OFF'}</span></div>
+            <div class="cm-kv"><span class="cm-kv-key">youtubeRestricted</span><span class="${par.youtubeRestrictedMode?'cm-tag cm-tag-on':'cm-tag cm-tag-off'}" style="font-size:11px;padding:1px 7px">${par.youtubeRestrictedMode?'ON':'OFF'}</span></div>
+            <div class="cm-kv"><span class="cm-kv-key">blockBypass</span><span class="${par.blockBypass?'cm-tag cm-tag-on':'cm-tag cm-tag-off'}" style="font-size:11px;padding:1px 7px">${par.blockBypass?'ON':'OFF'}</span></div>
+          </div>
+          ${par.categories?.length ? `<div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">Categorieën</div><div style="display:flex;flex-wrap:wrap;gap:5px">${par.categories.map(c=>`<span class="cm-tag ${c.active?'cm-tag-deny':'cm-tag-off'}">${c.active?'🚫':'○'} ${esc(c.id)}</span>`).join('')}</div></div>` : ''}
+          ${par.services?.length ? `<div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">Geblokkeerde services</div><div style="display:flex;flex-wrap:wrap;gap:5px">${par.services.map(s=>`<span class="cm-tag cm-tag-deny">${esc(s.id)}</span>`).join('')}</div></div>` : ''}
+        </div>
+      </div>`
+    }
+
+    html += `</div>`
+  }
+
+  document.getElementById('cm-readable-view').innerHTML = html
+  document.getElementById('cm-json-view').style.display = 'none'
+  document.getElementById('cm-readable-view').style.display = 'block'
+}
+
+function cmToggleView() {
+  const showJson = document.getElementById('cm-view-toggle').checked
+  document.getElementById('cm-json-view').style.display    = showJson ? 'block' : 'none'
+  document.getElementById('cm-readable-view').style.display = showJson ? 'none'  : 'block'
+}
+</script>
+</body>
+</html>
